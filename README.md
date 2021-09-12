@@ -10,6 +10,8 @@ dont be shy about creating tasks if you think someone else needs to do something
 
 Try Not to commit directly to Main becuase if you mess up we gotta do the work of trying to recover 
 
+if you are unsure about an addition, create a branch and then a pull request
+
 Version control is an acquired skill but i believe in you <3
 
 ### I typed this in like 15 mins so Dont hesitate to call me out if i dont make sense or said something wrong
