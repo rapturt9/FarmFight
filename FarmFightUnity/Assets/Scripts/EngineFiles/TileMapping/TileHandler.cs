@@ -59,7 +59,7 @@ public class TileHandler : MonoBehaviour
     {
         if (Input.GetMouseButtonUp(0))
         {
-            Tiles[selected] = new GameTile(selected, new BasicBehavior());
+            Tiles[selected] = new GameTile(selected, new SelectBehavior());
 
             selected = Hex.fromWorld(Camera.main.ScreenToWorldPoint(Input.mousePosition), tilemap.gameObject.transform.lossyScale.y);
 
