@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a77349d8f193b457a821accf66d8b325, type: 3}
-  m_Name: tiles
+  m_Name: Selected
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: 2747690628134850419, guid: 7d6777992efa54df4959e2b832ec3fbb, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_Transform:
     e00: 1
     e01: 0
@@ -33,5 +33,5 @@ MonoBehaviour:
     e33: 1
   m_InstancedGameObject: {fileID: 0}
   m_Flags: 1
-  m_ColliderType: 0
-  artName: Test
+  m_ColliderType: 1
+  artName: Select

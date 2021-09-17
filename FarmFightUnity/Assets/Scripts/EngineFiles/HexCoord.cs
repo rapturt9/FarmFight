@@ -36,36 +36,33 @@ public struct Hex
         return new Vector2Int(y,coord.x);
     }
 
-    private Vector3Int cellFormatter(Vector2Int cell)
-    {
-        return new Vector3Int(cell.y, cell.x, 0);
-    }
+    
 
     public Vector2Int Cell()
     {
         return toCell(this);
     }
 
-    public Vector2 world()
+    public Vector2 world(float yscale = 1)
     {
         Vector2Int cell = this.Cell();
         float R3 = Mathf.Sqrt(3);
 
-        float Y = (int)(cell.y * R3 / 2) - ((R3 / 4) * (cell.x & 1));
+        float Y = (int)((cell.y * R3 / (2*yscale)) - ((R3 / 4) * (cell.x & 1)));
 
         return new Vector2((cell.x * .75f), Y);
     }
 
-    public static Hex fromWorld(Vector3 coords)
+    public static Hex fromWorld(Vector3 coords, float yscale = 1)
     {
         float R3 = Mathf.Sqrt(3) / 2;
 
         int x = Mathf.RoundToInt(coords.x / 0.75f);
-        int y = Mathf.RoundToInt((coords.y / R3) - (x * (R3 / 2)));
+        int y = Mathf.RoundToInt((coords.y / (yscale*R3)) - (x * (R3 / 2)));
 
         return new Hex(x, y);
     }
-
+    
     static public Hex operator +(Hex self, Hex other)
     {
         return new Hex(self.x + other.x, self.y + other.y);

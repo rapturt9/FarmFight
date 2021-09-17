@@ -4,6 +4,8 @@ using UnityEngine.Tilemaps;
 
 public class TileHandler : MonoBehaviour
 {
+    [SerializeField]
+    public Hex selected;
 
 
     Dictionary<Hex, GameTile> Tiles;
@@ -31,7 +33,7 @@ public class TileHandler : MonoBehaviour
         foreach(var coord in temp.Keys)
         {
             
-                Tiles[coord] = new GameTile(coord, new BasicBehavior());
+                Tiles[coord] = new GameTile(coord, new SelectBehavior());
         }
 
         Redraw();
@@ -48,6 +50,26 @@ public class TileHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetMouseButtonUp(0))
+        {
+
+            selected = Hex.fromWorld(Camera.main.ScreenToWorldPoint(Input.mousePosition), tilemap.gameObject.transform.localScale.y);
+
+            if (selected != null)
+            {
+                Tiles[selected] = new GameTile(selected, new BasicBehavior());
+                
+                
+            }
+            
+            
+            
+        }
+
+        if (Input.GetKeyUp(KeyCode.R))
+            Start();
+
+        Redraw();
 
     }
 }
