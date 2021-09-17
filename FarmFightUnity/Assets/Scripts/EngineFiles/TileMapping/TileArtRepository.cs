@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class ArtRepository : MonoBehaviour
+public class TileArtRepository : MonoBehaviour
 {
 
 
-    public static ArtRepository Art;
+    public static TileArtRepository Art;
 
     [SerializeField]
     private List<TileArt> tileArtCollection;
@@ -22,17 +22,10 @@ public class ArtRepository : MonoBehaviour
         }
     }
 
-    public void OnEnable()
+    public void Init()
     {
 
-        if (Art == null)
-        {
-            Art = this;
-        }
-        else if (Art != this)
-        {
-            Destroy(gameObject);
-        }
+        
 
 
         artCollectionInternal = new Dictionary<string, TileArt>();
@@ -44,5 +37,17 @@ public class ArtRepository : MonoBehaviour
 
         
         
+    }
+
+    public void Awake()
+    {
+        if (Art == null)
+        {
+            Art = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 }

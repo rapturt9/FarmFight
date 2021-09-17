@@ -4,16 +4,23 @@ using UnityEngine.Tilemaps;
 
 public class TileHandler : MonoBehaviour
 {
+    public string Name;
+
     [SerializeField]
     public Hex selected;
 
-
     Dictionary<Hex, GameTile> Tiles;
+
+    
 
     Tilemap tilemap;
 
-    public void Start()
+   
+
+    public void Init()
     {
+
+
 
         TryGetComponent(out tilemap);
         if(tilemap == null)
@@ -52,11 +59,13 @@ public class TileHandler : MonoBehaviour
     {
         if (Input.GetMouseButtonUp(0))
         {
+            Tiles[selected] = new GameTile(selected, new BasicBehavior());
 
-            selected = Hex.fromWorld(Camera.main.ScreenToWorldPoint(Input.mousePosition), tilemap.gameObject.transform.localScale.y);
+            selected = Hex.fromWorld(Camera.main.ScreenToWorldPoint(Input.mousePosition), tilemap.gameObject.transform.lossyScale.y);
 
             if (selected != null)
             {
+
                 Tiles[selected] = new GameTile(selected, new BasicBehavior());
                 
                 
@@ -67,7 +76,7 @@ public class TileHandler : MonoBehaviour
         }
 
         if (Input.GetKeyUp(KeyCode.R))
-            Start();
+            Init();
 
         Redraw();
 

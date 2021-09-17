@@ -6,7 +6,7 @@ public class BasicBehavior : TileBehavior
 {
     public BasicBehavior()
     {
-        art = ArtRepository.Art["Test"];
+        art = TileArtRepository.Art["Test"];
     }
 }
 
@@ -14,6 +14,6 @@ public class SelectBehavior : TileBehavior
 {
     public SelectBehavior()
     {
-        art = ArtRepository.Art["Select"];
+        art = TileArtRepository.Art["Select"];
     }
 }

@@ -63,24 +63,16 @@ public struct GameTile
         
     }
 
+    public void Update()
+    {
+        behavior.Behavior();
+    }
+
     
     
 
 }
 
-public class TileBehavior
-{
-    public TileArt art;
 
-    public virtual void Update()
-    {
-
-    }
-
-    public virtual void Start()
-    {
-
-    }
-}
 
 
