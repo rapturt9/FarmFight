@@ -28,7 +28,7 @@ public class TileHandler : MonoBehaviour
 
     private void fillTiles()
     {
-        Dictionary<Hex,GameTile> temp = BoardHelperFns.BoardFiller(5);
+        Dictionary<Hex,GameTile> temp = BoardHelperFns.BoardFiller(4);
         Tiles = new Dictionary<Hex, GameTile>();
         foreach(var coord in temp.Keys)
         {
