@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class SoundRepository : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public GameObject SoundFolder;
+
+    [SerializeField]
+    Sound[] Sounds;
+
+    Dictionary<string, Sound> sounds;
+
+    public Sound this[string name]
     {
-        
+        get
+        {
+            return sounds[name];
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    
+    
 }
