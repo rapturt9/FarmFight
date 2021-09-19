@@ -21,7 +21,7 @@ public class TileTemp
 
     public virtual void StartBehavior()
     {
-
+        currentArt = TileArtRepository.Art["Test"];
     }
 
     public virtual void Behavior()
