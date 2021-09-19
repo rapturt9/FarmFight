@@ -8,7 +8,7 @@ using System;
 /// <summary>
 /// REMAKE REMAKE BAD BAD
 /// </summary>
-public struct TileInterFace
+public class TileInterFace
 {
     
 
@@ -36,6 +36,8 @@ public struct TileInterFace
         this.hexCoord = coord;
 
         this.Tile = tile;
+
+        Tile.StartBehavior();
     }
 
     public void Draw(Tilemap tilemap)

@@ -15,7 +15,23 @@ public class TileHandler : MonoBehaviour
 
     Tilemap tilemap;
 
+    public TileTemp this[Hex hex]
+    {
+        get
+        {
+            return Tiles[hex].Tile;
+        }
 
+        set
+        {
+            if (Tiles.ContainsKey(hex))
+            {
+                
+                Tiles[hex].Tile = value;
+            }
+            
+        }
+    }
 
     public void Init()
     {
@@ -57,10 +73,7 @@ public class TileHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(selected != TileManager.TM.selected)
-        {
-            
-        }
+        Redraw();
     }
 
     

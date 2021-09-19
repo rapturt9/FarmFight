@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapManager : MonoBehaviour
+public class TileManager : MonoBehaviour
 {
 
 
@@ -27,17 +27,20 @@ public class MapManager : MonoBehaviour
         foreach(var TH in Handlers)
         {
             TH.Init();
-            handlers[TH.Name] = TH;
+            handlers = new Dictionary<string, TileHandler>();
+
+            
+            handlers.Add(TH.Name,TH);
         }
     }
 
-    public static MapManager MM;
+    public static TileManager TM;
 
-    private void Awake()
+    public void Awake()
     {
-        if(MM == null)
+        if(TM == null)
         {
-            MM = this;
+            TM = this;
         }
         else
         {
@@ -46,4 +49,29 @@ public class MapManager : MonoBehaviour
 
         
     }
+
+    public Hex ScreenToHex(Vector3Int screenPos )
+    {
+        Vector3 Point = Camera.main.ScreenToWorldPoint(screenPos);
+
+        return Hex.fromWorld(Point);
+    }
+
+    public Hex ViewPortToHex(Vector3 viewPos)
+    {
+        return Hex.fromWorld(Camera.main.ViewportToWorldPoint(viewPos));
+    }
+
+    public Hex WorldToHex(Vector3 worldPos)
+    {
+        return Hex.fromWorld(worldPos);
+    }
+
+    public Hex Move(Hex current,int x, int y)
+    {
+        return current +  (Hex.right * x) + (Hex.up * y);
+    }
+
+
+    
 }

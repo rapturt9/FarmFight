@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
         TileArtRepository.Art.Init();
 
 
-        MapManager.MM.Init();
+        TileManager.TM.Init();
     }
 
     // Update is called once per frame
