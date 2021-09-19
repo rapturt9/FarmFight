@@ -6,21 +6,22 @@ using System;
 
 
 /// <summary>
-/// its a struct so 
+/// REMAKE REMAKE BAD BAD
 /// </summary>
-public struct GameTile
+public struct TileInterFace
 {
-    public static GameTile empty = new GameTile(Hex.zero,null,null);
+    
 
-    public TileArt art;
-
-    public TileBehavior behavior;
+    
 
 
     // Unity uses different coordinate systems than i do for its Cell system,
     // for your and my sake ive built in an automatic conversion system
 
     public Hex hexCoord { get; set;}
+
+    public TileTemp Tile;
+    
 
     public Vector3Int cellCoord
     {
@@ -30,44 +31,43 @@ public struct GameTile
     }
 
 
-    public GameTile(Hex coord ,TileBehavior behavior, TileArt art)
+    public TileInterFace(Hex coord, TileTemp tile)
     {
         this.hexCoord = coord;
-        this.behavior = behavior;
-        this.art = art;
 
-    }
-
-    public GameTile(Vector3Int coord, TileBehavior behavior, TileArt art)
-    {
-        hexCoord = Hex.fromCell(coord);
-        this.behavior = behavior;
-        this.art = art;
-    }
-
-    public GameTile(Vector3Int coord, TileBehavior behavior)
-    {
-        this = new GameTile(coord, behavior, behavior.art);
-    }
-
-    public GameTile(Hex coord, TileBehavior behavior)
-    {
-        this = new GameTile(coord, behavior, behavior.art);
-        
+        this.Tile = tile;
     }
 
     public void Draw(Tilemap tilemap)
     {
-        if(art != null)
-            tilemap.SetTile(cellCoord, art);
+        tilemap.SetTile(cellCoord, Tile.art);
         
     }
 
     public void Update()
     {
-        behavior.Behavior();
+        Tile.Behavior();
+
     }
 
+    public void changeTile(TileTemp tile)
+    {
+        End();
+        Tile = tile;
+        Begin();
+
+    }
+
+
+    public void Begin()
+    {
+        Tile.StartBehavior();
+    }
+
+    public void End()
+    {
+        Tile.EndBehavior();
+    }
     
     
 

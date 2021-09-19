@@ -1,14 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 
-public abstract class TileBehavior
+public abstract class TileTemp
 {
-    public TileArt art;
+    public TileArt currentDraw;
 
-    public virtual void Start()
+
+    public Hex hexCoord { get; set; }
+
+
+    public Vector3Int cellCoord
     {
+        get { return (Vector3Int)hexCoord.Cell(); }
+        set { hexCoord = Hex.fromCell(value); }
 
     }
+
 
     public virtual void StartBehavior()
     {

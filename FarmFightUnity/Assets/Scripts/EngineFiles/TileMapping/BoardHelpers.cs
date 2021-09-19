@@ -27,16 +27,16 @@ public static class BoardHelperFns
         }
     }
 
-    public static Dictionary<Hex, GameTile> BoardFiller(int n)
+    public static Dictionary<Hex, TileInterFace> BoardFiller(int n)
     {
-        Dictionary<Hex, GameTile> final = new Dictionary<Hex, GameTile>();
+        Dictionary<Hex, TileInterFace> final = new Dictionary<Hex, TileInterFace>();
 
         for (int i = -n; i <= n; i++)
         {
             for (int ii = -n; ii <= n; ii++)
             {
                 if (distance(Hex.zero, new Hex(i, ii)) <= n)
-                    final[new Hex(i, ii)] = GameTile.empty;
+                    final[new Hex(i, ii)] = new TileInterFace();
             }
         }
 
