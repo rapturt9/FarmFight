@@ -40,7 +40,7 @@ public struct TileInterFace
 
     public void Draw(Tilemap tilemap)
     {
-        tilemap.SetTile(cellCoord, Tile.art);
+        tilemap.SetTile(cellCoord, Tile.currentArt);
         
     }
 

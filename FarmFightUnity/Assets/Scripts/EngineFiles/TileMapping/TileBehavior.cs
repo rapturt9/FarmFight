@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public abstract class TileTemp
+public class TileTemp
 {
     public TileArt currentDraw;
 

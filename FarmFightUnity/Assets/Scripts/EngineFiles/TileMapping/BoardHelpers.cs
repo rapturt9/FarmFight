@@ -36,7 +36,7 @@ public static class BoardHelperFns
             for (int ii = -n; ii <= n; ii++)
             {
                 if (distance(Hex.zero, new Hex(i, ii)) <= n)
-                    final[new Hex(i, ii)] = new TileInterFace();
+                    final[new Hex(i, ii)] = new TileInterFace(new Hex(i, ii), new TileTemp());
             }
         }
 

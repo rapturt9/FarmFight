@@ -40,7 +40,7 @@ public class TileHandler : MonoBehaviour
         foreach(var coord in temp.Keys)
         {
             
-                Tiles[coord] = new TileInterFace(coord);
+                Tiles[coord] = new TileInterFace(coord,new TileTemp());
         }
 
         Redraw();
