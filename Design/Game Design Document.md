@@ -21,13 +21,15 @@ Typically, to harvest a crop, you try to click it at the exact time it is ripe. 
 
 *The Soldiers:*
 
-Need to decide if soldiers are tractors, farmers with pitchforks, other ideas. To deploy them to a tile, you click the tile, and the soldier travels alon the lines until they reach there. Additionally, soldiers from the defending person deal 1.5x more damage since home base advantage. 
+Soldiers look like farmers with pitchforks. To deploy them to a tile, you click the tile, and the soldier travels along the lines until they reach there. Additionally, soldiers from the defending person deal 1.5x more damage since home base advantage. 
 
 They will cost 5$ each and can be redeployed after battle on territory finishes.
 
 *The Battles:*
 
 Soldiers each have their own health and deal splash damage to all other soldiers on same tile. Battle visualization will look like a pie chart and a cloud behind it. The size of the pieces on the pie chart is determined by health and number of soldiers on each side.
+
+To take control of another tile, your soldiers must be the only ones from a team on the tile for 3 seconds.
 
 *The Endgame:*
 
