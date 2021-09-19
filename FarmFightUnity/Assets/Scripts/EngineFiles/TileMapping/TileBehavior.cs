@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class TileTemp
 {
-    public TileArt currentDraw;
+    public TileArt currentArt;
 
 
     public Hex hexCoord { get; set; }
