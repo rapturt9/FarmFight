@@ -77,11 +77,15 @@ public class TileHandler : MonoBehaviour
         foreach(var tile in Tiles.Values)
         {
             tile.Update();
-            tile.Draw(tilemap);
+            if(automaticRedraw)
+                tile.Draw(tilemap);
         }
         
 
     }
+
+    public bool automaticRedraw;
+    
 
     
 }

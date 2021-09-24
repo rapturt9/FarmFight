@@ -17,7 +17,7 @@ public class BasicTile : TileTemp
     {
         if (Input.GetMouseButtonUp(0))
         {
-            if(TileManager.TM.getMouseHex() == this.hexCoord)
+            if(TileManager.TM.getMouseHex() == hexCoord)
             {
                 TileArt hold = currentArt;
                 currentArt = offHand;
