@@ -9,6 +9,8 @@ public class Sound: ScriptableObject
 
     public string SoundName;
 
+
+
     public AudioSource CreateSoundInstance(GameObject soundFolder, float volume = .5f,
                                         bool loop = false, bool mute = false)
     {

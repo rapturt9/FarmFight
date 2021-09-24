@@ -37,7 +37,7 @@ public class TileInterFace
 
         this.Tile = tile;
 
-        Tile.StartBehavior();
+        Begin();
     }
 
     public void Draw(Tilemap tilemap)
@@ -63,12 +63,12 @@ public class TileInterFace
 
     public void Begin()
     {
-        Tile.StartBehavior();
+        Tile.init(hexCoord);
     }
 
     public void End()
     {
-        Tile.EndBehavior();
+        Tile.End();
     }
     
     
