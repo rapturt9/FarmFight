@@ -37,15 +37,20 @@ public class TileManager : MonoBehaviour
 
     public void Init()
     {
-        foreach(var TH in Handlers)
+        handlers = new Dictionary<string, TileHandler>();
+        foreach (var TH in Handlers)
         {
             TH.Init(size);
-            handlers = new Dictionary<string, TileHandler>();
-
             
+            
+         
             handlers.Add(TH.Name,TH);
         }
+
+        validHexes = new HashSet<Hex>(BoardHelperFns.HexList(size)) ;
     }
+
+    HashSet<Hex> validHexes;
 
     public static TileManager TM;
 
@@ -146,7 +151,8 @@ public class TileManager : MonoBehaviour
 
     public bool isValidHex(Hex hex)
     {
-        return BoardHelperFns.distance(Hex.zero, hex) <= size;
+        
+        return validHexes.Contains(hex);
     }
 
     public Hex[] getNeighbors(Hex hex)

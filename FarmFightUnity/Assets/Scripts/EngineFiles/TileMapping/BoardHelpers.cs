@@ -42,4 +42,20 @@ public static class BoardHelperFns
 
         return final;
     }
+
+    public static List<Hex> HexList(int n)
+    {
+        List<Hex> final = new List<Hex>();
+
+        for (int i = -n; i <= n; i++)
+        {
+            for (int ii = -n; ii <= n; ii++)
+            {
+                if (distance(Hex.zero, new Hex(i, ii)) <= n)
+                    final.Add( new Hex(i, ii));
+            }
+        }
+
+        return final;
+    }
 }

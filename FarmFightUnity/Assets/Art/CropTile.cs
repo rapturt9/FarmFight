@@ -76,3 +76,12 @@ public class BlankTile: TileTemp
         currentArt = null;
     }
 }
+
+
+public class HighLight: TileTemp
+{
+    public override void LoadArt()
+    {
+        currentArt = TileArtRepository.Art["Select"];
+    }
+}

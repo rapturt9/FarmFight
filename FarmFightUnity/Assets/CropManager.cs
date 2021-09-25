@@ -16,6 +16,7 @@ public class CropManager : MonoBehaviour
 
     private void Update()
     {
+        /*
         if (Input.GetMouseButtonDown(0) &
                 TileManager.TM.isValidHex(TileManager.TM.getMouseHex()))
         {
@@ -29,6 +30,7 @@ public class CropManager : MonoBehaviour
 
             clearTile(TileManager.TM.getMouseHex());
         }
+        */
     }
 
 

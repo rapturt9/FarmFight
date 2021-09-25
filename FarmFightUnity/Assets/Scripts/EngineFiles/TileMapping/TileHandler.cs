@@ -11,7 +11,7 @@ public class TileHandler : MonoBehaviour
 
     Dictionary<Hex, TileInterFace> TileDict;
 
-    
+    private int size;
 
     Tilemap tilemap;
 
@@ -36,7 +36,7 @@ public class TileHandler : MonoBehaviour
     public void Init(int size)
     {
 
-
+        this.size = size;
 
         TryGetComponent(out tilemap);
         if(tilemap == null)
@@ -58,7 +58,7 @@ public class TileHandler : MonoBehaviour
         {
             
 
-                TileDict[coord] = new TileInterFace(coord,new BasicTile());
+                
 
                 TileDict[coord] = new TileInterFace(coord,new BlankTile());
 
@@ -90,7 +90,12 @@ public class TileHandler : MonoBehaviour
     }
 
     public bool automaticRedraw;
-    
+
+
+    public void clearMap()
+    {
+        fillTiles(size);
+    }
 
     
 }
