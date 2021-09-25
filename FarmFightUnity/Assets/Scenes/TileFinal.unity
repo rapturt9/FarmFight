@@ -219,6 +219,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7331fdbad00441619c6516ff7a4c4aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  camera: {fileID: 0}
+  speed: 0.5
+  zoomspeed: 0.1
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -673,7 +676,6 @@ GameObject:
   - component: {fileID: 1645006419}
   - component: {fileID: 1645006421}
   - component: {fileID: 1645006420}
-  - component: {fileID: 1645006422}
   - component: {fileID: 1645006423}
   m_Layer: 5
   m_Name: Market
@@ -698,7 +700,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -263, y: -179}
+  m_AnchoredPosition: {x: -569, y: -179}
   m_SizeDelta: {x: 9.0228, y: 4.883}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1645006420
@@ -750,8 +752,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 45
-  m_fontSizeBase: 45
+  m_fontSize: 90
+  m_fontSizeBase: 90
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -786,7 +788,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -364.23746, y: 19.418802, z: 0, w: -87.039444}
+  m_margin: {x: -541.42035, y: 19.418802, z: -194.05746, w: -87.039444}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -800,20 +802,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1645006418}
   m_CullTransparentMesh: 1
---- !u!114 &1645006422
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1645006418}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 764855fbddb2f405ca37abef3402359b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  menuOpen: 0
-  pastMenuOpen: 0
 --- !u!114 &1645006423
 MonoBehaviour:
   m_ObjectHideFlags: 0

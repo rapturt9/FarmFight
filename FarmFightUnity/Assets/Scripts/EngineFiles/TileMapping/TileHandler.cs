@@ -9,7 +9,7 @@ public class TileHandler : MonoBehaviour
     [SerializeField]
     private Hex selected;
 
-    Dictionary<Hex, TileInterFace> Tiles;
+    Dictionary<Hex, TileInterFace> TileDict;
 
     
 
@@ -19,15 +19,15 @@ public class TileHandler : MonoBehaviour
     {
         get
         {
-            return Tiles[hex].Tile;
+            return TileDict[hex].Tile;
         }
 
         set
         {
-            if (Tiles.ContainsKey(hex))
+            if (TileDict.ContainsKey(hex))
             {
                 
-                Tiles[hex].Tile = value;
+                TileDict[hex].Tile = value;
             }
             
         }
@@ -53,15 +53,15 @@ public class TileHandler : MonoBehaviour
     {
         //tilemap.ClearAllTiles();
         Dictionary<Hex, TileInterFace> temp = BoardHelperFns.BoardFiller(size);
-        Tiles = new Dictionary<Hex, TileInterFace>();
+        TileDict = new Dictionary<Hex, TileInterFace>();
         foreach(var coord in temp.Keys)
         {
             
-<<<<<<< Updated upstream
-                Tiles[coord] = new TileInterFace(coord,new BasicTile());
-=======
+
+                TileDict[coord] = new TileInterFace(coord,new BasicTile());
+
                 TileDict[coord] = new TileInterFace(coord,new BlankTile());
->>>>>>> Stashed changes
+
         }
 
         Redraw();
@@ -69,7 +69,7 @@ public class TileHandler : MonoBehaviour
 
     private void Redraw()
     {
-        foreach(var tile in Tiles.Values)
+        foreach(var tile in TileDict.Values)
         {
             tile.Draw(tilemap);
         }
@@ -79,7 +79,7 @@ public class TileHandler : MonoBehaviour
     void Update()
     {
 
-        foreach(var tile in Tiles.Values)
+        foreach(var tile in TileDict.Values)
         {
             tile.Update();
             if(automaticRedraw)
