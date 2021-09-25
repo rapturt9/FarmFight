@@ -3,7 +3,7 @@ using MLAPI.Messaging;
 using MLAPI.NetworkVariable;
 using UnityEngine;
 
-public class Player : NetworkBehaviour
+public class MultiPlayerTestPlayer : NetworkBehaviour
 {
     [SerializeField] private float speed = 1f;
     public GameObject counter;

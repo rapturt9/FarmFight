@@ -3,7 +3,7 @@ using MLAPI;
 using UnityEngine;
 
 
-public class WorldManager : MonoBehaviour
+public class MultiplayerWorldManager : MonoBehaviour
 {
     void OnGUI()
     {
@@ -15,8 +15,6 @@ public class WorldManager : MonoBehaviour
         else
         {
             StatusLabels();
-
-            SubmitNewPosition();
         }
 
         GUILayout.EndArea();
@@ -37,21 +35,5 @@ public class WorldManager : MonoBehaviour
         GUILayout.Label("Transport: " +
             NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
         GUILayout.Label("Mode: " + mode);
-    }
-
-    static void SubmitNewPosition()
-    {
-        if (GUILayout.Button(NetworkManager.Singleton.IsServer ? "Move" : "Request Position Change"))
-        {
-            if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId,
-                out var networkedClient))
-            {
-                var player = networkedClient.PlayerObject.GetComponent<Player>();
-                if (player)
-                {
-                    
-                }
-            }
-        }
     }
 }
