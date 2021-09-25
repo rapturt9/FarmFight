@@ -52,7 +52,7 @@ so your changes become part of the main project
 
 ## Unity Instructions:
 
-### downloading visual studio is recommended but not required
+### to begin:
 
 
 1. open unityHub
@@ -61,9 +61,6 @@ so your changes become part of the main project
 3. click and wait for it to open
 4. now you wont have to redo it as long as you dont change where the repository is saved
 5. be sure to push after saving so you dont lose progress
-
-
-
 
 
 

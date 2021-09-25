@@ -6,7 +6,7 @@ public class TileManager : MonoBehaviour
 {
 
 
-
+    public int size;
 
     public TileHandler[] Handlers;
 
@@ -22,11 +22,24 @@ public class TileManager : MonoBehaviour
         }
     }
 
+    public TileTemp this[string name, Hex coord ]
+    {
+        get
+        {
+            return getTile(name,coord);
+        }
+
+        set
+        {
+            SetTile(name, coord, value);
+        }
+    }
+
     public void Init()
     {
         foreach(var TH in Handlers)
         {
-            TH.Init();
+            TH.Init(size);
             handlers = new Dictionary<string, TileHandler>();
 
             
@@ -50,12 +63,20 @@ public class TileManager : MonoBehaviour
         
     }
 
+    public string[] TileMapNames 
+    {
+        get
+        {
+            return new List<string>(handlers.Keys).ToArray();
+        }
+    }
+
     /// <summary>
     /// convert screen coords to hex coords
     /// </summary>
     /// <param name="screenPos"></param>
     /// <returns></returns>
-    public Hex ScreenToHex(Vector3Int screenPos )
+    public Hex screenToHex(Vector3Int screenPos )
     {
         Vector3 Point = Camera.main.ScreenToWorldPoint(screenPos);
 
@@ -67,7 +88,7 @@ public class TileManager : MonoBehaviour
     /// </summary>
     /// <param name="viewPos"></param>
     /// <returns></returns>
-    public Hex ViewPortToHex(Vector3 viewPos)
+    public Hex viewPortToHex(Vector3 viewPos)
     {
         return Hex.fromWorld(Camera.main.ViewportToWorldPoint(viewPos));
     }
@@ -77,7 +98,7 @@ public class TileManager : MonoBehaviour
     /// </summary>
     /// <param name="worldPos"></param>
     /// <returns></returns>
-    public Hex WorldToHex(Vector3 worldPos)
+    public Hex worldToHex(Vector3 worldPos)
     {
         return Hex.fromWorld(worldPos);
     }
@@ -89,7 +110,7 @@ public class TileManager : MonoBehaviour
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    public Hex Move(Hex current,int x, int y)
+    public Hex move(Hex current,int x, int y)
     {
         return current +  (Hex.right * x) + (Hex.up * y);
     }
@@ -101,7 +122,7 @@ public class TileManager : MonoBehaviour
     /// <param name="mapName"></param>
     /// <param name="coord"></param>
     /// <returns></returns>
-    public TileTemp GetTile(string mapName, Hex coord)
+    public TileTemp getTile(string mapName, Hex coord)
     {
         return this[mapName][coord];
     }
@@ -112,8 +133,61 @@ public class TileManager : MonoBehaviour
     /// <param name="mapName"></param>
     /// <param name="coord"></param>
     /// <param name="tile"></param>
-    public void setTile(string mapName, Hex coord, TileTemp tile)
+    public void SetTile(string mapName, Hex coord, TileTemp tile)
     {
         this[mapName][coord] = tile;
+        
     }
+
+    public Hex getMouseHex()
+    {
+        return screenToHex(Vector3Int.FloorToInt(Input.mousePosition));
+    }
+
+    public bool isValidHex(Hex hex)
+    {
+        return BoardHelperFns.distance(Hex.zero, hex) <= size;
+    }
+
+    public Hex[] getNeighbors(Hex hex)
+    {
+        List<Hex> relatives = new List<Hex>()
+        {
+            Hex.down,
+            Hex.up,
+            Hex.right,
+            Hex.left,
+            Hex.right + Hex.down,
+            Hex.left + Hex.up
+        };
+
+        List<Hex> final = new List<Hex>();
+
+        foreach (var rel in relatives)
+        {
+            
+            final.Add(hex + rel);
+
+        }
+
+        return final.ToArray();
+    }
+
+    public Hex[] getValidNeighbors(Hex hex)
+    {
+        List<Hex> relatives = new List<Hex>(getNeighbors(hex));
+
+        int i = 0;
+
+        while(i < relatives.Count)
+        {
+            if (isValidHex(hex))
+                i += 1;
+            else
+                relatives.RemoveAt(i);
+        }
+
+        return relatives.ToArray();
+    }
+    
 }

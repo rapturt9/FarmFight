@@ -33,7 +33,7 @@ public class TileHandler : MonoBehaviour
         }
     }
 
-    public void Init()
+    public void Init(int size)
     {
 
 
@@ -44,19 +44,19 @@ public class TileHandler : MonoBehaviour
             gameObject.AddComponent<Tilemap>();
         }
 
-        fillTiles();
+        fillTiles(size);
     }
 
     
 
-    private void fillTiles()
+    private void fillTiles(int size)
     {
-        Dictionary<Hex, TileInterFace> temp = BoardHelperFns.BoardFiller(4);
+        Dictionary<Hex, TileInterFace> temp = BoardHelperFns.BoardFiller(size);
         Tiles = new Dictionary<Hex, TileInterFace>();
         foreach(var coord in temp.Keys)
         {
             
-                Tiles[coord] = new TileInterFace(coord,new TileTemp());
+                Tiles[coord] = new TileInterFace(coord,new BasicTile());
         }
 
         Redraw();
@@ -73,8 +73,19 @@ public class TileHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Redraw();
+
+        foreach(var tile in Tiles.Values)
+        {
+            tile.Update();
+            if(automaticRedraw)
+                tile.Draw(tilemap);
+        }
+        
+
     }
+
+    public bool automaticRedraw;
+    
 
     
 }
