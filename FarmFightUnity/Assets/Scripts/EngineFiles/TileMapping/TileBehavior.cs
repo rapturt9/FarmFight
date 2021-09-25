@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+
 public class TileTemp
 {
     public TileArt currentArt;
@@ -47,5 +48,10 @@ public class TileTemp
 
     }
 
+
+    public TileArt getTileArt(string name)
+    {
+        return TileArtRepository.Art[name];
+    }
 
 }

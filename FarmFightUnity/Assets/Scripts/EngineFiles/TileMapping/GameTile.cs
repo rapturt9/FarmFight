@@ -20,7 +20,19 @@ public class TileInterFace
 
     public Hex hexCoord { get; set;}
 
-    public TileTemp Tile;
+    public TileTemp tileInternal;
+
+    public TileTemp Tile
+    {
+        set
+        {
+            changeTile(value);
+        }
+        get
+        {
+            return tileInternal;
+        }
+    }
     
 
     public Vector3Int cellCoord
@@ -42,20 +54,24 @@ public class TileInterFace
 
     public void Draw(Tilemap tilemap)
     {
-        tilemap.SetTile(cellCoord, Tile.currentArt);
-        
+        if(Tile.currentArt != null)
+            tilemap.SetTile(cellCoord, tileInternal.currentArt);
+        else
+            tilemap.SetTile(cellCoord,null);
+
     }
 
     public void Update()
     {
-        Tile.Behavior();
+        tileInternal.Behavior();
 
     }
 
     public void changeTile(TileTemp tile)
     {
-        End();
-        Tile = tile;
+        if(tileInternal != null)
+            End();
+        tileInternal = tile;
         Begin();
 
     }
@@ -63,12 +79,12 @@ public class TileInterFace
 
     public void Begin()
     {
-        Tile.init(hexCoord);
+        tileInternal.init(hexCoord);
     }
 
     public void End()
     {
-        Tile.End();
+        tileInternal.End();
     }
     
     

@@ -18,8 +18,6 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         TileArtRepository.Art.Init();
-
-
         TileManager.TM.Init();
     }
 
