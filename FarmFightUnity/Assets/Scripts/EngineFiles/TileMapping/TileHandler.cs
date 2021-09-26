@@ -9,7 +9,7 @@ public class TileHandler : MonoBehaviour
     [SerializeField]
     private Hex selected;
 
-    Dictionary<Hex, TileInterFace> TileDict;
+    public Dictionary<Hex, TileInterFace> TileDict;
 
     private int size;
 
