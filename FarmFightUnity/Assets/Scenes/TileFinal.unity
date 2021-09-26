@@ -1567,8 +1567,6 @@ MonoBehaviour:
     RegisteredScenes:
     - SampleScene
     - MultiplayerTest
-    - TileTest
-    - TileTestNetcode
     - TileFinal
     AllowRuntimeSceneChanges: 0
     NetworkPrefabs:
