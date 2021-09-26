@@ -50,5 +50,10 @@ public class Market : MonoBehaviour
         crops.addCarrot(selectedHex);
     }
 
+    public void Set()
+    {
+        
+    }
+
 
 }

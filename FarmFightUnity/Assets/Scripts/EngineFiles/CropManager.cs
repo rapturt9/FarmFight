@@ -12,6 +12,8 @@ public class CropManager : MonoBehaviour
     {
         handler = GetComponent<TileHandler>();
 
+        
+
     }
 
     private void Update()
@@ -46,7 +48,7 @@ public class CropManager : MonoBehaviour
 
     public void addWheat(Hex hex)
     {
-        handler[hex] = new Wheat();
+        handler[hex] = new Rice();
     }
 
     public void clearTile(Hex hex)
@@ -56,12 +58,30 @@ public class CropManager : MonoBehaviour
 
     public bool addFarmer(Hex hex)
     {
-        return true;
+        
+        if(handler[hex].hasFarmer == false)
+        {
+            handler[hex].hasFarmer = true;
+            return true;
+        }
+        return false;
     }
+
+    public bool removeFarmer(Hex hex)
+    {
+
+        if (handler[hex].hasFarmer == true)
+        {
+            handler[hex].hasFarmer = false;
+            return true;
+        }
+        return false;
+    }
+
 
     public void addSoldier(Hex hex, int number = 1)
     {
-
+        handler[hex].soldiers += number;
     }
 
 

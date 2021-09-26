@@ -51,21 +51,25 @@ public class TileHandler : MonoBehaviour
 
     private void fillTiles(int size)
     {
-        //tilemap.ClearAllTiles();
+        
         Dictionary<Hex, TileInterFace> temp = BoardHelperFns.BoardFiller(size);
         TileDict = new Dictionary<Hex, TileInterFace>();
+
         foreach(var coord in temp.Keys)
         {
             
-
+            
                 
-
-                TileDict[coord] = new TileInterFace(coord,new BlankTile());
+                
+            TileDict[coord] = new TileInterFace(coord,new BlankTile());
+                
 
         }
 
         Redraw();
     }
+
+    
 
     private void Redraw()
     {
