@@ -1,0 +1,10 @@
+Here are the player variables we should need:
+- List of tiles owned by player with crops information are embedded tile information 
+  - We can make sure that players can only plant crops in adjacent tile
+  - What crop is on tile
+  - Players can harvest crops they own, crop growth stages stored in tile
+  - Farmer information stored on tiles (boolean value whether they are there)
+  - Late game: what soldiers are on tiles/tile health
+- Money (int) stores total money of player
+- Soldier information and what tile they are going to
+  
