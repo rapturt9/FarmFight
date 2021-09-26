@@ -5,7 +5,7 @@ using UnityEngine.Tilemaps;
 
 public class GameManager : MonoBehaviour
 {
-
+    
 
     public TileHandler[] TileHandler;
     Repository central;
@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
-
+        
     }
 
     private void Start()

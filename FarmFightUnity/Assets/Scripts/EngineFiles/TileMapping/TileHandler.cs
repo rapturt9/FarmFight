@@ -26,10 +26,10 @@ public class TileHandler : MonoBehaviour
         {
             if (TileDict.ContainsKey(hex))
             {
-
+                
                 TileDict[hex].Tile = value;
             }
-
+            
         }
     }
 
@@ -47,7 +47,7 @@ public class TileHandler : MonoBehaviour
         fillTiles(size);
     }
 
-
+    
 
     private void fillTiles(int size)
     {
@@ -56,9 +56,9 @@ public class TileHandler : MonoBehaviour
         TileDict = new Dictionary<Hex, TileInterFace>();
         foreach(var coord in temp.Keys)
         {
+            
 
-
-
+                
 
                 TileDict[coord] = new TileInterFace(coord,new BlankTile());
 
@@ -85,7 +85,7 @@ public class TileHandler : MonoBehaviour
             if(automaticRedraw)
                 tile.Draw(tilemap);
         }
-
+        
 
     }
 
@@ -97,5 +97,5 @@ public class TileHandler : MonoBehaviour
         fillTiles(size);
     }
 
-
+    
 }

@@ -8,7 +8,7 @@ public class TileTemp
 {
     public TileArt currentArt;
 
-
+    
     public Hex hexCoord { get; set; }
 
 
@@ -22,13 +22,13 @@ public class TileTemp
 
     public virtual void Start()
     {
-
+        
     }
 
     public virtual void LoadArt()
     {
         currentArt = TileArtRepository.Art["Test"];
-
+        
     }
 
     public void init(Hex hex)

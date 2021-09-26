@@ -41,9 +41,9 @@ public class TileManager : MonoBehaviour
         foreach (var TH in Handlers)
         {
             TH.Init(size);
-
-
-
+            
+            
+         
             handlers.Add(TH.Name,TH);
         }
 
@@ -65,10 +65,10 @@ public class TileManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-
+        
     }
 
-    public string[] TileMapNames
+    public string[] TileMapNames 
     {
         get
         {
@@ -109,7 +109,7 @@ public class TileManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Move the hex
+    /// Move the hex 
     /// </summary>
     /// <param name="current"></param>
     /// <param name="x"></param>
@@ -141,7 +141,7 @@ public class TileManager : MonoBehaviour
     public void SetTile(string mapName, Hex coord, TileTemp tile)
     {
         this[mapName][coord] = tile;
-
+        
     }
 
     public Hex getMouseHex()
@@ -151,7 +151,7 @@ public class TileManager : MonoBehaviour
 
     public bool isValidHex(Hex hex)
     {
-
+        
         return validHexes.Contains(hex);
     }
 
@@ -171,7 +171,7 @@ public class TileManager : MonoBehaviour
 
         foreach (var rel in relatives)
         {
-
+            
             final.Add(hex + rel);
 
         }
@@ -195,5 +195,5 @@ public class TileManager : MonoBehaviour
 
         return relatives.ToArray();
     }
-
+    
 }
