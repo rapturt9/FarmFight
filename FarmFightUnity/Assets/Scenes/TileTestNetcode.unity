@@ -1052,6 +1052,7 @@ MonoBehaviour:
     - SampleScene
     - MultiplayerTest
     - TileTest
+    - TileTestNetcode
     AllowRuntimeSceneChanges: 0
     NetworkPrefabs:
     - Prefab: {fileID: 4144765270968009433, guid: 97e2f90e04a47b04d9a88cbf35c248e2, type: 3}
