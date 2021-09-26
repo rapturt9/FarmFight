@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a77349d8f193b457a821accf66d8b325, type: 3}
-  m_Name: Selected
-  m_EditorClassIdentifier:
-  m_Sprite: {fileID: 21300000, guid: 7d6777992efa54df4959e2b832ec3fbb, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 0.3764706}
+  m_Name: LandBackgroundTile 1
+  m_EditorClassIdentifier: 
+  m_Sprite: {fileID: -7790544929387226549, guid: 117c0da490254422b89e6cecbba61319, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
     e01: 0
@@ -34,4 +34,4 @@ MonoBehaviour:
   m_InstancedGameObject: {fileID: 0}
   m_Flags: 1
   m_ColliderType: 1
-  artName: Select
+  artName: LandBackground

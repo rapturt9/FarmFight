@@ -5,8 +5,8 @@ public class Repository : MonoBehaviour
 {
     ///Place Variables here
 
-
-
+    [SerializeField]
+    public Hex selectedHex = Hex.zero;
 
 
 

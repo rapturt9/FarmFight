@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+
 public class TileTemp
 {
     public TileArt currentArt;
 
-    
+
     public Hex hexCoord { get; set; }
 
 
@@ -21,13 +22,13 @@ public class TileTemp
 
     public virtual void Start()
     {
-        
+
     }
 
     public virtual void LoadArt()
     {
         currentArt = TileArtRepository.Art["Test"];
-        
+
     }
 
     public void init(Hex hex)
@@ -47,5 +48,10 @@ public class TileTemp
 
     }
 
+
+    public TileArt getTileArt(string name)
+    {
+        return TileArtRepository.Art[name];
+    }
 
 }

@@ -9,9 +9,9 @@ public class TileHandler : MonoBehaviour
     [SerializeField]
     private Hex selected;
 
-    Dictionary<Hex, TileInterFace> Tiles;
+    Dictionary<Hex, TileInterFace> TileDict;
 
-    
+    private int size;
 
     Tilemap tilemap;
 
@@ -19,24 +19,24 @@ public class TileHandler : MonoBehaviour
     {
         get
         {
-            return Tiles[hex].Tile;
+            return TileDict[hex].Tile;
         }
 
         set
         {
-            if (Tiles.ContainsKey(hex))
+            if (TileDict.ContainsKey(hex))
             {
-                
-                Tiles[hex].Tile = value;
+
+                TileDict[hex].Tile = value;
             }
-            
+
         }
     }
 
     public void Init(int size)
     {
 
-
+        this.size = size;
 
         TryGetComponent(out tilemap);
         if(tilemap == null)
@@ -47,16 +47,21 @@ public class TileHandler : MonoBehaviour
         fillTiles(size);
     }
 
-    
+
 
     private void fillTiles(int size)
     {
+        //tilemap.ClearAllTiles();
         Dictionary<Hex, TileInterFace> temp = BoardHelperFns.BoardFiller(size);
-        Tiles = new Dictionary<Hex, TileInterFace>();
+        TileDict = new Dictionary<Hex, TileInterFace>();
         foreach(var coord in temp.Keys)
         {
-            
-                Tiles[coord] = new TileInterFace(coord,new BasicTile());
+
+
+
+
+                TileDict[coord] = new TileInterFace(coord,new BlankTile());
+
         }
 
         Redraw();
@@ -64,7 +69,7 @@ public class TileHandler : MonoBehaviour
 
     private void Redraw()
     {
-        foreach(var tile in Tiles.Values)
+        foreach(var tile in TileDict.Values)
         {
             tile.Draw(tilemap);
         }
@@ -74,18 +79,23 @@ public class TileHandler : MonoBehaviour
     void Update()
     {
 
-        foreach(var tile in Tiles.Values)
+        foreach(var tile in TileDict.Values)
         {
             tile.Update();
             if(automaticRedraw)
                 tile.Draw(tilemap);
         }
-        
+
 
     }
 
     public bool automaticRedraw;
-    
 
-    
+
+    public void clearMap()
+    {
+        fillTiles(size);
+    }
+
+
 }

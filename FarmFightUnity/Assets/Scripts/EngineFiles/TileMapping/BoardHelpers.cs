@@ -8,7 +8,7 @@ using UnityEngine;
 public static class BoardHelperFns
 {
 
-    
+
 
     public static int distance(Hex pt1, Hex pt2)
     {
@@ -37,6 +37,22 @@ public static class BoardHelperFns
             {
                 if (distance(Hex.zero, new Hex(i, ii)) <= n)
                     final[new Hex(i, ii)] = new TileInterFace(new Hex(i, ii), new TileTemp());
+            }
+        }
+
+        return final;
+    }
+
+    public static List<Hex> HexList(int n)
+    {
+        List<Hex> final = new List<Hex>();
+
+        for (int i = -n; i <= n; i++)
+        {
+            for (int ii = -n; ii <= n; ii++)
+            {
+                if (distance(Hex.zero, new Hex(i, ii)) <= n)
+                    final.Add( new Hex(i, ii));
             }
         }
 

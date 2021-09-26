@@ -37,15 +37,20 @@ public class TileManager : MonoBehaviour
 
     public void Init()
     {
-        foreach(var TH in Handlers)
+        handlers = new Dictionary<string, TileHandler>();
+        foreach (var TH in Handlers)
         {
             TH.Init(size);
-            handlers = new Dictionary<string, TileHandler>();
 
-            
+
+
             handlers.Add(TH.Name,TH);
         }
+
+        validHexes = new HashSet<Hex>(BoardHelperFns.HexList(size)) ;
     }
+
+    HashSet<Hex> validHexes;
 
     public static TileManager TM;
 
@@ -60,10 +65,10 @@ public class TileManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        
+
     }
 
-    public string[] TileMapNames 
+    public string[] TileMapNames
     {
         get
         {
@@ -104,7 +109,7 @@ public class TileManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Move the hex 
+    /// Move the hex
     /// </summary>
     /// <param name="current"></param>
     /// <param name="x"></param>
@@ -136,7 +141,7 @@ public class TileManager : MonoBehaviour
     public void SetTile(string mapName, Hex coord, TileTemp tile)
     {
         this[mapName][coord] = tile;
-        
+
     }
 
     public Hex getMouseHex()
@@ -146,7 +151,8 @@ public class TileManager : MonoBehaviour
 
     public bool isValidHex(Hex hex)
     {
-        return BoardHelperFns.distance(Hex.zero, hex) <= size;
+
+        return validHexes.Contains(hex);
     }
 
     public Hex[] getNeighbors(Hex hex)
@@ -165,7 +171,7 @@ public class TileManager : MonoBehaviour
 
         foreach (var rel in relatives)
         {
-            
+
             final.Add(hex + rel);
 
         }
@@ -189,5 +195,5 @@ public class TileManager : MonoBehaviour
 
         return relatives.ToArray();
     }
-    
+
 }
