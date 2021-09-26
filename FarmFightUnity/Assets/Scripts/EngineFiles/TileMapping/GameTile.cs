@@ -10,9 +10,9 @@ using System;
 /// </summary>
 public class TileInterFace
 {
-    
 
-    
+
+
 
 
     // Unity uses different coordinate systems than i do for its Cell system,
@@ -33,13 +33,13 @@ public class TileInterFace
             return tileInternal;
         }
     }
-    
+
 
     public Vector3Int cellCoord
     {
         get { return (Vector3Int)hexCoord.Cell(); }
         set { hexCoord = Hex.fromCell(value); }
-        
+
     }
 
 
@@ -86,11 +86,7 @@ public class TileInterFace
     {
         tileInternal.End();
     }
-    
-    
+
+
 
 }
-
-
-
-

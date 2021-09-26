@@ -1,0 +1,7 @@
+Singleton based system
+
+
+create new tiles by inheriting from TileTemp Class
+set a starting behavior, an update behavior, an end behavior, and set art
+
+TODO, More

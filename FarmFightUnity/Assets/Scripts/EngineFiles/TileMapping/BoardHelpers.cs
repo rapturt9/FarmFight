@@ -8,7 +8,7 @@ using UnityEngine;
 public static class BoardHelperFns
 {
 
-    
+
 
     public static int distance(Hex pt1, Hex pt2)
     {
