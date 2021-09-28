@@ -15,6 +15,7 @@ public class TileHandler : NetworkBehaviour
     private int size;
 
     Tilemap tilemap;
+    public GameManager gameManager;
 
     public TileTemp this[Hex hex]
     {
@@ -74,7 +75,7 @@ public class TileHandler : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!IsServer && !IsClient) { return; }
+        if (!gameManager.gameIsRunning) { return; }
 
         foreach(var tile in TileDict.Values)
         {

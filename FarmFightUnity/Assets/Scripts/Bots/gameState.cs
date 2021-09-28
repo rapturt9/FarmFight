@@ -4,11 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using MLAPI;
 using MLAPI.NetworkVariable.Collections;
+using MLAPI.Messaging;
 
 public class GameState : NetworkBehaviour
 {
-    private bool gameIsRunning = true;
-
     public TileHandler tileHandler;
 
     public NetworkDictionary<Hex, string> cropTilesSync = new NetworkDictionary<Hex, string>();
@@ -22,6 +21,7 @@ public class GameState : NetworkBehaviour
 
     enum CropTileSyncTypes
     {
+        blankTile = -1,
         cropNum,
         lastPlanted,
         containsFarmer
@@ -47,7 +47,7 @@ public class GameState : NetworkBehaviour
 
     IEnumerator collectGameData()
     {
-        while (gameIsRunning)
+        while (true)
         {
             yield return new WaitForSeconds(0.5F);
             updateGameState();
@@ -66,31 +66,42 @@ public class GameState : NetworkBehaviour
     }
 
     public void updateGameState () {
+        if (IsClient)
+        {
+            DeserializeBoard();
+        }
         foreach (var coord in hexCoords){
-            var serialized = SerializeTile(tileHandler[coord]);
+            var tileTuple = SerializeTile(tileHandler[coord]);
             // Only updates our game state if something has changed
-            if (serialized != cropTiles[coord])
+            if (tileTuple != cropTiles[coord])
             {
-                cropTiles[coord] = serialized;
-                cropTilesSync[coord] = SerializeTileTuple(serialized);
+                cropTiles[coord] = tileTuple;
+                if (IsServer)
+                {
+                    ChangeTileSync(coord, SerializeTileTuple(tileTuple));
+                }
+                else if (IsClient)
+                {
+                    ChangeTileSyncServerRpc(new int[2] { coord.x, coord.y }, SerializeTileTuple(tileTuple));
+                }
             }
         }
-        print(cropTilesSync[new Hex(0, 1)]);
+        print(cropTilesSync[new Hex(0, 0)]);
     }
 
     // Turns TileTemp into tuple
     ValueTuple<int, float, bool> SerializeTile(TileTemp tile)
     {
-        var tileData = emptyTileTuple;
+        var tileTuple = emptyTileTuple;
         // Crop tile
         if (!(tile is BlankTile))
         {
             CropTile tileInfo = (CropTile)tile;
             int cropNum = tileInfo.cropType;
 
-            tileData = (cropNum, 0.0F, false);
+            tileTuple = (cropNum, 0.0F, false);
         }
-        return tileData;
+        return tileTuple;
     }
 
     // Turns tile tuple into string, for network syncing
@@ -100,12 +111,57 @@ public class GameState : NetworkBehaviour
     }
 
     // Turns string into tile tuple
-    ValueTuple<int, float, bool> DeserializeTile(string tileString)
+    ValueTuple<int, float, bool> DeserializeTileString(string tileString)
     {
         string[] split = tileString.Split(',');
         int cropNum = int.Parse(split[(int)CropTileSyncTypes.cropNum]);
         float lastPlanted = float.Parse(split[(int)CropTileSyncTypes.lastPlanted]);
         bool containsFarmer = bool.Parse(split[(int)CropTileSyncTypes.containsFarmer]);
         return (cropNum, lastPlanted, containsFarmer);
+    }
+
+    // Turns all of the tile strings into actual board tiles
+    void DeserializeBoard()
+    {
+        foreach (var coord in hexCoords)
+        {
+            var tileTuple = DeserializeTileString(cropTilesSync[coord]);
+            // Change the game state
+            if (tileTuple != cropTiles[coord])
+            {
+                CropTypes cropNum = (CropTypes)tileTuple.Item1;
+                float lastPlanted = tileTuple.Item2;
+                bool containsFarmer = tileTuple.Item3;
+
+                // Initializes tile
+                TileTemp tile;
+                if (cropNum == CropTypes.potato)
+                    tile = new Potato();
+                else if (cropNum == CropTypes.wheat)
+                    tile = new Wheat();
+                else if (cropNum == CropTypes.carrot)
+                    tile = new Carrot();
+                else
+                    tile = new BlankTile();
+
+                // Sets tile
+                tileHandler[coord] = tile;
+
+            }
+
+        }
+    }
+
+    // Functions for Server Rpcs
+    void ChangeTileSync(Hex coord, string serializedString)
+    {
+        cropTilesSync[coord] = serializedString;
+    }
+
+    // Server Rpcs
+    [ServerRpc]
+    void ChangeTileSyncServerRpc(int[] coords, string serializedString)
+    {
+        ChangeTileSync(new Hex(coords[0], coords[1]), serializedString);
     }
 }

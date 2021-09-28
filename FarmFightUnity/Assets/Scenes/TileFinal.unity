@@ -249,6 +249,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TileHandler: []
   gameState: {fileID: 358149039}
+  gameIsRunning: 0
 --- !u!114 &58370722
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -856,6 +857,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: UI
+  gameManager: {fileID: 58370721}
   automaticRedraw: 1
 --- !u!483693784 &950269515
 TilemapRenderer:
@@ -1571,6 +1573,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: Crops
+  gameManager: {fileID: 58370721}
   automaticRedraw: 1
 --- !u!114 &1228046377
 MonoBehaviour:
@@ -2131,6 +2134,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: Info
+  gameManager: {fileID: 58370721}
   automaticRedraw: 0
 --- !u!483693784 &1785283979
 TilemapRenderer:
