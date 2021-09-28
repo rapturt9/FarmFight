@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.Tilemaps;
 using MLAPI;
+using MLAPI.Messaging;
 
 public class TileHandler : NetworkBehaviour
 {
@@ -15,6 +16,7 @@ public class TileHandler : NetworkBehaviour
     private int size;
 
     Tilemap tilemap;
+    public GameManager gameManager;
 
     public TileTemp this[Hex hex]
     {
@@ -74,7 +76,7 @@ public class TileHandler : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!IsServer && !IsClient) { return; }
+        if (!gameManager.gameIsRunning) { return; }
 
         foreach(var tile in TileDict.Values)
         {
@@ -94,5 +96,41 @@ public class TileHandler : NetworkBehaviour
         fillTiles(size);
     }
 
-    
+
+    // We have changed a tile somehow, so it gets synced to everyone
+    // Only works on CropTile
+    public void SyncTile(Hex coord)
+    {
+        TileSyncData tileData = GameState.SerializeTile(this[coord]);
+
+        if (IsClient)
+        {
+            SyncTileServerRpc(BoardHelperFns.HexToArray(coord), tileData);
+        }
+        else if (IsServer)
+        {
+            SyncTileClientRpc(BoardHelperFns.HexToArray(coord), tileData);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void SyncTileServerRpc(int[] coord, TileSyncData tileData)
+    {
+        _SyncTile(coord, tileData);
+        SyncTileClientRpc(coord, tileData);
+    }
+
+    [ClientRpc]
+    void SyncTileClientRpc(int[] coord, TileSyncData tileData)
+    {
+        _SyncTile(coord, tileData);
+    }
+
+    // Internal function, actually changes the tile
+    void _SyncTile(int[] coordArray, TileSyncData tileData)
+    {
+        Hex coord = BoardHelperFns.ArrayToHex(coordArray);
+        TileTemp tile = GameState.DeserializeTile(tileData);
+        this[coord] = tile;
+    }
 }
