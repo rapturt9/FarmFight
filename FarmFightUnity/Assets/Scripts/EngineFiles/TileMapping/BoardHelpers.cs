@@ -58,4 +58,10 @@ public static class BoardHelperFns
 
         return final;
     }
+
+    // Used for MLAPI syncing, since it doesn't like Hexes
+    public static int[] HexToArray(Hex coord)
+    {
+        return new int[2] { coord.x, coord.y };
+    }
 }

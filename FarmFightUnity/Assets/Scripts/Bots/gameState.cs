@@ -5,19 +5,18 @@ using UnityEngine;
 using MLAPI;
 using MLAPI.NetworkVariable.Collections;
 using MLAPI.Messaging;
+using MLAPI.Serialization;
 
 public class GameState : NetworkBehaviour
 {
     public TileHandler tileHandler;
 
-    public NetworkDictionary<Hex, string> cropTilesSync = new NetworkDictionary<Hex, string>();
     // Hex coord, (crop#, time planted/time last clicked, farmer or not)
-    public Dictionary<Hex, (int, float, bool)> cropTiles = new Dictionary<Hex, (int, float, bool)>();
+    public Dictionary<Hex, TileSyncData> cropTiles = new Dictionary<Hex, TileSyncData>();
 
     public List<Hex> hexCoords;
 
-    private static ValueTuple<int, float, bool> emptyTileTuple = (-1, 0.0f, false);
-    private static string emptyTileString;
+    private static TileSyncData emptyTileSyncData = new TileSyncData(CropType.blankTile, 0.0f, false);
 
     enum CropTileSyncTypes
     {
@@ -30,7 +29,6 @@ public class GameState : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        emptyTileString = SerializeTileTuple(emptyTileTuple);
         hexCoords = BoardHelperFns.HexList(3);
     }
 
@@ -60,108 +58,136 @@ public class GameState : NetworkBehaviour
     {
         foreach (var coord in hexCoords)
         {
-            cropTiles[coord] = emptyTileTuple;
-            cropTilesSync[coord] = emptyTileString;
+            cropTiles[coord] = emptyTileSyncData;
         }
     }
 
-    public void updateGameState () {
-        if (IsClient)
-        {
-            DeserializeBoard();
-        }
-        foreach (var coord in hexCoords){
-            var tileTuple = SerializeTile(tileHandler[coord]);
-            // Only updates our game state if something has changed
-            if (tileTuple != cropTiles[coord])
-            {
-                cropTiles[coord] = tileTuple;
-                if (IsServer)
-                {
-                    ChangeTileSync(coord, SerializeTileTuple(tileTuple));
-                }
-                else if (IsClient)
-                {
-                    ChangeTileSyncServerRpc(new int[2] { coord.x, coord.y }, SerializeTileTuple(tileTuple));
-                }
-            }
-        }
-        print(cropTilesSync[new Hex(0, 0)]);
-    }
-
-    // Turns TileTemp into tuple
-    ValueTuple<int, float, bool> SerializeTile(TileTemp tile)
-    {
-        var tileTuple = emptyTileTuple;
-        // Crop tile
-        if (!(tile is BlankTile))
-        {
-            CropTile tileInfo = (CropTile)tile;
-            int cropNum = tileInfo.cropType;
-
-            tileTuple = (cropNum, 0.0F, false);
-        }
-        return tileTuple;
-    }
-
-    // Turns tile tuple into string, for network syncing
-    string SerializeTileTuple(ValueTuple<int, float, bool> tileData)
-    {
-        return tileData.Item1.ToString() + "," + tileData.Item2.ToString() + "," + tileData.Item3.ToString();
-    }
-
-    // Turns string into tile tuple
-    ValueTuple<int, float, bool> DeserializeTileString(string tileString)
-    {
-        string[] split = tileString.Split(',');
-        int cropNum = int.Parse(split[(int)CropTileSyncTypes.cropNum]);
-        float lastPlanted = float.Parse(split[(int)CropTileSyncTypes.lastPlanted]);
-        bool containsFarmer = bool.Parse(split[(int)CropTileSyncTypes.containsFarmer]);
-        return (cropNum, lastPlanted, containsFarmer);
-    }
-
-    // Turns all of the tile strings into actual board tiles
-    void DeserializeBoard()
+    public void updateGameState()
     {
         foreach (var coord in hexCoords)
         {
-            var tileTuple = DeserializeTileString(cropTilesSync[coord]);
-            // Change the game state
-            if (tileTuple != cropTiles[coord])
+            var tileData = SerializeTile(tileHandler[coord]);
+            //Only updates our game state if something has changed
+            if (tileData != cropTiles[coord])
             {
-                CropTypes cropNum = (CropTypes)tileTuple.Item1;
-                float lastPlanted = tileTuple.Item2;
-                bool containsFarmer = tileTuple.Item3;
-
-                // Initializes tile
-                TileTemp tile;
-                if (cropNum == CropTypes.potato)
-                    tile = new Potato();
-                else if (cropNum == CropTypes.wheat)
-                    tile = new Wheat();
-                else if (cropNum == CropTypes.carrot)
-                    tile = new Carrot();
-                else
-                    tile = new BlankTile();
-
-                // Sets tile
-                tileHandler[coord] = tile;
-
+                cropTiles[coord] = tileData;
             }
-
         }
+        print(cropTiles[new Hex(0, 0)]);
     }
 
-    // Functions for Server Rpcs
-    void ChangeTileSync(Hex coord, string serializedString)
+    // Turns TileTemp into tuple
+    public static TileSyncData SerializeTile(TileTemp tile)
     {
-        cropTilesSync[coord] = serializedString;
+        var tileData = emptyTileSyncData;
+        // Not blank, so crop
+        if (!(tile is BlankTile))
+        {
+            CropTile tileInfo = (CropTile)tile;
+            // TODO sync time and farmer
+            tileData = new TileSyncData(tileInfo.cropType, 0.0F, false);
+        }
+        return tileData;
     }
 
-    // Server Rpcs
-    [ServerRpc]
-    void ChangeTileSyncServerRpc(int[] coords, string serializedString)
+    // Turns all of the tile strings into actual board tiles
+    //void DeserializeBoard()
+    //{
+    //    foreach (var coord in hexCoords)
+    //    {
+    //        var tileTuple = DeserializeTileString(cropTiles[coord]);
+    //        // Change the game state
+    //        if (tileTuple != cropTiles[coord])
+    //        {
+    //            CropType cropNum = (CropType)tileTuple.Item1;
+    //            float lastPlanted = tileTuple.Item2;
+    //            bool containsFarmer = tileTuple.Item3;
+
+    //            // Initializes tile
+    //            TileTemp tile;
+    //            if (cropNum == CropType.potato)
+    //                tile = new Potato();
+    //            else if (cropNum == CropType.wheat)
+    //                tile = new Wheat();
+    //            else if (cropNum == CropType.carrot)
+    //                tile = new Carrot();
+    //            else
+    //                tile = new BlankTile();
+
+    //            // Sets tile
+    //            tileHandler[coord] = tile;
+
+    //        }
+
+    //    }
+    //}
+
+    // Goes from TileSyncData to TileTemp
+    public static TileTemp DeserializeTile(TileSyncData tileData)
     {
-        ChangeTileSync(new Hex(coords[0], coords[1]), serializedString);
+        CropType cropNum = tileData.cropType;
+        float timeLastPlanted = tileData.timeLastPlanted;
+        bool containsFarmer = tileData.containsFarmer;
+
+        // Initializes tile
+        TileTemp tile;
+        if (cropNum == CropType.potato)
+            tile = new Potato();
+        else if (cropNum == CropType.wheat)
+            tile = new Wheat();
+        else if (cropNum == CropType.carrot)
+            tile = new Carrot();
+        else
+            tile = new BlankTile();
+        // TODO sync timeLimePlanted and containsFarmer
+
+        return tile;
+    }
+}
+
+
+public struct TileSyncData : INetworkSerializable
+{
+    public CropType cropType;
+    public float timeLastPlanted;
+    public bool containsFarmer;
+
+    public TileSyncData(CropType cropTypeArg, float timeLastPlantedArg, bool containsFarmerArg) : this()
+    {
+        cropType = cropTypeArg;
+        timeLastPlanted = timeLastPlantedArg;
+        containsFarmer = containsFarmerArg;
+    }
+
+    public void NetworkSerialize(NetworkSerializer serializer)
+    {
+        serializer.Serialize(ref cropType);
+        serializer.Serialize(ref timeLastPlanted);
+        serializer.Serialize(ref containsFarmer);
+    }
+
+    // Equality
+    public static bool operator ==(TileSyncData a, TileSyncData b) => a.Equals(b);
+
+    public static bool operator !=(TileSyncData a, TileSyncData b) => !(a == b);
+
+    public override bool Equals(object obj)
+    {
+        if (obj == null || GetType() != obj.GetType())
+            return false;
+
+        var b = (TileSyncData)obj;
+        return (cropType == b.cropType) && (timeLastPlanted == b.timeLastPlanted) && (containsFarmer == b.containsFarmer);
+    }
+
+    public override int GetHashCode()
+    {
+        return (cropType, timeLastPlanted, containsFarmer).GetHashCode();
+    }
+
+    // String representation
+    public override string ToString()
+    {
+        return (cropType, timeLastPlanted, containsFarmer).ToString();
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class CropTile : TileTemp
 {
-    public int cropType = -1;
+    public CropType cropType = CropType.blankTile;
 
     public abstract TileArt getCropArt();
     
@@ -44,8 +44,9 @@ public abstract class CropTile : TileTemp
 }
 
 
-public enum CropTypes
+public enum CropType
 {
+    blankTile = -1,
     potato,
     wheat,
     carrot,
@@ -57,7 +58,7 @@ public class Wheat : CropTile
     public override void Start()
     {
         base.Start();
-        cropType = (int)CropTypes.wheat;
+        cropType = CropType.wheat;
     }
 
     public override TileArt getCropArt()
@@ -71,7 +72,7 @@ public class Potato : CropTile
     public override void Start()
     {
         base.Start();
-        cropType = (int)CropTypes.potato;
+        cropType = CropType.potato;
     }
 
     public override TileArt getCropArt()
@@ -85,7 +86,7 @@ public class Carrot : CropTile
     public override void Start()
     {
         base.Start();
-        cropType = (int)CropTypes.carrot;
+        cropType = CropType.carrot;
     }
 
     public override TileArt getCropArt()
