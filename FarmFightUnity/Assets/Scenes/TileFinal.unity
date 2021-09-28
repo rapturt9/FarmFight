@@ -423,6 +423,7 @@ GameObject:
   - component: {fileID: 358149038}
   - component: {fileID: 358149039}
   - component: {fileID: 358149040}
+  - component: {fileID: 358149041}
   m_Layer: 0
   m_Name: GameState
   m_TagString: Untagged
@@ -474,6 +475,20 @@ MonoBehaviour:
   PrefabHashGenerator: GameState
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
+--- !u!114 &358149041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 358149037}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4683bdd7659947db9b1a19ac39d2bc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameIsRunning: 1
+  gameData: {fileID: 358149039}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

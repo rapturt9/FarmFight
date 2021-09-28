@@ -7,6 +7,7 @@ public abstract class CropTile : TileTemp
     public CropType cropType = CropType.blankTile;
     public float timeLastPlanted = 0f;
     public float timeBetweenFrames = 0.5f;
+    public int tileOwner = -1;
 
     public abstract TileArt getCropArt();
     
