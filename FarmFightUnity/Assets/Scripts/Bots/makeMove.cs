@@ -5,7 +5,7 @@ using UnityEngine;
 public class makeMove : MonoBehaviour
 {
     public bool gameIsRunning = true;
-    public gameState gameData;
+    public GameState gameData;
 
     // Start is called before the first frame update
     /*void Start()
