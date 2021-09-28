@@ -64,4 +64,9 @@ public static class BoardHelperFns
     {
         return new int[2] { coord.x, coord.y };
     }
+
+    public static Hex ArrayToHex(int[] coord)
+    {
+        return new Hex(coord[0], coord[1]);
+    }
 }

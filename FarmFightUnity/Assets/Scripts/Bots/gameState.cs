@@ -7,7 +7,7 @@ using MLAPI.NetworkVariable.Collections;
 using MLAPI.Messaging;
 using MLAPI.Serialization;
 
-public class GameState : NetworkBehaviour
+public class GameState : MonoBehaviour
 {
     public TileHandler tileHandler;
 
@@ -30,11 +30,6 @@ public class GameState : NetworkBehaviour
     void Start()
     {
         hexCoords = BoardHelperFns.HexList(3);
-    }
-
-    public override void NetworkStart()
-    {
-
     }
 
     public void Init()
@@ -73,7 +68,6 @@ public class GameState : NetworkBehaviour
                 cropTiles[coord] = tileData;
             }
         }
-        print(cropTiles[new Hex(0, 0)]);
     }
 
     // Turns TileTemp into tuple
@@ -130,15 +124,16 @@ public class GameState : NetworkBehaviour
         bool containsFarmer = tileData.containsFarmer;
 
         // Initializes tile
-        TileTemp tile;
-        if (cropNum == CropType.potato)
-            tile = new Potato();
-        else if (cropNum == CropType.wheat)
-            tile = new Wheat();
-        else if (cropNum == CropType.carrot)
-            tile = new Carrot();
-        else
-            tile = new BlankTile();
+        TileTemp tile = new BlankTile();
+        if (cropNum != CropType.blankTile)
+        {
+            if (cropNum == CropType.potato)
+                tile = new Potato();
+            else if (cropNum == CropType.wheat)
+                tile = new Wheat();
+            else if (cropNum == CropType.carrot)
+                tile = new Carrot();
+        }
         // TODO sync timeLimePlanted and containsFarmer
 
         return tile;

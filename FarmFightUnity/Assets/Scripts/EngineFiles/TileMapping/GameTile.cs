@@ -10,11 +10,6 @@ using System;
 /// </summary>
 public class TileInterFace
 {
-
-
-
-
-
     // Unity uses different coordinate systems than i do for its Cell system,
     // for your and my sake ive built in an automatic conversion system
 

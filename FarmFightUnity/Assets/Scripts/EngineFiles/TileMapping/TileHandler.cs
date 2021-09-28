@@ -101,17 +101,19 @@ public class TileHandler : NetworkBehaviour
     // Only works on CropTile
     public void SyncTile(Hex coord)
     {
+        TileSyncData tileData = GameState.SerializeTile(this[coord]);
+
         if (IsClient)
         {
-            SyncTileServerRpc(BoardHelperFns.HexToArray(coord), GameState.SerializeTile(this[coord]));
+            SyncTileServerRpc(BoardHelperFns.HexToArray(coord), tileData);
         }
         else if (IsServer)
         {
-            SyncTileClientRpc(BoardHelperFns.HexToArray(coord), GameState.SerializeTile(this[coord]));
+            SyncTileClientRpc(BoardHelperFns.HexToArray(coord), tileData);
         }
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     void SyncTileServerRpc(int[] coord, TileSyncData tileData)
     {
         _SyncTile(coord, tileData);
@@ -127,8 +129,8 @@ public class TileHandler : NetworkBehaviour
     // Internal function, actually changes the tile
     void _SyncTile(int[] coordArray, TileSyncData tileData)
     {
-        Hex coord = new Hex(coordArray[0], coordArray[1]);
-
+        Hex coord = BoardHelperFns.ArrayToHex(coordArray);
+        TileTemp tile = GameState.DeserializeTile(tileData);
+        this[coord] = tile;
     }
-
 }

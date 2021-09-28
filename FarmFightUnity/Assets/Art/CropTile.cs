@@ -5,6 +5,8 @@ using UnityEngine;
 public abstract class CropTile : TileTemp
 {
     public CropType cropType = CropType.blankTile;
+    public float timeLastPlanted = 0f;
+    public float timeBetweenFrames = 0.5f;
 
     public abstract TileArt getCropArt();
     
@@ -27,7 +29,8 @@ public abstract class CropTile : TileTemp
 
     public override void Start()
     {
-        frame = 0; 
+        timeLastPlanted = Time.time;
+        frame = 0;
     }
 
     public int frame;
@@ -38,7 +41,14 @@ public abstract class CropTile : TileTemp
         frame += 1;
         frame %= tileArts.Count * 60;
 
-        currentArt = tileArts[frame / 60];
+        int artFrame = (int)((Time.time - timeLastPlanted) / timeBetweenFrames);
+        // Rolling over
+        if (artFrame == tileArts.Count)
+        {
+            artFrame = 0;
+            timeLastPlanted = Time.time;
+        }
+        currentArt = tileArts[artFrame];
     }
 
 }
