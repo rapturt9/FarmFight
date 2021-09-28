@@ -1,10 +1,31 @@
 using System.Collections;
-using MLAPI;
+using System.IO;
 using UnityEngine;
-
+using MLAPI;
+using MLAPI.NetworkVariable;
+using MLAPI.Serialization;
+using MLAPI.Serialization.Pooled;
 
 public class MultiplayerWorldManager : MonoBehaviour
 {
+    private void Start()
+    {
+        // Makes Hex serializable on the network
+        SerializationManager.RegisterSerializationHandlers<Hex>((Stream stream, Hex coord) =>
+        {
+            using (var writer = PooledNetworkWriter.Get(stream))
+            {
+                writer.WriteIntArrayPacked(new int[] { coord.x, coord.y });
+            }
+        }, (Stream stream) =>
+        {
+            using (var reader = PooledNetworkReader.Get(stream))
+            {
+                int[] newCoord = reader.ReadIntArrayPacked();
+                return new Hex(newCoord[0], newCoord[1]);
+            }
+        });
+    }
     void OnGUI()
     {
         GUILayout.BeginArea(new Rect(10, 10, 300, 300));

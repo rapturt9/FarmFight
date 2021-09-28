@@ -1,15 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Tilemaps;
+using MLAPI;
 
-public class TileHandler : MonoBehaviour
+public class TileHandler : NetworkBehaviour
 {
     public string Name;
 
     [SerializeField]
     private Hex selected;
 
-    Dictionary<Hex, TileInterFace> TileDict;
+    public Dictionary<Hex, TileInterFace> TileDict;
 
     private int size;
 
@@ -56,12 +57,7 @@ public class TileHandler : MonoBehaviour
         TileDict = new Dictionary<Hex, TileInterFace>();
         foreach(var coord in temp.Keys)
         {
-            
-
-                
-
-                TileDict[coord] = new TileInterFace(coord,new BlankTile());
-
+            TileDict[coord] = new TileInterFace(coord,new BlankTile());
         }
 
         Redraw();
@@ -78,6 +74,7 @@ public class TileHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!IsServer && !IsClient) { return; }
 
         foreach(var tile in TileDict.Values)
         {
