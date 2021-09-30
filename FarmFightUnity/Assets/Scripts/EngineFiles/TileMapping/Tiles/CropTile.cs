@@ -41,13 +41,47 @@ public abstract class TileTemp : TileTempDepr
 
     public override void Behavior()
     {
-        frameInternal += 1;
-        frameInternal %= tileArts.Count * frameRate;
+        if(frameInternal >= tileArts.Count * frameRate){
+            frameInternal = tileArts.Count * frameRate - 1;
+        } else {
+            frameInternal += 1;
+        }
+
 
         frame = (int) (frameInternal / frameRate);
 
+        if(0 <= frame && frame <= 6){
+            currentArt = tileArts[frame];
+        } else {
+            currentArt = tileArts[6];
+        }
+    }
 
-        currentArt = tileArts[frame];
+    //return crop level and reset crop growth
+    public double reset () {
+        double mid = 4.5;
+
+        double calc = 0;
+        double stage = frameInternal / frameRate;
+        if(stage < 1.2){
+            return 0;
+        } else {
+            calc = abs(stage - mid);
+            calc = mid - calc;
+        }
+
+        frameInternal = 0;
+        frame = 0;
+        Debug.Log(calc);
+        return calc;
+    }
+
+    //take absolute value
+    public double abs (double a) {
+        if(a < 0){
+            return -a;
+        }
+        return a;
     }
 
 }
@@ -91,7 +125,7 @@ public class Carrot : TileTemp
 {
     public override TileArt getCropArt()
     {
-        
+        TileName = "Carrot";   
         return getTileArt("Carrot");
     }
 }

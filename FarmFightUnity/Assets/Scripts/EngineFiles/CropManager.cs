@@ -35,6 +35,31 @@ public class CropManager : MonoBehaviour
         */
     }
 
+    public double harvest(Hex hex)
+    {
+        //if crop there
+        int hLevel = 0;
+        if(handler[hex].TileName == "Potato"){
+            hLevel = 1;
+        }
+        if(handler[hex].TileName == "Carrot"){
+            hLevel = 4;
+        }
+        if(handler[hex].TileName == "Wheat"){
+            hLevel = 2;
+        }
+        if(handler[hex].TileName == "Rice"){
+            hLevel = 10;
+        }
+
+        if(hLevel > 0){
+            return handler[hex].reset() * hLevel;
+        }
+
+        return 0;
+    }
+    
+
 
     public void addPotato(Hex hex)
     {
