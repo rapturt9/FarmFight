@@ -12,25 +12,25 @@ public class Market : MonoBehaviour
         central = Repository.Central;
 
         selectedHex = central.selectedHex;
-
-        if (money_text != null)
-        {
-            Debug.Log(money_text);
-            money_text.text = "0.00$";
+        if(UIHandler != null){
+            UIHandler[selectedHex] = new HighLight();
         }
+
+        money = 100;
     }
 
     public TileHandler UIHandler;
     public CropManager crops;
     public PeopleManager people;
 
-    public double money;
+    double money;
 
     public Text money_text;
 
     // Update is called once per frame
     void Update()
     {
+        bool move = false; //if new til selected
         if (selectedHex != null && UIHandler != null && UIHandler[selectedHex] != null && selectedHex != central.selectedHex)
         {
 
@@ -38,17 +38,18 @@ public class Market : MonoBehaviour
             selectedHex = central.selectedHex;
             UIHandler[selectedHex] = new HighLight();
 
+            move = true;
+
         }
 
         if (selectedHex != null && UIHandler != null && UIHandler[selectedHex] != null)
         {
             double add = 0;
-            add += crops.harvest(selectedHex);
+            add += crops.harvest(selectedHex, move);
             if (add > 0)
             {
-                money += add * add / 500;
+                money += add * add / 200; 
             }
-
             string dollars = (((int)(money * 100)) / 100.0).ToString() + "$";
             GameObject.FindWithTag("Market").GetComponent<Text>().text=dollars;
         }
@@ -59,19 +60,35 @@ public class Market : MonoBehaviour
 
     public void SetRice()
     {
-        crops.addWheat(selectedHex);
+        if(money >= 10){
+            if(crops.addWheat(selectedHex)){
+                money -= 10;
+            }
+        }
     }
 
     public void SetPotato()
     {
-        crops.addPotato(selectedHex);
+        if(money >= 1){
+            if(crops.addPotato(selectedHex)){
+                money -= 1;
+            }
+        }
     }
 
     public void SetCarrot()
     {
-        crops.addCarrot(selectedHex);
+        if(money >= 2){
+            if(crops.addCarrot(selectedHex)){
+                money -= 2;
+            }
+        }
     }
 
+    /*public void SetFarmer()
+    {
+        crops.addFarmer(selectedHex);
+    }*/
     public void Set()
     {
 

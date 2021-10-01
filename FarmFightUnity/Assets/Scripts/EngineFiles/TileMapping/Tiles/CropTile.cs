@@ -55,15 +55,16 @@ public abstract class TileTemp : TileTempDepr
         } else {
             currentArt = tileArts[6];
         }
+
     }
 
     //return crop level and reset crop growth
-    public double reset () {
-        double mid = 4.5;
+    public double reset (bool move) { //move is true if cursor moved to new tile
+        double mid = 5.5; //optimal harvest level
 
         double calc = 0;
         double stage = frameInternal / frameRate;
-        if(stage < 1.2){
+        if(stage < mid && !move){
             return 0;
         } else {
             calc = abs(stage - mid);
@@ -72,7 +73,6 @@ public abstract class TileTemp : TileTempDepr
 
         frameInternal = 0;
         frame = 0;
-        Debug.Log(calc);
         return calc;
     }
 
