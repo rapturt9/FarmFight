@@ -857,6 +857,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: UI
+  syncsTiles: 0
   gameManager: {fileID: 58370721}
   automaticRedraw: 1
 --- !u!483693784 &950269515
@@ -1007,6 +1008,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a1add2ae3604ae4793247b72ea82b31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startAsHost: 1
 --- !u!4 &1041828389
 Transform:
   m_ObjectHideFlags: 0
@@ -1574,6 +1576,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: Crops
+  syncsTiles: 1
   gameManager: {fileID: 58370721}
   automaticRedraw: 1
 --- !u!114 &1228046377
@@ -2152,6 +2155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: Info
+  syncsTiles: 0
   gameManager: {fileID: 58370721}
   automaticRedraw: 0
 --- !u!483693784 &1785283979

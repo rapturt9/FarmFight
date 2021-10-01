@@ -7,6 +7,7 @@ using MLAPI.Messaging;
 public class TileHandler : NetworkBehaviour
 {
     public string Name;
+    public bool syncsTiles = false;
 
     [SerializeField]
     private Hex selected;
@@ -29,10 +30,11 @@ public class TileHandler : NetworkBehaviour
         {
             if (TileDict.ContainsKey(hex))
             {
-                
                 TileDict[hex].Tile = value;
+                // Only sync some tiles (crops) and not others (UI)
+                if (syncsTiles)
+                    SyncTile(hex);
             }
-            
         }
     }
 
@@ -131,6 +133,9 @@ public class TileHandler : NetworkBehaviour
     {
         Hex coord = BoardHelperFns.ArrayToHex(coordArray);
         TileTemp tile = GameState.DeserializeTile(tileData);
-        this[coord] = tile;
+        if (TileDict.ContainsKey(coord))
+        {
+            TileDict[coord].Tile = tile;
+        }
     }
 }

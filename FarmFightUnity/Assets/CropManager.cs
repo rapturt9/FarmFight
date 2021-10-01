@@ -37,25 +37,21 @@ public class CropManager : MonoBehaviour
     public void addPotato(Hex hex)
     {
         handler[hex] = new Potato();
-        handler.SyncTile(hex);
     }
 
     public void addCarrot(Hex hex)
     {
         handler[hex] = new Carrot();
-        handler.SyncTile(hex);
     }
 
     public void addWheat(Hex hex)
     {
         handler[hex] = new Wheat();
-        handler.SyncTile(hex);
     }
 
     public void clearTile(Hex hex)
     {
         handler[hex] = new BlankTile();
-        handler.SyncTile(hex);
     }
 
     public bool addFarmer(Hex hex)

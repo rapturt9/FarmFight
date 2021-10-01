@@ -8,6 +8,8 @@ using MLAPI.Serialization.Pooled;
 
 public class MultiplayerWorldManager : MonoBehaviour
 {
+    public bool startAsHost = true;
+
     private void Start()
     {
         // Makes Hex serializable on the network
@@ -28,17 +30,24 @@ public class MultiplayerWorldManager : MonoBehaviour
     }
     void OnGUI()
     {
-        GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-        if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
+        if (!startAsHost)
         {
-            StartButtons();
+            GUILayout.BeginArea(new Rect(10, 10, 300, 300));
+            if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
+            {
+                StartButtons();
+            }
+            else
+            {
+                StatusLabels();
+            }
+
+            GUILayout.EndArea();
         }
         else
         {
-            StatusLabels();
+            NetworkManager.Singleton.StartHost();
         }
-
-        GUILayout.EndArea();
     }
 
     static void StartButtons()
