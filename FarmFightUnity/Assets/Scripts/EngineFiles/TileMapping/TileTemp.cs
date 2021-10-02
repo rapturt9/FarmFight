@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 
-public class TileTemp
+public class TileTempDepr
 {
     public TileArt currentArt;
 
