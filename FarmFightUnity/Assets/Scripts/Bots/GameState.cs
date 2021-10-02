@@ -16,25 +16,29 @@ public class GameState : MonoBehaviour
 
     public List<Hex> hexCoords;
 
-    private static TileSyncData emptyTileSyncData = new TileSyncData(CropType.blankTile, 0.0f, false);
+    private static TileSyncData emptyTileSyncData = new TileSyncData(CropType.blankTile, 0.0f, false, -1);
 
     enum CropTileSyncTypes
     {
         blankTile = -1,
         cropNum,
         lastPlanted,
-        containsFarmer
+        containsFarmer,
+        tileOwner
     }
 
     // Start is called before the first frame update
     void Start()
     {
         hexCoords = BoardHelperFns.HexList(3);
+        updateGameStateFirstTime();
     }
 
     public void Init()
     {
-        updateGameStateFirstTime();
+        // Calling this in init wasn't working for me, idk why
+        // So i called it in start
+        //updateGameStateFirstTime();
         StartCoroutine(collectGameData());
     }
 
@@ -49,7 +53,7 @@ public class GameState : MonoBehaviour
     }
 
     // Makes every tile empty
-    void updateGameStateFirstTime()
+    public void updateGameStateFirstTime()
     {
         foreach (var coord in hexCoords)
         {
@@ -61,6 +65,7 @@ public class GameState : MonoBehaviour
     {
         foreach (var coord in hexCoords)
         {
+            //tileHandler[coord] not working
             var tileData = SerializeTile(tileHandler[coord]);
             //Only updates our game state if something has changed
             if (tileData != cropTiles[coord])
@@ -79,7 +84,7 @@ public class GameState : MonoBehaviour
         {
             CropTile tileInfo = (CropTile)tile;
             // TODO sync time and farmer
-            tileData = new TileSyncData(tileInfo.cropType, 0.0F, false);
+            tileData = new TileSyncData(tileInfo.cropType, 0.0F, false, tileInfo.tileOwner);
         }
         return tileData;
     }
@@ -90,6 +95,7 @@ public class GameState : MonoBehaviour
         CropType cropNum = tileData.cropType;
         float timeLastPlanted = tileData.timeLastPlanted;
         bool containsFarmer = tileData.containsFarmer;
+        int tileOwner = tileData.tileOwner;
 
         // Initializes tile
         TileTemp tile = new BlankTile();
@@ -141,12 +147,14 @@ public struct TileSyncData : INetworkSerializable
     public CropType cropType;
     public float timeLastPlanted;
     public bool containsFarmer;
+    public int tileOwner;
 
-    public TileSyncData(CropType cropTypeArg, float timeLastPlantedArg, bool containsFarmerArg) : this()
+    public TileSyncData(CropType cropTypeArg, float timeLastPlantedArg, bool containsFarmerArg, int tileOwnerArg) : this()
     {
         cropType = cropTypeArg;
         timeLastPlanted = timeLastPlantedArg;
         containsFarmer = containsFarmerArg;
+        tileOwner = tileOwnerArg;
     }
 
     public void NetworkSerialize(NetworkSerializer serializer)
@@ -154,6 +162,7 @@ public struct TileSyncData : INetworkSerializable
         serializer.Serialize(ref cropType);
         serializer.Serialize(ref timeLastPlanted);
         serializer.Serialize(ref containsFarmer);
+        serializer.Serialize(ref tileOwner);
     }
 
     // Equality
@@ -167,17 +176,17 @@ public struct TileSyncData : INetworkSerializable
             return false;
 
         var b = (TileSyncData)obj;
-        return (cropType == b.cropType) && (timeLastPlanted == b.timeLastPlanted) && (containsFarmer == b.containsFarmer);
+        return (cropType == b.cropType) && (timeLastPlanted == b.timeLastPlanted) && (containsFarmer == b.containsFarmer) && (tileOwner == b.tileOwner);
     }
 
     public override int GetHashCode()
     {
-        return (cropType, timeLastPlanted, containsFarmer).GetHashCode();
+        return (cropType, timeLastPlanted, containsFarmer, tileOwner).GetHashCode();
     }
 
     // String representation
     public override string ToString()
     {
-        return (cropType, timeLastPlanted, containsFarmer).ToString();
+        return (cropType, timeLastPlanted, containsFarmer, tileOwner).ToString();
     }
 }
