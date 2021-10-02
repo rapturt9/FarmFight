@@ -107,8 +107,9 @@ public class GameState : MonoBehaviour
                 tile = new Wheat();
             else if (cropNum == CropType.carrot)
                 tile = new Carrot();
+            ((CropTile)tile).tileOwner = tileOwner;
         }
-        // TODO sync timeLimePlanted and containsFarmer
+        // TODO sync timeLastPlanted and containsFarmer
 
         return tile;
     }

@@ -34,7 +34,7 @@ public class makeMove : MonoBehaviour
             print(gameData.cropTiles[coord]);
         }*/
         foreach (var elem in possibleMoves){
-            print(elem);
+            //print(elem);
         }
     }
 

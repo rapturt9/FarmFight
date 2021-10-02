@@ -38,21 +38,28 @@ public class Market : MonoBehaviour
     public void SetRice()
     {
         crops.addWheat(selectedHex);
+        SetCrop(selectedHex);
     }
 
     public void SetPotato()
     {
         crops.addPotato(selectedHex);
+        SetCrop(selectedHex);
     }
 
     public void SetCarrot()
     {
         crops.addCarrot(selectedHex);
+        SetCrop(selectedHex);
     }
 
-    public void SetCrop(int type)
+    public void SetCrop(Hex coord)
     {
-
+        if (crops.handler[coord] is CropTile)
+        {
+            ((CropTile)crops.handler[coord]).tileOwner = central.localPlayerId;
+            crops.handler.SyncTile(coord);
+        }
     }
 
 }

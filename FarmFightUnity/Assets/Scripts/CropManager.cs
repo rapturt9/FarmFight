@@ -6,7 +6,7 @@ public class CropManager : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    TileHandler handler;
+    public TileHandler handler;
 
     void Start()
     {
