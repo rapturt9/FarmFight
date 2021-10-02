@@ -65,5 +65,13 @@ public class MultiplayerWorldManager : MonoBehaviour
         GUILayout.Label("Transport: " +
             NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
         GUILayout.Label("Mode: " + mode);
+
+        if (NetworkManager.Singleton.IsHost)
+        {
+            if (GUILayout.Button("Start Game"))
+            {
+                print("This doesn't do anything yet!");
+            }
+        }
     }
 }

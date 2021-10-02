@@ -7,7 +7,7 @@ public class Repository : MonoBehaviour
 
     [SerializeField]
     public Hex selectedHex = Hex.zero;
-
+    public int localPlayerId;
 
 
     /// <summary>

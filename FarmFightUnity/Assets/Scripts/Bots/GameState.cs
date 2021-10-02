@@ -84,38 +84,6 @@ public class GameState : MonoBehaviour
         return tileData;
     }
 
-    // Turns all of the tile strings into actual board tiles
-    //void DeserializeBoard()
-    //{
-    //    foreach (var coord in hexCoords)
-    //    {
-    //        var tileTuple = DeserializeTileString(cropTiles[coord]);
-    //        // Change the game state
-    //        if (tileTuple != cropTiles[coord])
-    //        {
-    //            CropType cropNum = (CropType)tileTuple.Item1;
-    //            float lastPlanted = tileTuple.Item2;
-    //            bool containsFarmer = tileTuple.Item3;
-
-    //            // Initializes tile
-    //            TileTemp tile;
-    //            if (cropNum == CropType.potato)
-    //                tile = new Potato();
-    //            else if (cropNum == CropType.wheat)
-    //                tile = new Wheat();
-    //            else if (cropNum == CropType.carrot)
-    //                tile = new Carrot();
-    //            else
-    //                tile = new BlankTile();
-
-    //            // Sets tile
-    //            tileHandler[coord] = tile;
-
-    //        }
-
-    //    }
-    //}
-
     // Goes from TileSyncData to TileTemp
     public static TileTemp DeserializeTile(TileSyncData tileData)
     {
@@ -137,6 +105,33 @@ public class GameState : MonoBehaviour
         // TODO sync timeLimePlanted and containsFarmer
 
         return tile;
+    }
+
+    // Serializes board into something that can be transported via Rpc
+    public TileSyncData[] SerializeBoard()
+    {
+        int numTiles = hexCoords.Count;
+        TileSyncData[] allTiles = new TileSyncData[numTiles];
+
+        for (int i = 0; i < numTiles; i++)
+        {
+            Hex coord = hexCoords[i];
+            // Sets TileSyncData
+            allTiles[i] = SerializeTile(tileHandler[coord]);
+        }
+        return allTiles;
+    }
+
+    // Turns all of the tile strings into actual board tiles
+    public void DeserializeBoard(TileSyncData[] allTiles)
+    {
+        int numTiles = hexCoords.Count;
+        for (int i = 0; i < numTiles; i++)
+        {
+            Hex coord = hexCoords[i];
+            TileTemp tile = DeserializeTile(allTiles[i]);
+            tileHandler.TileDict[coord].Tile = tile;
+        }
     }
 }
 

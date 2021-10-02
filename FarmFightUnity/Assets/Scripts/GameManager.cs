@@ -3,17 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using MLAPI;
+using MLAPI.NetworkVariable;
+using MLAPI.Messaging;
 
 public class GameManager : NetworkBehaviour
 {
+    public TileManager tileManager;
     public TileHandler[] TileHandler;
     public GameState gameState;
 
     public bool gameIsRunning = false;
+    int localPlayerId = 0;
+    private List<Hex> openCorners;
     Repository central;
 
     // Start is called before the first frame update
     private void Awake()
+    {
+        
+    }
+
+    private void Start()
     {
         
     }
@@ -24,6 +34,11 @@ public class GameManager : NetworkBehaviour
         TileManager.TM.Init();
         gameState.Init();
         central = Repository.Central;
+        SetupCorners();
+
+        // Adds a new player and gets their ID
+        addNewPlayerServerRpc(NetworkManager.Singleton.LocalClientId);
+
         // Now, lets things update
         gameIsRunning = true;
     }
@@ -42,5 +57,64 @@ public class GameManager : NetworkBehaviour
         }
 
         //Debug.Log(central.selectedHex);
+    }
+
+    // Sets up corners for players to start. Only called server-side
+    void SetupCorners()
+    {
+        if (!IsServer) { return; }
+
+        openCorners = new List<Hex>();
+
+        List<Hex> relatives = new List<Hex>()
+        {
+            Hex.down,
+            Hex.up,
+            Hex.right,
+            Hex.left,
+            Hex.right + Hex.down,
+            Hex.left + Hex.up
+        };
+        for (int i = 0; i < TileManager.hexagonSides; i++)
+        {
+            openCorners.Add(relatives[i] * TileManager.TM.size);
+        }
+    }
+
+    // Handles a new client connecting
+    [ServerRpc(RequireOwnership = false)]
+    void addNewPlayerServerRpc(ulong targetClientId)
+    {
+        // Adds player index
+        localPlayerId++;
+
+        // Sets the player in a random corner
+        int index = Random.Range(0, openCorners.Count - 1);
+        Hex newCorner = openCorners[index];
+        openCorners.RemoveAt(index);
+
+        Potato startingTile = new Potato();
+        int cropTileHandlerIndex = 0;
+        TileManager.TM.Handlers[cropTileHandlerIndex][newCorner] = startingTile;
+
+        // Serializes entire board
+        TileSyncData[] allTiles = gameState.SerializeBoard();
+
+        // Only targets the most recently connected player
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { targetClientId }
+            }
+        };
+        addNewPlayerClientRpc(localPlayerId, allTiles, clientRpcParams);
+    }
+
+    [ClientRpc]
+    void addNewPlayerClientRpc(int localPlayerId, TileSyncData[] allTiles, ClientRpcParams clientRpcParams = default)
+    {
+        central.localPlayerId = localPlayerId;
+        gameState.DeserializeBoard(allTiles);
     }
 }

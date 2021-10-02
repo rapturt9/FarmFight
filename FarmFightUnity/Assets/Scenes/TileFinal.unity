@@ -247,6 +247,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ba5794c640f04052ba57c4c0d7427d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tileManager: {fileID: 0}
   TileHandler: []
   gameState: {fileID: 358149039}
   gameIsRunning: 0
@@ -262,6 +263,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e77e01bf03021465daca69c49332f5ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  localPlayerID: 0
 --- !u!114 &58370723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1008,7 +1010,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a1add2ae3604ae4793247b72ea82b31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startAsHost: 1
+  startAsHost: 0
 --- !u!4 &1041828389
 Transform:
   m_ObjectHideFlags: 0
