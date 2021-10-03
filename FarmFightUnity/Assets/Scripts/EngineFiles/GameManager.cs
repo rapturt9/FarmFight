@@ -20,7 +20,7 @@ public class GameManager : NetworkBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
-        
+
     }
 
     private void Start()
@@ -89,7 +89,7 @@ public class GameManager : NetworkBehaviour
         int index = Random.Range(0, openCorners.Count - 1);
         Hex newCorner = openCorners[index];
         openCorners.RemoveAt(index);
-        
+
         Potato startingTile = new Potato();
         startingTile.tileOwner = localPlayerId;
         int cropTileHandlerIndex = 0;

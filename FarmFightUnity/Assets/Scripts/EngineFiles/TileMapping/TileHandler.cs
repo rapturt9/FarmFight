@@ -52,11 +52,11 @@ public class TileHandler : NetworkBehaviour
         fillTiles(size);
     }
 
-    
+
 
     private void fillTiles(int size)
     {
-        
+
         Dictionary<Hex, TileInterFace> temp = BoardHelperFns.BoardFiller(size);
         TileDict = new Dictionary<Hex, TileInterFace>();
 
@@ -68,7 +68,7 @@ public class TileHandler : NetworkBehaviour
         Redraw();
     }
 
-    
+
 
     private void Redraw()
     {
@@ -89,7 +89,7 @@ public class TileHandler : NetworkBehaviour
             if(automaticRedraw)
                 tile.Draw(tilemap);
         }
-        
+
 
     }
 

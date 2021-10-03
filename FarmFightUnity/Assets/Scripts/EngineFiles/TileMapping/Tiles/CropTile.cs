@@ -150,7 +150,7 @@ public class Carrot : TileTemp
 
     public override TileArt getCropArt()
     {
-        TileName = "Carrot";   
+        TileName = "Carrot";
         return getTileArt("Carrot");
     }
 }
@@ -168,11 +168,11 @@ public class HighLight: TileTemp
 
     public override void Start()
     {
-       
+
     }
 
     public override void Behavior()
     {
-        
+
     }
 }
