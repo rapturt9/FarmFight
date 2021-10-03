@@ -7,6 +7,7 @@ public class TileManager : MonoBehaviour
 
 
     public int size;
+    public static int hexagonSides = 6;
 
     public TileHandler[] Handlers;
 

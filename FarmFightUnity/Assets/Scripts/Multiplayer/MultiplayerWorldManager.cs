@@ -1,23 +1,53 @@
 using System.Collections;
-using MLAPI;
+using System.IO;
 using UnityEngine;
-
+using MLAPI;
+using MLAPI.NetworkVariable;
+using MLAPI.Serialization;
+using MLAPI.Serialization.Pooled;
 
 public class MultiplayerWorldManager : MonoBehaviour
 {
+    public bool startAsHost = true;
+
+    private void Start()
+    {
+        // Makes Hex serializable on the network
+        SerializationManager.RegisterSerializationHandlers<Hex>((Stream stream, Hex coord) =>
+        {
+            using (var writer = PooledNetworkWriter.Get(stream))
+            {
+                writer.WriteIntArrayPacked(new int[] { coord.x, coord.y });
+            }
+        }, (Stream stream) =>
+        {
+            using (var reader = PooledNetworkReader.Get(stream))
+            {
+                int[] newCoord = reader.ReadIntArrayPacked();
+                return new Hex(newCoord[0], newCoord[1]);
+            }
+        });
+    }
     void OnGUI()
     {
-        GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-        if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
+        if (!startAsHost)
         {
-            StartButtons();
+            GUILayout.BeginArea(new Rect(10, 10, 300, 300));
+            if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
+            {
+                StartButtons();
+            }
+            else
+            {
+                StatusLabels();
+            }
+
+            GUILayout.EndArea();
         }
         else
         {
-            StatusLabels();
+            NetworkManager.Singleton.StartHost();
         }
-
-        GUILayout.EndArea();
     }
 
     static void StartButtons()
@@ -35,5 +65,13 @@ public class MultiplayerWorldManager : MonoBehaviour
         GUILayout.Label("Transport: " +
             NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
         GUILayout.Label("Mode: " + mode);
+
+        if (NetworkManager.Singleton.IsHost)
+        {
+            if (GUILayout.Button("Start Game"))
+            {
+                print("This doesn't do anything yet!");
+            }
+        }
     }
 }

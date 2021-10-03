@@ -64,7 +64,16 @@ so your changes become part of the main project
 
 
 
+## Multiplayer Instructions:
 
+By default the game starts as host, so you can't test out being just a client. To try out multiplayer for yourself:
 
-
-
+1. Go to the MultiplayerWorldManager game object in the scene and uncheck "Start as Host".
+2. Start the game to test. You should see three buttons in the top left. Nothing will work unless you click the "Host" button.
+3. Stop the game and in the top menu open ParrelSync -> Clones Manager.
+4. Click "Add new clone". ParrelSync will start copying files. This might take a while.
+5. You should see "Clone 0" appears at the top of the ParrelSync window. Click "Open in New Editor" to start a new instance of Unity. This also might take a while.
+6. After Unity has set up the new editor, start the game on both editor instances.
+7. On your *main* instance click "Host" in the upper left, and on your *clone* instance click "Client"
+8. If your screen is big enough, resize your editors so each takes up only half of the screen.
+9. Interact with the game and see what syncs!

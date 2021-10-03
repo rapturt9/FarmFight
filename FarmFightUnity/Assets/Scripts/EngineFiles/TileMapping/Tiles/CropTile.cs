@@ -4,11 +4,14 @@ using UnityEngine;
 
 public abstract class TileTemp : TileTempDepr
 {
+    public CropType cropType = CropType.blankTile;
+    public float timeLastPlanted = 0f;
+    public bool containsFarmer = false;
+    public int tileOwner = -1;
     public string TileName;
+    public float timeBetweenFrames = 0.5f;
 
     public abstract TileArt getCropArt();
-
-    public bool hasFarmer = false;
 
     public int soldiers = 0;
 
@@ -30,6 +33,8 @@ public abstract class TileTemp : TileTempDepr
 
     public override void Start()
     {
+        if (timeLastPlanted == 0f)
+            timeLastPlanted = Time.time;
         frame = 0;
         frameRate = 60;
         frameInternal = 0;
@@ -44,7 +49,8 @@ public abstract class TileTemp : TileTempDepr
         if(frameInternal >= tileArts.Count * frameRate){
             frameInternal = tileArts.Count * frameRate - 1;
         } else {
-            frameInternal += 1;
+            frameInternal = (int)((Time.time - timeLastPlanted) * frameRate);
+            //frameInternal += 1;
         }
 
 
@@ -59,41 +65,42 @@ public abstract class TileTemp : TileTempDepr
     }
 
     //return crop level and reset crop growth
-    public double reset (bool move) { //move is true if cursor moved to new tile
+    public double reset () {
         double mid = 5.5; //optimal harvest level
 
-        double calc = 0;
+        double calc;
         double stage = frameInternal / frameRate;
-        if(stage < mid && !move){
-            return 0;
-        } else {
-            calc = abs(stage - mid);
-            calc = mid - calc;
-        }
 
+        calc = Mathf.Abs((float)(stage - mid));
+        calc = mid - calc;
+
+        timeLastPlanted = Time.time;
         frameInternal = 0;
         frame = 0;
         return calc;
     }
-
-    //take absolute value
-    public double abs (double a) {
-        if(a < 0){
-            return -a;
-        }
-        return a;
-    }
-
 }
 
+public enum CropType
+{
+    blankTile = -1,
+    potato,
+    carrot,
+    rice
+}
 
 public class BlankTile: TileTemp
 {
+    public override void Start()
+    {
+        base.Start();
+        cropType = CropType.blankTile;
+
+    }
     public override TileArt getCropArt()
     {
         TileName = "Blank";
         return null;
-        
     }
 
     public override void Behavior()
@@ -105,6 +112,12 @@ public class BlankTile: TileTemp
 
 public class Rice : TileTemp
 {
+    public override void Start()
+    {
+        base.Start();
+        cropType = CropType.rice;
+    }
+
     public override TileArt getCropArt()
     {
         TileName = "Rice";
@@ -114,6 +127,12 @@ public class Rice : TileTemp
 
 public class Potato : TileTemp
 {
+    public override void Start()
+    {
+        base.Start();
+        cropType = CropType.potato;
+    }
+
     public override TileArt getCropArt()
     {
         TileName = "Potato";
@@ -123,9 +142,15 @@ public class Potato : TileTemp
 
 public class Carrot : TileTemp
 {
+    public override void Start()
+    {
+        base.Start();
+        cropType = CropType.carrot;
+    }
+
     public override TileArt getCropArt()
     {
-        TileName = "Carrot";   
+        TileName = "Carrot";
         return getTileArt("Carrot");
     }
 }
@@ -143,11 +168,11 @@ public class HighLight: TileTemp
 
     public override void Start()
     {
-       
+
     }
 
     public override void Behavior()
     {
-        
+
     }
 }

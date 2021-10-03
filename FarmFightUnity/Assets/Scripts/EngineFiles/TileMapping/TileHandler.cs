@@ -1,19 +1,23 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Tilemaps;
+using MLAPI;
+using MLAPI.Messaging;
 
-public class TileHandler : MonoBehaviour
+public class TileHandler : NetworkBehaviour
 {
     public string Name;
+    public bool syncsTiles = false;
 
     [SerializeField]
     private Hex selected;
 
-    Dictionary<Hex, TileInterFace> TileDict;
+    public Dictionary<Hex, TileInterFace> TileDict;
 
     private int size;
 
     Tilemap tilemap;
+    public GameManager gameManager;
 
     public TileTemp this[Hex hex]
     {
@@ -26,10 +30,11 @@ public class TileHandler : MonoBehaviour
         {
             if (TileDict.ContainsKey(hex))
             {
-                
                 TileDict[hex].Tile = value;
+                // Only sync some tiles (crops) and not others (UI)
+                if (syncsTiles)
+                    SyncTile(hex);
             }
-            
         }
     }
 
@@ -47,29 +52,23 @@ public class TileHandler : MonoBehaviour
         fillTiles(size);
     }
 
-    
+
 
     private void fillTiles(int size)
     {
-        
+
         Dictionary<Hex, TileInterFace> temp = BoardHelperFns.BoardFiller(size);
         TileDict = new Dictionary<Hex, TileInterFace>();
 
         foreach(var coord in temp.Keys)
         {
-            
-            
-                
-                
             TileDict[coord] = new TileInterFace(coord,new BlankTile());
-                
-
         }
 
         Redraw();
     }
 
-    
+
 
     private void Redraw()
     {
@@ -82,6 +81,7 @@ public class TileHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!gameManager.gameIsRunning) { return; }
 
         foreach(var tile in TileDict.Values)
         {
@@ -89,7 +89,7 @@ public class TileHandler : MonoBehaviour
             if(automaticRedraw)
                 tile.Draw(tilemap);
         }
-        
+
 
     }
 
@@ -101,5 +101,44 @@ public class TileHandler : MonoBehaviour
         fillTiles(size);
     }
 
-    
+
+    // We have changed a tile somehow, so it gets synced to everyone
+    // Only works on TileTemp
+    public void SyncTile(Hex coord)
+    {
+        TileSyncData tileData = GameState.SerializeTile(this[coord]);
+
+        if (IsClient)
+        {
+            SyncTileServerRpc(BoardHelperFns.HexToArray(coord), tileData);
+        }
+        else if (IsServer)
+        {
+            SyncTileClientRpc(BoardHelperFns.HexToArray(coord), tileData);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void SyncTileServerRpc(int[] coord, TileSyncData tileData)
+    {
+        _SyncTile(coord, tileData);
+        SyncTileClientRpc(coord, tileData);
+    }
+
+    [ClientRpc]
+    void SyncTileClientRpc(int[] coord, TileSyncData tileData)
+    {
+        _SyncTile(coord, tileData);
+    }
+
+    // Internal function, actually changes the tile
+    void _SyncTile(int[] coordArray, TileSyncData tileData)
+    {
+        Hex coord = BoardHelperFns.ArrayToHex(coordArray);
+        TileTemp tile = GameState.DeserializeTile(tileData);
+        if (TileDict.ContainsKey(coord))
+        {
+            TileDict[coord].Tile = tile;
+        }
+    }
 }
