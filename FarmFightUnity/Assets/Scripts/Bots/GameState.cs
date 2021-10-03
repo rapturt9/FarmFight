@@ -78,38 +78,30 @@ public class GameState : MonoBehaviour
     // Turns TileTemp into tuple
     public static TileSyncData SerializeTile(TileTemp tile)
     {
-        var tileData = emptyTileSyncData;
-        // Not blank, so crop
-        if (!(tile is BlankTile))
-        {
-            CropTile tileInfo = (CropTile)tile;
-            // TODO sync time and farmer
-            tileData = new TileSyncData(tileInfo.cropType, 0.0F, false, tileInfo.tileOwner);
-        }
-        return tileData;
+        return new TileSyncData(tile.cropType, tile.timeLastPlanted, tile.containsFarmer, tile.tileOwner);
     }
 
     // Goes from TileSyncData to TileTemp
     public static TileTemp DeserializeTile(TileSyncData tileData)
     {
-        CropType cropNum = tileData.cropType;
+        CropType cropType = tileData.cropType;
         float timeLastPlanted = tileData.timeLastPlanted;
         bool containsFarmer = tileData.containsFarmer;
         int tileOwner = tileData.tileOwner;
 
-        // Initializes tile
-        TileTemp tile = new BlankTile();
-        if (cropNum != CropType.blankTile)
-        {
-            if (cropNum == CropType.potato)
-                tile = new Potato();
-            else if (cropNum == CropType.wheat)
-                tile = new Wheat();
-            else if (cropNum == CropType.carrot)
-                tile = new Carrot();
-            ((CropTile)tile).tileOwner = tileOwner;
-        }
-        // TODO sync timeLastPlanted and containsFarmer
+        TileTemp tile;
+        if (cropType == CropType.potato)
+            tile = new Potato();
+        else if (cropType == CropType.carrot)
+            tile = new Carrot();
+        else if (cropType == CropType.rice)
+            tile = new Rice();
+        else
+            tile = new BlankTile();
+
+        tile.timeLastPlanted = timeLastPlanted;
+        tile.containsFarmer = containsFarmer;
+        tile.tileOwner = tileOwner;
 
         return tile;
     }

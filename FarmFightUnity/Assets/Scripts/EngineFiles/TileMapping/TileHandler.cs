@@ -103,7 +103,7 @@ public class TileHandler : NetworkBehaviour
 
 
     // We have changed a tile somehow, so it gets synced to everyone
-    // Only works on CropTile
+    // Only works on TileTemp
     public void SyncTile(Hex coord)
     {
         TileSyncData tileData = GameState.SerializeTile(this[coord]);

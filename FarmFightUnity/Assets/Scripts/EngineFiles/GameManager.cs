@@ -25,7 +25,7 @@ public class GameManager : NetworkBehaviour
 
     private void Start()
     {
-        
+        central = Repository.Central;
     }
 
     public override void NetworkStart()
@@ -33,7 +33,6 @@ public class GameManager : NetworkBehaviour
         TileArtRepository.Art.Init();
         TileManager.TM.Init();
         gameState.Init();
-        central = Repository.Central;
         SetupCorners();
 
         // Adds a new player and gets their ID
@@ -41,6 +40,7 @@ public class GameManager : NetworkBehaviour
 
         // Now, lets things update
         gameIsRunning = true;
+        central.gameIsRunning = gameIsRunning;
     }
 
     // Update is called once per frame
@@ -85,15 +85,13 @@ public class GameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     void addNewPlayerServerRpc(ulong targetClientId)
     {
-        // Adds player index
-        localPlayerId++;
-
         // Sets the player in a random corner
         int index = Random.Range(0, openCorners.Count - 1);
         Hex newCorner = openCorners[index];
         openCorners.RemoveAt(index);
-
+        
         Potato startingTile = new Potato();
+        startingTile.tileOwner = localPlayerId;
         int cropTileHandlerIndex = 0;
         TileManager.TM.Handlers[cropTileHandlerIndex][newCorner] = startingTile;
 
@@ -109,6 +107,9 @@ public class GameManager : NetworkBehaviour
             }
         };
         addNewPlayerClientRpc(localPlayerId, allTiles, clientRpcParams);
+
+        // Adds player index
+        localPlayerId++;
     }
 
     [ClientRpc]

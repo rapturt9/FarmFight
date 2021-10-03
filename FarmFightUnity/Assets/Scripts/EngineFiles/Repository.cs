@@ -8,6 +8,8 @@ public class Repository : MonoBehaviour
     [SerializeField]
     public Hex selectedHex = Hex.zero;
     public int localPlayerId;
+    public bool gameIsRunning = false;
+    public double money = 100.0;
 
 
     /// <summary>

@@ -263,7 +263,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e77e01bf03021465daca69c49332f5ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localPlayerID: 0
+  localPlayerId: 0
+  gameIsRunning: 0
+  money: 100
 --- !u!114 &58370723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -366,12 +368,12 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1645006423}
         m_TargetAssemblyTypeName: Market, Assembly-CSharp
-        m_MethodName: SetRice
-        m_Mode: 1
+        m_MethodName: SetCrop
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: SetRice
           m_BoolArgument: 0
@@ -1025,7 +1027,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a1add2ae3604ae4793247b72ea82b31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startAsHost: 0
+  startAsHost: 1
 --- !u!4 &1041828389
 Transform:
   m_ObjectHideFlags: 0
@@ -1204,8 +1206,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1645006423}
         m_TargetAssemblyTypeName: Market, Assembly-CSharp
-        m_MethodName: SetPotato
-        m_Mode: 1
+        m_MethodName: SetCrop
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1608,6 +1610,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 439d2dc440fc24274891fbd5de3094c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  handler: {fileID: 0}
 --- !u!114 &1228046378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1752,9 +1755,8 @@ GameObject:
   - component: {fileID: 1524123755}
   - component: {fileID: 1524123758}
   - component: {fileID: 1524123757}
-  - component: {fileID: 1524123756}
   m_Layer: 5
-  m_Name: Market
+  m_Name: MarketText
   m_TagString: Market
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1779,24 +1781,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -157}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1524123756
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1524123754}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5160e798a5de3441bb88d2906b863059, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  central: {fileID: 0}
-  UIHandler: {fileID: 0}
-  crops: {fileID: 0}
-  people: {fileID: 0}
-  money: 0
-  money_text: {fileID: 1524123757}
 --- !u!114 &1524123757
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1994,12 +1978,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5160e798a5de3441bb88d2906b863059, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  central: {fileID: 0}
   UIHandler: {fileID: 950269514}
   crops: {fileID: 1228046377}
   people: {fileID: 1785283977}
-  money: 0
-  money_text: {fileID: 0}
+  moneyText: {fileID: 1524123757}
 --- !u!1 &1648115324
 GameObject:
   m_ObjectHideFlags: 0
@@ -5891,12 +5873,12 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1645006423}
         m_TargetAssemblyTypeName: Market, Assembly-CSharp
-        m_MethodName: SetCarrot
-        m_Mode: 1
+        m_MethodName: SetCrop
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: SetCarrot
           m_BoolArgument: 0

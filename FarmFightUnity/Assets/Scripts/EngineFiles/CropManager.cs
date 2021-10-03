@@ -6,11 +6,13 @@ public class CropManager : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    TileHandler handler;
+    public TileHandler handler;
+    Repository central;
     bool plantOne;
 
     void Start()
     {
+        central = Repository.Central;
         handler = GetComponent<TileHandler>();
 
         coords = new int[6, 2] { { -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 }, { 1, -1 }, { 1, 0 } };
@@ -37,30 +39,36 @@ public class CropManager : MonoBehaviour
         */
     }
 
-    public double harvest(Hex hex, bool move)
+    public double harvest(Hex hex)
     {
-        //if crop there
-        int hLevel = 0;
-        if (handler[hex].TileName == "Potato")
+        // Only harvest if owned by the local player
+        if (handler[hex].tileOwner == central.localPlayerId)
         {
-            hLevel = 1;
-        }
-        if (handler[hex].TileName == "Carrot")
-        {
-            hLevel = 4;
-        }
-        if (handler[hex].TileName == "Wheat")
-        {
-            hLevel = 2;
-        }
-        if (handler[hex].TileName == "Rice")
-        {
-            hLevel = 10;
-        }
+            //if crop there
+            int hLevel = 0;
+            if (handler[hex].TileName == "Potato")
+            {
+                hLevel = 1;
+            }
+            if (handler[hex].TileName == "Carrot")
+            {
+                hLevel = 4;
+            }
+            if (handler[hex].TileName == "Wheat")
+            {
+                hLevel = 2;
+            }
+            if (handler[hex].TileName == "Rice")
+            {
+                hLevel = 10;
+            }
 
-        if (hLevel > 0)
-        {
-            return handler[hex].reset(move) * hLevel;
+            if (hLevel > 0)
+            {
+                double add = handler[hex].reset() * hLevel;
+                handler.SyncTile(hex);
+                return add;
+            }
         }
 
         return 0;
@@ -84,7 +92,7 @@ public class CropManager : MonoBehaviour
                -3 <= x + y && x + y <= 3)
             {
                 Hex adj = new Hex(hex.x + coords[i, 0], hex.y + coords[i, 1]);
-                if (hasCrop(adj))
+                if (hasCrop(adj))// && (handler[hex].tileOwner == central.localPlayerId))
                 {
                     return true;
                 }
@@ -97,45 +105,31 @@ public class CropManager : MonoBehaviour
 
     public bool hasCrop(Hex hex)
     {
-        return handler[hex].TileName == "Potato" || handler[hex].TileName == "Carrot" || handler[hex].TileName == "Rice" || handler[hex].TileName == "Wheat";
+        //return handler[hex].TileName == "Potato" || handler[hex].TileName == "Carrot" || handler[hex].TileName == "Rice" || handler[hex].TileName == "Wheat";
+        return handler[hex].cropType != CropType.blankTile;
     }
 
 
-    public bool addPotato(Hex hex)
+    public bool addCrop(Hex hex, CropType cropType)
     {
         if (!canPlant(hex))
         {
             return false;
         }
-        handler[hex] = new Potato();
-        if (!plantOne)
-        {
-            plantOne = true;
-        }
-        return true;
-    }
 
-    public bool addCarrot(Hex hex)
-    {
-        if (!canPlant(hex))
+        if (cropType == CropType.potato)
         {
-            return false;
+            handler[hex] = new Potato();
         }
-        handler[hex] = new Carrot();
-        if (!plantOne)
+        else if (cropType == CropType.carrot)
         {
-            plantOne = true;
+            handler[hex] = new Carrot();
         }
-        return true;
-    }
+        else if (cropType == CropType.rice)
+        {
+            handler[hex] = new Rice();
+        }
 
-    public bool addWheat(Hex hex)
-    {
-        if (!canPlant(hex))
-        {
-            return false;
-        }
-        handler[hex] = new Rice();
         if (!plantOne)
         {
             plantOne = true;
@@ -150,10 +144,9 @@ public class CropManager : MonoBehaviour
 
     public bool addFarmer(Hex hex)
     {
-
-        if (handler[hex].hasFarmer == false)
+        if (handler[hex].containsFarmer == false)
         {
-            handler[hex].hasFarmer = true;
+            handler[hex].containsFarmer = true;
             Debug.Log("Has Farmer");
             return true;
         }
@@ -163,9 +156,9 @@ public class CropManager : MonoBehaviour
     public bool removeFarmer(Hex hex)
     {
 
-        if (handler[hex].hasFarmer == true)
+        if (handler[hex].containsFarmer == true)
         {
-            handler[hex].hasFarmer = false;
+            handler[hex].containsFarmer = false;
             return true;
         }
         return false;
