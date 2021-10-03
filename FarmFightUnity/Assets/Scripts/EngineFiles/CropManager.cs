@@ -22,21 +22,7 @@ public class CropManager : MonoBehaviour
 
     private void Update()
     {
-        /*
-        if (Input.GetMouseButtonDown(0) &
-                TileManager.TM.isValidHex(TileManager.TM.getMouseHex()))
-        {
-
-            addCarrot(TileManager.TM.getMouseHex());
-        }
-
-        if (Input.GetMouseButtonDown(1) &
-                TileManager.TM.isValidHex(TileManager.TM.getMouseHex()))
-        {
-
-            clearTile(TileManager.TM.getMouseHex());
-        }
-        */
+        
     }
 
     public double harvest(Hex hex)
@@ -156,6 +142,9 @@ public class CropManager : MonoBehaviour
         {
             handler[hex].containsFarmer = true;
             Debug.Log("Has Farmer");
+
+            
+
             return true;
         }
         return false;

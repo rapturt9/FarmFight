@@ -92,10 +92,16 @@ public class Market : NetworkBehaviour
         }
     }
 
-    /*public void SetFarmer()
+    public void SetFarmer(bool state = true)
     {
-        crops.addFarmer(selectedHex);
-    }*/
+        if (state)
+            crops.addFarmer(selectedHex);
+        else
+            crops.removeFarmer(selectedHex);
+    }
+
+    
+
     public void Set()
     {
 

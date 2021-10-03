@@ -7,6 +7,8 @@ public class Repository : MonoBehaviour
 
     [SerializeField]
     public Hex selectedHex = Hex.zero;
+    
+
     public int localPlayerId;
     public bool gameIsRunning = false;
     public double money = 100.0;
@@ -32,7 +34,10 @@ public class Repository : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
+    private void Update()
+    {
+        Debug.Log(selectedHex.Cell());
+    }
 
 
 

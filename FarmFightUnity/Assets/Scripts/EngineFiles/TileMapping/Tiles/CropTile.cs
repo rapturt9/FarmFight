@@ -7,7 +7,27 @@ public abstract class TileTemp : TileTempDepr
 {
     public CropType cropType = CropType.blankTile;
     public float timeLastPlanted = 0f;
-    public bool containsFarmer = false;
+    public bool containsFarmer
+    {
+        get { return farmerObj != null; }
+        set
+        {
+            if (value)
+            {
+
+                farmerObj = SpriteRepo.Sprites["Farmer", hexCoord];
+                
+            }
+            else
+            {
+                GameObject.Destroy(farmerObj);
+                farmerObj = null;
+            }
+
+        }
+    }
+                       
+    public GameObject farmerObj = null;
     public int tileOwner = -1;
     public string TileName;
     public float timeBetweenFrames = 0.5f;
@@ -57,10 +77,16 @@ public abstract class TileTemp : TileTempDepr
 
         frame = (int) (frameInternal / frameRate);
 
+
+        if(containsFarmer & frame == 6)
+        {
+            Repository.Central.money += reset();
+        }
+
         if(0 <= frame && frame <= 6){
             currentArt = tileArts[frame];
         } else {
-            currentArt = tileArts[6];
+            currentArt = tileArts[7];
         }
 
     }
