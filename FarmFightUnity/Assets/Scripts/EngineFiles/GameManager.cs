@@ -66,18 +66,9 @@ public class GameManager : NetworkBehaviour
 
         openCorners = new List<Hex>();
 
-        List<Hex> relatives = new List<Hex>()
+        foreach (var relative in TileManager.TM.getValidNeighbors(new Hex(0,0)))
         {
-            Hex.down,
-            Hex.up,
-            Hex.right,
-            Hex.left,
-            Hex.right + Hex.down,
-            Hex.left + Hex.up
-        };
-        for (int i = 0; i < TileManager.hexagonSides; i++)
-        {
-            openCorners.Add(relatives[i] * TileManager.TM.size);
+            openCorners.Add(relative * TileManager.TM.size);
         }
     }
 

@@ -83,20 +83,29 @@ public class CropManager : MonoBehaviour
             return true;
         }
 
-        for (int i = 0; i < 6; i++)
-        {
-            int x = hex.x + coords[i, 0];
-            int y = hex.y + coords[i, 1];
-            if (-3 <= x && x <= 3 &&
-               -3 <= y && y <= 3 &&
-               -3 <= x + y && x + y <= 3)
-            {
-                Hex adj = new Hex(hex.x + coords[i, 0], hex.y + coords[i, 1]);
-                if (hasCrop(adj))// && (handler[hex].tileOwner == central.localPlayerId))
-                {
-                    return true;
-                }
+        //for (int i = 0; i < 6; i++)
+        //{
+        //    int x = hex.x + coords[i, 0];
+        //    int y = hex.y + coords[i, 1];
+        //    if (-3 <= x && x <= 3 &&
+        //       -3 <= y && y <= 3 &&
+        //       -3 <= x + y && x + y <= 3)
+        //    {
+        //        Hex adj = new Hex(hex.x + coords[i, 0], hex.y + coords[i, 1]);
+        //        print(hasCrop(adj));
+        //        print(handler[hex].tileOwner);
+        //        if (hasCrop(adj) && (handler[hex].tileOwner == central.localPlayerId))
+        //        {
+        //            return true;
+        //        }
 
+        //    }
+        //}
+        foreach (var adj in TileManager.TM.getValidNeighbors(hex))
+        {
+            if (hasCrop(adj) && (handler[adj].tileOwner == central.localPlayerId))
+            {
+                return true;
             }
         }
 
@@ -105,7 +114,6 @@ public class CropManager : MonoBehaviour
 
     public bool hasCrop(Hex hex)
     {
-        //return handler[hex].TileName == "Potato" || handler[hex].TileName == "Carrot" || handler[hex].TileName == "Rice" || handler[hex].TileName == "Wheat";
         return handler[hex].cropType != CropType.blankTile;
     }
 
@@ -169,10 +177,4 @@ public class CropManager : MonoBehaviour
     {
         handler[hex].soldiers += number;
     }
-
-
-
-
-
-
 }

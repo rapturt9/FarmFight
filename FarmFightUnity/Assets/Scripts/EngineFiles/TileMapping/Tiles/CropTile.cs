@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MLAPI;
 
 public abstract class TileTemp : TileTempDepr
 {
@@ -34,7 +35,7 @@ public abstract class TileTemp : TileTempDepr
     public override void Start()
     {
         if (timeLastPlanted == 0f)
-            timeLastPlanted = Time.time;
+            timeLastPlanted = NetworkManager.Singleton.NetworkTime;
         frame = 0;
         frameRate = 60;
         frameInternal = 0;
@@ -49,7 +50,7 @@ public abstract class TileTemp : TileTempDepr
         if(frameInternal >= tileArts.Count * frameRate){
             frameInternal = tileArts.Count * frameRate - 1;
         } else {
-            frameInternal = (int)((Time.time - timeLastPlanted) * frameRate);
+            frameInternal = (int)((NetworkManager.Singleton.NetworkTime - timeLastPlanted) * frameRate);
             //frameInternal += 1;
         }
 
@@ -74,7 +75,7 @@ public abstract class TileTemp : TileTempDepr
         calc = Mathf.Abs((float)(stage - mid));
         calc = mid - calc;
 
-        timeLastPlanted = Time.time;
+        timeLastPlanted = NetworkManager.Singleton.NetworkTime;
         frameInternal = 0;
         frame = 0;
         return calc;
