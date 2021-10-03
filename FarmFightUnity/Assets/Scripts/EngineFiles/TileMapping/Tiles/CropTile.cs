@@ -48,7 +48,7 @@ public abstract class TileTemp : TileTempDepr
     public override void Behavior()
     {
         if(frameInternal >= tileArts.Count * frameRate){
-            frameInternal = tileArts.Count * frameRate - 1;
+            frameInternal = tileArts.Count * frameRate;
         } else {
             frameInternal = (int)((NetworkManager.Singleton.NetworkTime - timeLastPlanted) * frameRate);
             //frameInternal += 1;
@@ -57,10 +57,10 @@ public abstract class TileTemp : TileTempDepr
 
         frame = (int) (frameInternal / frameRate);
 
-        if(0 <= frame && frame <= 6){
+        if(0 <= frame && frame <= 7){
             currentArt = tileArts[frame];
         } else {
-            currentArt = tileArts[6];
+            currentArt = tileArts[7];
         }
 
     }
