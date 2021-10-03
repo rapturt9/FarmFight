@@ -8,16 +8,11 @@ public class CropManager : MonoBehaviour
 
     public TileHandler handler;
     Repository central;
-    bool plantOne;
 
     void Start()
     {
         central = Repository.Central;
         handler = GetComponent<TileHandler>();
-
-        coords = new int[6, 2] { { -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 }, { 1, -1 }, { 1, 0 } };
-        plantOne = false;
-
     }
 
     private void Update()
@@ -74,33 +69,9 @@ public class CropManager : MonoBehaviour
         return 0;
     }
 
-    int[,] coords;
 
     public bool canPlant(Hex hex)
     {
-        if (!plantOne)
-        {
-            return true;
-        }
-
-        //for (int i = 0; i < 6; i++)
-        //{
-        //    int x = hex.x + coords[i, 0];
-        //    int y = hex.y + coords[i, 1];
-        //    if (-3 <= x && x <= 3 &&
-        //       -3 <= y && y <= 3 &&
-        //       -3 <= x + y && x + y <= 3)
-        //    {
-        //        Hex adj = new Hex(hex.x + coords[i, 0], hex.y + coords[i, 1]);
-        //        print(hasCrop(adj));
-        //        print(handler[hex].tileOwner);
-        //        if (hasCrop(adj) && (handler[hex].tileOwner == central.localPlayerId))
-        //        {
-        //            return true;
-        //        }
-
-        //    }
-        //}
         foreach (var adj in TileManager.TM.getValidNeighbors(hex))
         {
             if (hasCrop(adj) && (handler[adj].tileOwner == central.localPlayerId))
@@ -136,11 +107,6 @@ public class CropManager : MonoBehaviour
         else if (cropType == CropType.rice)
         {
             handler[hex] = new Rice();
-        }
-
-        if (!plantOne)
-        {
-            plantOne = true;
         }
         return true;
     }
