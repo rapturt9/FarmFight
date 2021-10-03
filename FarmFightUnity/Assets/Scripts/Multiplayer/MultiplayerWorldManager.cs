@@ -9,6 +9,7 @@ using MLAPI.Serialization.Pooled;
 public class MultiplayerWorldManager : MonoBehaviour
 {
     public bool startAsHost = true;
+    private bool hostStarted = false;
 
     private void Start()
     {
@@ -44,9 +45,10 @@ public class MultiplayerWorldManager : MonoBehaviour
 
             GUILayout.EndArea();
         }
-        else
+        else if (!hostStarted)
         {
             NetworkManager.Singleton.StartHost();
+            hostStarted = true;
         }
     }
 
