@@ -16,7 +16,7 @@ public abstract class TileTemp : TileTempDepr
             {
 
                 farmerObj = SpriteRepo.Sprites["Farmer", hexCoord];
-                
+                farmerObj.transform.position = hexCoord.world() + .25f * Vector2.right;
             }
             else
             {
@@ -26,15 +26,87 @@ public abstract class TileTemp : TileTempDepr
 
         }
     }
-                       
+
+    public void addSoldier()
+    {
+
+        Soldier soldier = SpriteRepo.Sprites["Soldier", hexCoord].GetComponent<Soldier>();
+
+        
+
+        soldier.gameObject.SetActive(true);
+
+        soldier.transform.position = hexCoord.world()+Vector2.left*.25f;
+        
+        
+
+        soldiers.Add(soldier);
+
+        Debug.Log($"Soldier added to {hexCoord}");
+    }
+
+
+    public void sendSoldier(Hex end)
+    {
+        if (soldierCount != 0)
+        {
+            GameObject.Destroy(soldiers[0].GetComponent<SoldierTrip>());
+
+            SoldierTrip temp = soldiers[0].gameObject.AddComponent<SoldierTrip>();
+
+            temp.init(hexCoord, end);
+
+
+            soldiers.RemoveAt(0);
+
+            if (soldierCount != 0)
+            {
+                soldiers[0].FadeIn();
+
+                //soldiers[0].transform.position = hexCoord.world() + Vector2.left * .25f;
+            }
+        }
+    }
+
+    
+
+    /// <summary>
+    /// list of the soldiers on the tile
+    ///
+    /// *may need to be split into multiple lists depending on what fights look like*
+    /// </summary>
+    public List<Soldier> soldiers = new List<Soldier>();
+
+    /// <summary>
+    /// the Gameobject representing a farmer
+    /// </summary>
     public GameObject farmerObj = null;
+
+    /// <summary>
+    /// the tiles owner
+    /// </summary>
     public int tileOwner = -1;
+
+    /// <summary>
+    /// IDK WHAT THIS IS ABOUT BUT I ASSUME IT IS IMPORTANT
+    /// </summary>
     public string TileName;
+
+    /// <summary>
+    /// self explamnatory
+    /// </summary>
     public float timeBetweenFrames = 0.5f;
 
+    /// <summary>
+    /// implement to set a crop art
+    /// </summary>
+    /// <returns></returns>
     public abstract TileArt getCropArt();
 
-    public int soldiers = 0;
+    /// <summary>
+    /// number of soldiers
+    /// </summary>
+    public int soldierCount { get { return soldiers.Count; } }
 
     public List<TileArt> tileArts;
 
@@ -54,6 +126,8 @@ public abstract class TileTemp : TileTempDepr
 
     public override void Start()
     {
+        soldiers = new List<Soldier>();
+
         if (timeLastPlanted == 0f)
             timeLastPlanted = NetworkManager.Singleton.NetworkTime;
         frame = 0;
@@ -61,8 +135,17 @@ public abstract class TileTemp : TileTempDepr
         frameInternal = 0;
     }
 
+    /// <summary>
+    /// the frame the tile is displaying
+    /// </summary>
     public int frame;
+
+    /// <summary>
+    /// the the framerate
+    /// </summary>
     public float frameRate;
+
+    
     private float frameInternal;
 
     public override void Behavior()
@@ -88,6 +171,11 @@ public abstract class TileTemp : TileTempDepr
         } else {
             currentArt = tileArts[7];
         }
+
+
+
+
+        
 
     }
 

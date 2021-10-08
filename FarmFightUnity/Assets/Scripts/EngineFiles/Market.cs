@@ -100,6 +100,11 @@ public class Market : NetworkBehaviour
             crops.removeFarmer(selectedHex);
     }
 
+    public void addSoldier()
+    {
+        crops.addSoldier(selectedHex);
+    }
+
     
 
     public void Set()

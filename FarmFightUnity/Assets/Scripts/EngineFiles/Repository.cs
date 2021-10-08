@@ -34,10 +34,7 @@ public class Repository : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    private void Update()
-    {
-        Debug.Log(selectedHex.Cell());
-    }
+    
 
 
 

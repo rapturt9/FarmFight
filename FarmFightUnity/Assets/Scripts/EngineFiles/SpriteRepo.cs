@@ -15,7 +15,6 @@ public class SpriteRepo : MonoBehaviour
         get
         {
             GameObject temp = Instantiate(SpriteObjects[name]);
-            temp.transform.position = hex.world()+ .25f*Vector2.right;
             temp.transform.parent = gameObject.transform;
             temp.SetActive(true);
 

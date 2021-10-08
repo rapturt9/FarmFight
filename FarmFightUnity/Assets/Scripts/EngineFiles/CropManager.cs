@@ -15,14 +15,20 @@ public class CropManager : MonoBehaviour
         central = Repository.Central;
         handler = GetComponent<TileHandler>();
 
-        coords = new int[6, 2] { { -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 }, { 1, -1 }, { 1, 0 } };
+        //coords = new int[6, 2] { { -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 }, { 1, -1 }, { 1, 0 } };
         plantOne = false;
 
     }
 
+    
+
     private void Update()
     {
-        
+        if (Input.GetMouseButtonDown(1))
+        {
+            Debug.Log($"sending from {central.selectedHex} to {TileManager.TM.getMouseHex()}");
+            sendSoldier(central.selectedHex, TileManager.TM.getMouseHex());
+        }
     }
 
     public double harvest(Hex hex)
@@ -60,7 +66,7 @@ public class CropManager : MonoBehaviour
         return 0;
     }
 
-    int[,] coords;
+    //int[,] coords;
 
     public bool canPlant(Hex hex)
     {
@@ -69,24 +75,6 @@ public class CropManager : MonoBehaviour
             return true;
         }
 
-        //for (int i = 0; i < 6; i++)
-        //{
-        //    int x = hex.x + coords[i, 0];
-        //    int y = hex.y + coords[i, 1];
-        //    if (-3 <= x && x <= 3 &&
-        //       -3 <= y && y <= 3 &&
-        //       -3 <= x + y && x + y <= 3)
-        //    {
-        //        Hex adj = new Hex(hex.x + coords[i, 0], hex.y + coords[i, 1]);
-        //        print(hasCrop(adj));
-        //        print(handler[hex].tileOwner);
-        //        if (hasCrop(adj) && (handler[hex].tileOwner == central.localPlayerId))
-        //        {
-        //            return true;
-        //        }
-
-        //    }
-        //}
         foreach (var adj in TileManager.TM.getValidNeighbors(hex))
         {
             if (hasCrop(adj) && (handler[adj].tileOwner == central.localPlayerId))
@@ -161,9 +149,16 @@ public class CropManager : MonoBehaviour
         return false;
     }
 
-
-    public void addSoldier(Hex hex, int number = 1)
+    
+    public void addSoldier(Hex hex)
     {
-        handler[hex].soldiers += number;
+        handler[hex].addSoldier();        
+    }
+
+    
+
+    public void sendSoldier(Hex start, Hex end)
+    {
+        handler[start].sendSoldier(end);
     }
 }
