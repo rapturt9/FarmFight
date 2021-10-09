@@ -26,7 +26,7 @@ public class CropManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1))
         {
-            Debug.Log($"sending from {central.selectedHex} to {TileManager.TM.getMouseHex()}");
+            
             sendSoldier(central.selectedHex, TileManager.TM.getMouseHex());
         }
     }

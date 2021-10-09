@@ -44,15 +44,7 @@ public class Soldier: MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetKeyUp(KeyCode.Q))
-        {
-            FadeIn();
-        }
-
-        if (Input.GetKeyUp(KeyCode.W))
-        {
-            FadeOut();
-        }
+        
     }
 
     public void FadeIn()

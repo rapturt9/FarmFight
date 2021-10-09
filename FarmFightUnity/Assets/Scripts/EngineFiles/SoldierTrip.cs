@@ -16,19 +16,16 @@ public class SoldierTrip: MonoBehaviour
     {
         this.start = start;
         this.end = end;
-    }
 
-
-
-    public void Start()
-    {
-  
-        
         Path = PathCreator(start, end);
-        
+
 
         StartCoroutine("Mover");
     }
+
+
+
+    
 
 
     static List<Vector3> PathCreator(Hex start, Hex end)
@@ -61,12 +58,15 @@ public class SoldierTrip: MonoBehaviour
             }
         }
 
-        TileManager.TM["Crops"][end].soldiers.Add(soldier);
+        
+        TileManager.TM["Crops"][end].addSoldier(soldier);
 
-        if (TileManager.TM["Crops"][end].soldierCount != 1)
-            soldier.FadeOut();
-        else
-            transform.position += Vector3.left * .25f;
+        //Repository.Central.cropHandler.SyncTile(end);
+
+
+
+
+
     }    
 
 

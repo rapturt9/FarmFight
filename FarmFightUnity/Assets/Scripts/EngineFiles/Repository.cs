@@ -34,8 +34,12 @@ public class Repository : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    
 
+
+
+    /// just for ease of access
+    ///
+    public TileHandler cropHandler;
 
 
 }

@@ -12,17 +12,22 @@ public abstract class TileTemp : TileTempDepr
         get { return farmerObj != null; }
         set
         {
-            if (value)
+            
+            if (value & farmerObj == null )
             {
-
+                
                 farmerObj = SpriteRepo.Sprites["Farmer", hexCoord];
                 farmerObj.transform.position = hexCoord.world() + .25f * Vector2.right;
+                
+
             }
             else
             {
                 GameObject.Destroy(farmerObj);
                 farmerObj = null;
             }
+
+            
 
         }
     }
@@ -34,7 +39,7 @@ public abstract class TileTemp : TileTempDepr
 
         
 
-        soldier.gameObject.SetActive(true);
+        
 
         soldier.transform.position = hexCoord.world()+Vector2.left*.25f;
         
@@ -42,19 +47,54 @@ public abstract class TileTemp : TileTempDepr
 
         soldiers.Add(soldier);
 
-        Debug.Log($"Soldier added to {hexCoord}");
+        //Repository.Central.cropHandler.SyncTile(hexCoord);
     }
+
+    public void addSoldier(Soldier soldier)
+    {
+        
+        soldiers.Add(soldier);
+
+        
+
+        soldier.transform.position = hexCoord.world() + Vector2.left * .25f;
+
+        //Debug.Log($"Soldier added to {hexCoord}");
+
+
+        if(soldierCount > 1)
+        {
+            soldier.FadeOut();
+        }
+
+        if (soldierCount == 0)
+        {
+            Debug.Log("adding Failed");
+            //addSoldier(soldier);
+        }
+        
+
+    }
+
 
 
     public void sendSoldier(Hex end)
     {
-        if (soldierCount != 0)
+        if (soldierCount != 0  & end != hexCoord)
         {
-            GameObject.Destroy(soldiers[0].GetComponent<SoldierTrip>());
+            //GameObject.Destroy(soldiers[0].GetComponent<SoldierTrip>());
 
-            SoldierTrip temp = soldiers[0].gameObject.AddComponent<SoldierTrip>();
+            Soldier soldier = soldiers[0];
+            SoldierTrip trip;
 
-            temp.init(hexCoord, end);
+
+            if (!soldier.TryGetComponent(out trip))
+            {
+                soldiers[0].gameObject.AddComponent<SoldierTrip>()
+                .init(hexCoord, end);
+            }
+            else
+                trip.init(hexCoord, end);
 
 
             soldiers.RemoveAt(0);
@@ -62,13 +102,25 @@ public abstract class TileTemp : TileTempDepr
             if (soldierCount != 0)
             {
                 soldiers[0].FadeIn();
-
-                //soldiers[0].transform.position = hexCoord.world() + Vector2.left * .25f;
             }
+
+            
+        }
+        else Debug.Log("cannot Send");
+
+        
+    }
+
+    //destroys all associated gameobjects
+    public override void End()
+    {
+        GameObject.Destroy(farmerObj);
+        foreach(var soldier in soldiers)
+        {
+            GameObject.Destroy(soldier.gameObject);
         }
     }
 
-    
 
     /// <summary>
     /// list of the soldiers on the tile
@@ -88,7 +140,7 @@ public abstract class TileTemp : TileTempDepr
     public int tileOwner = -1;
 
     /// <summary>
-    /// IDK WHAT THIS IS ABOUT BUT I ASSUME IT IS IMPORTANT
+    /// name
     /// </summary>
     public string TileName;
 
@@ -161,11 +213,14 @@ public abstract class TileTemp : TileTempDepr
         frame = (int) (frameInternal / frameRate);
 
 
-        if(containsFarmer & frame == 6)
+        //farmer autoharvest
+        if(containsFarmer & frame >= 6)
         {
             Repository.Central.money += reset();
         }
 
+        if(TileName != "Blank")
+            Debug.Log(farmerObj == null);
         if(0 <= frame && frame <= 6){
             currentArt = tileArts[frame];
         } else {

@@ -98,11 +98,14 @@ public class Market : NetworkBehaviour
             crops.addFarmer(selectedHex);
         else
             crops.removeFarmer(selectedHex);
+
+        crops.handler.SyncTile(selectedHex);
     }
 
-    public void addSoldier()
+    public void AddSoldier()
     {
         crops.addSoldier(selectedHex);
+        crops.handler.SyncTile(selectedHex);
     }
 
     
