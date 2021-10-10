@@ -7,6 +7,7 @@ using UnityEngine;
 public class TileTemp
 {
     public TileArt currentArt;
+    public int owner
 
     
     public Hex hexCoord { get; set; }

@@ -458,6 +458,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileHandler: {fileID: 1228046376}
+  botControl: {fileID: 358149041}
 --- !u!114 &358149040
 MonoBehaviour:
   m_ObjectHideFlags: 0

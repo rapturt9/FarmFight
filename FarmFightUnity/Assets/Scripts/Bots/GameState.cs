@@ -10,6 +10,7 @@ using MLAPI.Serialization;
 public class GameState : MonoBehaviour
 {
     public TileHandler tileHandler;
+    public makeMove botControl;
 
     // Hex coord, (crop#, time planted/time last clicked, farmer or not)
     public Dictionary<Hex, TileSyncData> cropTiles = new Dictionary<Hex, TileSyncData>();
@@ -31,15 +32,15 @@ public class GameState : MonoBehaviour
     void Start()
     {
         hexCoords = BoardHelperFns.HexList(3);
-        updateGameStateFirstTime();
     }
 
     public void Init()
     {
         // Calling this in init wasn't working for me, idk why
         // So i called it in start
-        //updateGameStateFirstTime();
+        updateGameStateFirstTime();
         StartCoroutine(collectGameData());
+        botControl.Init();
     }
 
     IEnumerator collectGameData()
@@ -57,12 +58,24 @@ public class GameState : MonoBehaviour
     {
         foreach (var coord in hexCoords)
         {
-            cropTiles[coord] = emptyTileSyncData;
+            if (coord == new Hex(0,0)){
+                cropTiles[coord] = new TileSyncData(CropType.carrot, 0.0f, false, 0);
+                tileHandler[coord] = DeserializeTile(cropTiles[coord]);
+                tileHandler[coord].tileOwner = 0;
+                tileHandler.SyncTile(coord);
+            }
+            else{
+                cropTiles[coord] = emptyTileSyncData;  
+            }
         }
+        TileSyncData tile = cropTiles[new Hex(0,0)];
+        print(tile.tileOwner);
     }
 
     public void updateGameState()
     {
+        TileSyncData tile = cropTiles[new Hex(0,0)];
+        print(tile.tileOwner);
         foreach (var coord in hexCoords)
         {
             var tileData = SerializeTile(tileHandler[coord]);
@@ -71,7 +84,6 @@ public class GameState : MonoBehaviour
             {
                 cropTiles[coord] = tileData;
             }
-            //cropTiles[coord] = tileData;
         }
     }
 
@@ -141,6 +153,9 @@ public class GameState : MonoBehaviour
                 tile = new Carrot();
         }
         // TODO sync timeLimePlanted and containsFarmer
+        tile.timeLastPlanted = tileLastPlanted;
+        tile.containsFarmer = containsFarmer;
+        tile.tileOwner = tileOwner;
 
         return tile;
     }

@@ -9,7 +9,7 @@ public class makeMove : MonoBehaviour
     public List<Hex> hexCoords;
 
     // Start is called before the first frame update
-    void Start()
+    public void Init()
     {
         hexCoords = BoardHelperFns.HexList(3);
         StartCoroutine(startGame());
@@ -21,17 +21,18 @@ public class makeMove : MonoBehaviour
         while (gameIsRunning){
             yield return new WaitForSeconds(2.0F);
             pickMove();
-            //print("picking move");
         }
 
     }
 
     void pickMove () {
-        //gameData.updateGameState();
-        gameData.tileHandler[new Hex(3,0)] = GameState.DeserializeTile(new TileSyncData(CropType.carrot, 0.0f, false, 0));
-        gameData.tileHandler.SyncTile(new Hex(3,0));
+        //gameData.tileHandler[new Hex(3,0)] = GameState.DeserializeTile(new TileSyncData(CropType.carrot, 0.0f, false, 0));
+        //gameData.tileHandler.SyncTile(new Hex(3,0));
         gameData.updateGameState();
         List<(Hex,string)> possibleMoves = getMoves(0);
+
+        TileSyncData tile = gameData.cropTiles[new Hex(0,0)];
+        print(tile.tileOwner);
         /*foreach (var coord in hexCoords)
         {
             print(coord);
