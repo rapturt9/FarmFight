@@ -7,6 +7,7 @@ using MLAPI.Messaging;
 public class TileHandler : NetworkBehaviour
 {
     public string Name;
+    public bool syncsTiles = false;
 
     [SerializeField]
     private Hex selected;
@@ -29,10 +30,11 @@ public class TileHandler : NetworkBehaviour
         {
             if (TileDict.ContainsKey(hex))
             {
-                
                 TileDict[hex].Tile = value;
+                // Only sync some tiles (crops) and not others (UI)
+                if (syncsTiles)
+                    SyncTile(hex);
             }
-            
         }
     }
 
@@ -50,13 +52,14 @@ public class TileHandler : NetworkBehaviour
         fillTiles(size);
     }
 
-    
+
 
     private void fillTiles(int size)
     {
-        //tilemap.ClearAllTiles();
+
         Dictionary<Hex, TileInterFace> temp = BoardHelperFns.BoardFiller(size);
         TileDict = new Dictionary<Hex, TileInterFace>();
+
         foreach(var coord in temp.Keys)
         {
             TileDict[coord] = new TileInterFace(coord,new BlankTile());
@@ -64,6 +67,8 @@ public class TileHandler : NetworkBehaviour
 
         Redraw();
     }
+
+
 
     private void Redraw()
     {
@@ -84,7 +89,7 @@ public class TileHandler : NetworkBehaviour
             if(automaticRedraw)
                 tile.Draw(tilemap);
         }
-        
+
 
     }
 
@@ -98,7 +103,7 @@ public class TileHandler : NetworkBehaviour
 
 
     // We have changed a tile somehow, so it gets synced to everyone
-    // Only works on CropTile
+    // Only works on TileTemp
     public void SyncTile(Hex coord)
     {
         TileSyncData tileData = GameState.SerializeTile(this[coord]);
@@ -131,6 +136,9 @@ public class TileHandler : NetworkBehaviour
     {
         Hex coord = BoardHelperFns.ArrayToHex(coordArray);
         TileTemp tile = GameState.DeserializeTile(tileData);
-        this[coord] = tile;
+        if (TileDict.ContainsKey(coord))
+        {
+            TileDict[coord].Tile = tile;
+        }
     }
 }

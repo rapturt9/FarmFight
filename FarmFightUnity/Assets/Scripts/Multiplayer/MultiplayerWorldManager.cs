@@ -8,6 +8,9 @@ using MLAPI.Serialization.Pooled;
 
 public class MultiplayerWorldManager : MonoBehaviour
 {
+    public bool startAsHost = true;
+    private bool hostStarted = false;
+
     private void Start()
     {
         // Makes Hex serializable on the network
@@ -28,17 +31,25 @@ public class MultiplayerWorldManager : MonoBehaviour
     }
     void OnGUI()
     {
-        GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-        if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
+        if (!startAsHost)
         {
-            StartButtons();
-        }
-        else
-        {
-            StatusLabels();
-        }
+            GUILayout.BeginArea(new Rect(10, 10, 300, 300));
+            if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
+            {
+                StartButtons();
+            }
+            else
+            {
+                StatusLabels();
+            }
 
-        GUILayout.EndArea();
+            GUILayout.EndArea();
+        }
+        else if (!hostStarted)
+        {
+            NetworkManager.Singleton.StartHost();
+            hostStarted = true;
+        }
     }
 
     static void StartButtons()
@@ -56,5 +67,13 @@ public class MultiplayerWorldManager : MonoBehaviour
         GUILayout.Label("Transport: " +
             NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
         GUILayout.Label("Mode: " + mode);
+
+        if (NetworkManager.Singleton.IsHost)
+        {
+            if (GUILayout.Button("Start Game"))
+            {
+                print("This doesn't do anything yet!");
+            }
+        }
     }
 }

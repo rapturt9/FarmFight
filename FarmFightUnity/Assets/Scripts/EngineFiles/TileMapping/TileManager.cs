@@ -7,6 +7,7 @@ public class TileManager : MonoBehaviour
 
 
     public int size;
+    public static int hexagonSides = 6;
 
     public TileHandler[] Handlers;
 
@@ -185,9 +186,9 @@ public class TileManager : MonoBehaviour
 
         int i = 0;
 
-        while(i < relatives.Count)
+        while (i < relatives.Count)
         {
-            if (isValidHex(hex))
+            if (isValidHex(relatives[i]))
                 i += 1;
             else
                 relatives.RemoveAt(i);
@@ -195,5 +196,4 @@ public class TileManager : MonoBehaviour
 
         return relatives.ToArray();
     }
-    
 }
