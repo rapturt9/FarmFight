@@ -65,13 +65,13 @@ public class GameState : MonoBehaviour
     {
         foreach (var coord in hexCoords)
         {
-            //tileHandler[coord] not working
             var tileData = SerializeTile(tileHandler[coord]);
             //Only updates our game state if something has changed
             if (tileData != cropTiles[coord])
             {
                 cropTiles[coord] = tileData;
             }
+            //cropTiles[coord] = tileData;
         }
     }
 

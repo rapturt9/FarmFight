@@ -21,21 +21,25 @@ public class makeMove : MonoBehaviour
         while (gameIsRunning){
             yield return new WaitForSeconds(2.0F);
             pickMove();
+            //print("picking move");
         }
 
     }
 
     void pickMove () {
         //gameData.updateGameState();
-        List<(Hex,string)> possibleMoves = getMoves(-1);
+        gameData.tileHandler[new Hex(3,0)] = GameState.DeserializeTile(new TileSyncData(CropType.carrot, 0.0f, false, 0));
+        gameData.tileHandler.SyncTile(new Hex(3,0));
+        gameData.updateGameState();
+        List<(Hex,string)> possibleMoves = getMoves(0);
         /*foreach (var coord in hexCoords)
         {
             print(coord);
             print(gameData.cropTiles[coord]);
         }*/
-        foreach (var elem in possibleMoves){
+        /*foreach (var elem in possibleMoves){
             print(elem);
-        }
+        }*/
     }
 
     List<(Hex,string)> getMoves(int owner) {
@@ -50,6 +54,7 @@ public class makeMove : MonoBehaviour
         foreach (var coord in hexCoords){
             TileSyncData tile = gameData.cropTiles[coord];
             if (tile.tileOwner == owner) {
+                //print("owned tile");
                 if (tile.cropType == CropType.blankTile){
                     res.Add((coord,"plantRice"));
                     res.Add((coord,"plantCarrot"));
@@ -61,6 +66,8 @@ public class makeMove : MonoBehaviour
 
                 foreach (var dir in dirs){
                     Hex newLoc = coord+dir;
+
+                    //print(newLoc);
 
                     if (hexCoords.Contains(newLoc) && gameData.cropTiles[newLoc].tileOwner == -1){
                         if (!res.Contains((newLoc,"plantRice"))){
