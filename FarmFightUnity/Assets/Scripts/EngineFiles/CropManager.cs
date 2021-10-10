@@ -8,25 +8,21 @@ public class CropManager : MonoBehaviour
 
     public TileHandler handler;
     Repository central;
-    bool plantOne;
 
     void Start()
     {
         central = Repository.Central;
         handler = GetComponent<TileHandler>();
-
         //coords = new int[6, 2] { { -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 }, { 1, -1 }, { 1, 0 } };
-        plantOne = false;
-
     }
 
-    
+
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(1))
         {
-            
+
             sendSoldier(central.selectedHex, TileManager.TM.getMouseHex());
         }
     }
@@ -65,16 +61,9 @@ public class CropManager : MonoBehaviour
 
         return 0;
     }
-
-    //int[,] coords;
-
+    
     public bool canPlant(Hex hex)
     {
-        if (!plantOne)
-        {
-            return true;
-        }
-
         foreach (var adj in TileManager.TM.getValidNeighbors(hex))
         {
             if (hasCrop(adj) && (handler[adj].tileOwner == central.localPlayerId))
@@ -111,11 +100,6 @@ public class CropManager : MonoBehaviour
         {
             handler[hex] = new Rice();
         }
-
-        if (!plantOne)
-        {
-            plantOne = true;
-        }
         return true;
     }
 
@@ -131,7 +115,7 @@ public class CropManager : MonoBehaviour
             handler[hex].containsFarmer = true;
             Debug.Log("Has Farmer");
 
-            
+
 
             return true;
         }
@@ -149,13 +133,13 @@ public class CropManager : MonoBehaviour
         return false;
     }
 
-    
+
     public void addSoldier(Hex hex)
     {
-        handler[hex].addSoldier();        
+        handler[hex].addSoldier();
     }
 
-    
+
 
     public void sendSoldier(Hex start, Hex end)
     {

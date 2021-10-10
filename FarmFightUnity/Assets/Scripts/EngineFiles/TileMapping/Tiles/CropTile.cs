@@ -12,13 +12,13 @@ public abstract class TileTemp : TileTempDepr
         get { return farmerObj != null; }
         set
         {
-            
+
             if (value & farmerObj == null )
             {
-                
+
                 farmerObj = SpriteRepo.Sprites["Farmer", hexCoord];
                 farmerObj.transform.position = hexCoord.world() + .25f * Vector2.right;
-                
+
 
             }
             else
@@ -27,7 +27,7 @@ public abstract class TileTemp : TileTempDepr
                 farmerObj = null;
             }
 
-            
+
 
         }
     }
@@ -37,13 +37,13 @@ public abstract class TileTemp : TileTempDepr
 
         Soldier soldier = SpriteRepo.Sprites["Soldier", hexCoord].GetComponent<Soldier>();
 
-        
 
-        
+
+
 
         soldier.transform.position = hexCoord.world()+Vector2.left*.25f;
-        
-        
+
+
 
         soldiers.Add(soldier);
 
@@ -52,10 +52,10 @@ public abstract class TileTemp : TileTempDepr
 
     public void addSoldier(Soldier soldier)
     {
-        
+
         soldiers.Add(soldier);
 
-        
+
 
         soldier.transform.position = hexCoord.world() + Vector2.left * .25f;
 
@@ -72,7 +72,7 @@ public abstract class TileTemp : TileTempDepr
             Debug.Log("adding Failed");
             //addSoldier(soldier);
         }
-        
+
 
     }
 
@@ -104,11 +104,11 @@ public abstract class TileTemp : TileTempDepr
                 soldiers[0].FadeIn();
             }
 
-            
+
         }
         else Debug.Log("cannot Send");
 
-        
+
     }
 
     //destroys all associated gameobjects
@@ -197,13 +197,13 @@ public abstract class TileTemp : TileTempDepr
     /// </summary>
     public float frameRate;
 
-    
+
     private float frameInternal;
 
     public override void Behavior()
     {
         if(frameInternal >= tileArts.Count * frameRate){
-            frameInternal = tileArts.Count * frameRate - 1;
+            frameInternal = tileArts.Count * frameRate;
         } else {
             frameInternal = (int)((NetworkManager.Singleton.NetworkTime - timeLastPlanted) * frameRate);
             //frameInternal += 1;
@@ -212,7 +212,6 @@ public abstract class TileTemp : TileTempDepr
 
         frame = (int) (frameInternal / frameRate);
 
-
         //farmer autoharvest
         if(containsFarmer & frame >= 6)
         {
@@ -220,8 +219,8 @@ public abstract class TileTemp : TileTempDepr
         }
 
         if(TileName != "Blank")
-            Debug.Log(farmerObj == null);
-        if(0 <= frame && frame <= 6){
+            //Debug.Log(farmerObj == null);
+        if(0 <= frame && frame <= 7){
             currentArt = tileArts[frame];
         } else {
             currentArt = tileArts[7];
@@ -230,7 +229,7 @@ public abstract class TileTemp : TileTempDepr
 
 
 
-        
+
 
     }
 
