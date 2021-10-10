@@ -105,7 +105,7 @@ public class Market : NetworkBehaviour
     public void AddSoldier()
     {
         crops.addSoldier(selectedHex);
-        crops.handler.SyncTile(selectedHex);
+        //crops.handler.SyncTile(selectedHex);
     }
 
     

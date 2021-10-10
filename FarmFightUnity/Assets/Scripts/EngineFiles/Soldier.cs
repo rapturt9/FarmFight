@@ -1,9 +1,12 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections;
-public class Soldier: MonoBehaviour
+using MLAPI;
+
+public class Soldier: NetworkBehaviour
 {
     public int Health = 100;
+    public int owner = -1;
 
     public float travelSpeed = .005f;
     

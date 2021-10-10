@@ -12,23 +12,17 @@ public abstract class TileTemp : TileTempDepr
         get { return farmerObj != null; }
         set
         {
-
             if (value & farmerObj == null )
             {
 
                 farmerObj = SpriteRepo.Sprites["Farmer", hexCoord];
                 farmerObj.transform.position = hexCoord.world() + .25f * Vector2.right;
-
-
             }
             else
             {
                 GameObject.Destroy(farmerObj);
                 farmerObj = null;
             }
-
-
-
         }
     }
 
@@ -37,13 +31,7 @@ public abstract class TileTemp : TileTempDepr
 
         Soldier soldier = SpriteRepo.Sprites["Soldier", hexCoord].GetComponent<Soldier>();
 
-
-
-
-
         soldier.transform.position = hexCoord.world()+Vector2.left*.25f;
-
-
 
         soldiers.Add(soldier);
 
@@ -54,8 +42,6 @@ public abstract class TileTemp : TileTempDepr
     {
 
         soldiers.Add(soldier);
-
-
 
         soldier.transform.position = hexCoord.world() + Vector2.left * .25f;
 
