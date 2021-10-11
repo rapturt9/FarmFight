@@ -104,8 +104,7 @@ public class Market : NetworkBehaviour
 
     public void AddSoldier()
     {
-        crops.addSoldier(selectedHex);
-        //crops.handler.SyncTile(selectedHex);
+        crops.addSoldierServerRpc(BoardHelperFns.HexToArray(selectedHex), central.localPlayerId);
     }
 
     

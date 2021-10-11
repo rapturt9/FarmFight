@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MLAPI;
+using MLAPI.Messaging;
 
-public class CropManager : MonoBehaviour
+public class CropManager : NetworkBehaviour
 {
     // Start is called before the first frame update
 
@@ -13,17 +15,27 @@ public class CropManager : MonoBehaviour
     {
         central = Repository.Central;
         handler = GetComponent<TileHandler>();
-        //coords = new int[6, 2] { { -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 }, { 1, -1 }, { 1, 0 } };
     }
 
 
 
     private void Update()
     {
+        if (!central.gameIsRunning) { return; }
+
+        // Right click to send a soldier
         if (Input.GetMouseButtonDown(1))
         {
+            sendSoldierServerRpc(BoardHelperFns.HexToArray(central.selectedHex),
+                BoardHelperFns.HexToArray(TileManager.TM.getMouseHex()),
+                central.localPlayerId);
+        }
 
-            sendSoldier(central.selectedHex, TileManager.TM.getMouseHex());
+        List<Soldier> s = handler[central.selectedHex].soldiers;
+        if (s.Count > 0)
+        {
+            Debug.Log("Length " + s.Count.ToString());
+            Debug.Log(s[0].owner.Value);
         }
     }
 
@@ -114,9 +126,6 @@ public class CropManager : MonoBehaviour
         {
             handler[hex].containsFarmer = true;
             Debug.Log("Has Farmer");
-
-
-
             return true;
         }
         return false;
@@ -124,7 +133,6 @@ public class CropManager : MonoBehaviour
 
     public bool removeFarmer(Hex hex)
     {
-
         if (handler[hex].containsFarmer == true)
         {
             handler[hex].containsFarmer = false;
@@ -133,16 +141,56 @@ public class CropManager : MonoBehaviour
         return false;
     }
 
-
-    public void addSoldier(Hex hex)
+    // We initially spawn a soldier only on the server
+    [ServerRpc(RequireOwnership = false)]
+    public void addSoldierServerRpc(int[] hexArray, int owner)
     {
-        handler[hex].addSoldier();
+        Hex hex = BoardHelperFns.ArrayToHex(hexArray);
+        TileTemp tile = handler[hex];
+        // Spawns soldier
+        Soldier soldier = SpriteRepo.Sprites["Soldier", tile.hexCoord].GetComponent<Soldier>();
+        soldier.transform.position = tile.hexCoord.world() + Vector2.left * .25f;
+        soldier.owner.Value = owner;
+        tile.soldiers.Add(soldier);
+        handler.SyncTile(hex);
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    public void sendSoldierServerRpc(int[] startArray, int[] endArray, int localPlayerId)
+    {
+        Hex start = BoardHelperFns.ArrayToHex(startArray);
+        Hex end = BoardHelperFns.ArrayToHex(endArray);
 
+        TileTemp startTile = handler[start];
+
+        if (startTile.soldierCount != 0 && 
+            end != startTile.hexCoord && 
+            startTile.soldiers[0].owner.Value == localPlayerId)
+        {
+            Soldier soldier = startTile.soldiers[0];
+            SoldierTrip trip;
+
+            if (!soldier.TryGetComponent(out trip))
+            {
+                startTile.soldiers[0].gameObject.AddComponent<SoldierTrip>()
+                .init(startTile.hexCoord, end);
+            }
+            else
+                trip.init(startTile.hexCoord, end);
+
+            startTile.soldiers.RemoveAt(0);
+
+            if (startTile.soldierCount != 0)
+            {
+                startTile.soldiers[0].FadeIn();
+            }
+            handler.SyncTile(start);
+        }
+        else Debug.Log("cannot Send");
+    }
 
     public void sendSoldier(Hex start, Hex end)
     {
-        handler[start].sendSoldier(end);
+        //handler[start].sendSoldier(end);
     }
 }

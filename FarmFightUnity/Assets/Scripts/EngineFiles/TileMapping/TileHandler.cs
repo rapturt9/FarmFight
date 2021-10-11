@@ -106,7 +106,9 @@ public class TileHandler : NetworkBehaviour
     // Only works on TileTemp
     public void SyncTile(Hex coord)
     {
+        // Gets tile data and soldier data
         TileSyncData tileData = GameState.SerializeTile(this[coord]);
+        List<Soldier> soldiersToSync = new List<Soldier>(this[coord].soldiers);
 
         if (IsClient)
         {
@@ -115,6 +117,12 @@ public class TileHandler : NetworkBehaviour
         else if (IsServer)
         {
             SyncTileClientRpc(BoardHelperFns.HexToArray(coord), tileData);
+        }
+
+        // Re-syncs the soldiers to the new tile
+        foreach (var soldier in soldiersToSync)
+        {
+            soldier.AddToTile(coord);
         }
     }
 

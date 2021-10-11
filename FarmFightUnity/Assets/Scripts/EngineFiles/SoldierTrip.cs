@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MLAPI;
 
-public class SoldierTrip: MonoBehaviour
+public class SoldierTrip: NetworkBehaviour
 {
     
 
@@ -59,17 +60,8 @@ public class SoldierTrip: MonoBehaviour
         }
 
         
-        TileManager.TM["Crops"][end].addSoldier(soldier);
+        TileManager.TM["Crops"][end].addExistingSoldier(soldier);
 
         //Repository.Central.cropHandler.SyncTile(end);
-
-
-
-
-
-    }    
-
-
-
-
+    }
 }

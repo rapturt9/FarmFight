@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MLAPI;
+using MLAPI.Messaging;
 
 public abstract class TileTemp : TileTempDepr
 {
@@ -14,7 +15,6 @@ public abstract class TileTemp : TileTempDepr
         {
             if (value & farmerObj == null )
             {
-
                 farmerObj = SpriteRepo.Sprites["Farmer", hexCoord];
                 farmerObj.transform.position = hexCoord.world() + .25f * Vector2.right;
             }
@@ -26,27 +26,13 @@ public abstract class TileTemp : TileTempDepr
         }
     }
 
-    public void addSoldier()
+    public void addExistingSoldier(Soldier soldier)
     {
-
-        Soldier soldier = SpriteRepo.Sprites["Soldier", hexCoord].GetComponent<Soldier>();
-
-        soldier.transform.position = hexCoord.world()+Vector2.left*.25f;
-
-        soldiers.Add(soldier);
-
-        //Repository.Central.cropHandler.SyncTile(hexCoord);
-    }
-
-    public void addSoldier(Soldier soldier)
-    {
-
-        soldiers.Add(soldier);
+        soldier.AddToTile(hexCoord);
 
         soldier.transform.position = hexCoord.world() + Vector2.left * .25f;
 
         //Debug.Log($"Soldier added to {hexCoord}");
-
 
         if(soldierCount > 1)
         {
@@ -55,18 +41,16 @@ public abstract class TileTemp : TileTempDepr
 
         if (soldierCount == 0)
         {
-            Debug.Log("adding Failed");
+            //Debug.Log("adding Failed");
             //addSoldier(soldier);
         }
-
-
     }
 
 
 
     public void sendSoldier(Hex end)
     {
-        if (soldierCount != 0  & end != hexCoord)
+        if (soldierCount != 0 && end != hexCoord)
         {
             //GameObject.Destroy(soldiers[0].GetComponent<SoldierTrip>());
 
@@ -93,8 +77,6 @@ public abstract class TileTemp : TileTempDepr
 
         }
         else Debug.Log("cannot Send");
-
-
     }
 
     //destroys all associated gameobjects
@@ -103,7 +85,7 @@ public abstract class TileTemp : TileTempDepr
         GameObject.Destroy(farmerObj);
         foreach(var soldier in soldiers)
         {
-            GameObject.Destroy(soldier.gameObject);
+            //GameObject.Destroy(soldier.gameObject);
         }
     }
 

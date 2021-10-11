@@ -2,11 +2,15 @@
 using UnityEngine;
 using System.Collections;
 using MLAPI;
+using MLAPI.NetworkVariable;
+using MLAPI.Messaging;
 
 public class Soldier: NetworkBehaviour
 {
-    public int Health = 100;
-    public int owner = -1;
+    public NetworkVariable<int> Health = new NetworkVariable<int>(100);
+    public NetworkVariable<int> owner = new NetworkVariable<int>(-1);
+
+    public TileHandler handler;
 
     public float travelSpeed = .005f;
     
@@ -15,8 +19,7 @@ public class Soldier: NetworkBehaviour
     public void Start()
     {
         //GetComponent<SpriteRenderer>().color = Color.clear;
-
-        
+        handler = TileManager.TM["Crops"];
     }
     
     public IEnumerator FadeInCoroutine()
@@ -43,6 +46,40 @@ public class Soldier: NetworkBehaviour
 
         GetComponent<SpriteRenderer>().enabled = false;
 
+    }
+
+    // We have changed a tile somehow, so it gets synced to everyone
+    // Only works on TileTemp
+    public void AddToTile(Hex coord)
+    {
+        if (IsClient)
+        {
+            AddToTileServerRpc(BoardHelperFns.HexToArray(coord));
+        }
+        else if (IsServer)
+        {
+            AddToTileClientRpc(BoardHelperFns.HexToArray(coord));
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void AddToTileServerRpc(int[] coord)
+    {
+        AddToTileClientRpc(coord);
+    }
+
+    [ClientRpc]
+    void AddToTileClientRpc(int[] coord)
+    {
+        _AddToTile(coord);
+    }
+
+    // Internal function, actually changes the tile
+    void _AddToTile(int[] coordArray)
+    {
+        Hex coord = BoardHelperFns.ArrayToHex(coordArray);
+        if (!handler[coord].soldiers.Contains(this))
+            handler[coord].soldiers.Add(this);
     }
 
     public void Update()

@@ -55,8 +55,6 @@ public class GameManager : NetworkBehaviour
         {
             Repository.Central.selectedHex = hex;
         }
-
-        //Debug.Log(central.selectedHex);
     }
 
     // Sets up corners for players to start. Only called server-side
