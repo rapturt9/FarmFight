@@ -92,25 +92,19 @@ public class Market : NetworkBehaviour
         }
     }
 
-    public void SetFarmer(bool state = true)
+    public void SetFarmer()
     {
-        if (state)
-            crops.addFarmer(selectedHex);
-        else
-            crops.removeFarmer(selectedHex);
+        crops.switchFarmer(selectedHex);
+        //if (state)
+        //    crops.addFarmer(selectedHex);
+        //else
+        //    crops.removeFarmer(selectedHex);
 
         crops.handler.SyncTile(selectedHex);
     }
 
     public void AddSoldier()
     {
-        crops.addSoldierServerRpc(BoardHelperFns.HexToArray(selectedHex), central.localPlayerId);
-    }
-
-    
-
-    public void Set()
-    {
-
+        crops.addSoldier(selectedHex);
     }
 }

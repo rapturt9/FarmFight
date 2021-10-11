@@ -48,8 +48,7 @@ public class Soldier: NetworkBehaviour
 
     }
 
-    // We have changed a tile somehow, so it gets synced to everyone
-    // Only works on TileTemp
+    // Add to all client tiles
     public void AddToTile(Hex coord)
     {
         if (IsClient)

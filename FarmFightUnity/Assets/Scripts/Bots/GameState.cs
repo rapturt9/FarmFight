@@ -100,7 +100,7 @@ public class GameState : MonoBehaviour
             tile = new BlankTile();
 
         tile.timeLastPlanted = timeLastPlanted;
-        tile.containsFarmer = containsFarmer;
+        //tile.containsFarmer = containsFarmer; // Can't sync now
         tile.tileOwner = tileOwner;
 
         return tile;

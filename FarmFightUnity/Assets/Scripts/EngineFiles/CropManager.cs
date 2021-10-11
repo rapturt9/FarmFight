@@ -31,12 +31,13 @@ public class CropManager : NetworkBehaviour
                 central.localPlayerId);
         }
 
-        List<Soldier> s = handler[central.selectedHex].soldiers;
-        if (s.Count > 0)
-        {
-            Debug.Log("Length " + s.Count.ToString());
-            Debug.Log(s[0].owner.Value);
-        }
+        // Soldier on tile debugging
+        //List<Soldier> s = handler[central.selectedHex].soldiers;
+        //if (s.Count > 0)
+        //{
+        //    Debug.Log("Length " + s.Count.ToString());
+        //    Debug.Log(s[0].owner.Value);
+        //}
     }
 
     public double harvest(Hex hex)
@@ -120,38 +121,67 @@ public class CropManager : NetworkBehaviour
         handler[hex] = new BlankTile();
     }
 
-    public bool addFarmer(Hex hex)
+    // Toggles farmer from on to off
+    public bool switchFarmer(Hex hex)
     {
         if (handler[hex].containsFarmer == false)
+            addFarmer(hex);
+        else
+            removeFarmer(hex);
+        return false;
+    }
+
+    public bool addFarmer(Hex hex)
+    {
+        if (handler[hex].containsFarmer == false && handler[hex].tileOwner == central.localPlayerId)
         {
-            handler[hex].containsFarmer = true;
-            Debug.Log("Has Farmer");
+            addFarmerServerRpc(BoardHelperFns.HexToArray(hex));
             return true;
         }
         return false;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void addFarmerServerRpc(int[] hexArray)
+    {
+        Hex hex = BoardHelperFns.ArrayToHex(hexArray);
+        handler[hex].addFarmer();
+        handler.SyncTile(hex);
+        Debug.Log("Has Farmer");
     }
 
     public bool removeFarmer(Hex hex)
     {
         if (handler[hex].containsFarmer == true)
         {
-            handler[hex].containsFarmer = false;
+            removeFarmerServerRpc(BoardHelperFns.HexToArray(hex));
             return true;
         }
         return false;
     }
 
-    // We initially spawn a soldier only on the server
     [ServerRpc(RequireOwnership = false)]
-    public void addSoldierServerRpc(int[] hexArray, int owner)
+    public void removeFarmerServerRpc(int[] hexArray)
     {
         Hex hex = BoardHelperFns.ArrayToHex(hexArray);
-        TileTemp tile = handler[hex];
-        // Spawns soldier
-        Soldier soldier = SpriteRepo.Sprites["Soldier", tile.hexCoord].GetComponent<Soldier>();
-        soldier.transform.position = tile.hexCoord.world() + Vector2.left * .25f;
-        soldier.owner.Value = owner;
-        tile.soldiers.Add(soldier);
+        handler[hex].removeFarmer();
+        handler.SyncTile(hex);
+    }
+
+    public void addSoldier(Hex hex)
+    {
+        int[] hexArray = BoardHelperFns.HexToArray(hex);
+        int owner = central.localPlayerId;
+        if (handler[hex].tileOwner == owner)
+            addSoldierServerRpc(hexArray, owner);
+    }
+
+    // We initially spawn a soldier only on the server
+    [ServerRpc(RequireOwnership = false)]
+    void addSoldierServerRpc(int[] hexArray, int owner)
+    {
+        Hex hex = BoardHelperFns.ArrayToHex(hexArray);
+        handler[hex].addSoldier(owner);
         handler.SyncTile(hex);
     }
 
@@ -162,35 +192,7 @@ public class CropManager : NetworkBehaviour
         Hex end = BoardHelperFns.ArrayToHex(endArray);
 
         TileTemp startTile = handler[start];
-
-        if (startTile.soldierCount != 0 && 
-            end != startTile.hexCoord && 
-            startTile.soldiers[0].owner.Value == localPlayerId)
-        {
-            Soldier soldier = startTile.soldiers[0];
-            SoldierTrip trip;
-
-            if (!soldier.TryGetComponent(out trip))
-            {
-                startTile.soldiers[0].gameObject.AddComponent<SoldierTrip>()
-                .init(startTile.hexCoord, end);
-            }
-            else
-                trip.init(startTile.hexCoord, end);
-
-            startTile.soldiers.RemoveAt(0);
-
-            if (startTile.soldierCount != 0)
-            {
-                startTile.soldiers[0].FadeIn();
-            }
+        if (startTile.sendSoldier(end, localPlayerId))
             handler.SyncTile(start);
-        }
-        else Debug.Log("cannot Send");
-    }
-
-    public void sendSoldier(Hex start, Hex end)
-    {
-        //handler[start].sendSoldier(end);
     }
 }

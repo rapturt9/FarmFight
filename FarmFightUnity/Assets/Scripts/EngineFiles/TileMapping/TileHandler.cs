@@ -109,6 +109,7 @@ public class TileHandler : NetworkBehaviour
         // Gets tile data and soldier data
         TileSyncData tileData = GameState.SerializeTile(this[coord]);
         List<Soldier> soldiersToSync = new List<Soldier>(this[coord].soldiers);
+        GameObject farmerToSync = this[coord].farmerObj;
 
         if (IsClient)
         {
@@ -123,6 +124,11 @@ public class TileHandler : NetworkBehaviour
         foreach (var soldier in soldiersToSync)
         {
             soldier.AddToTile(coord);
+        }
+        // Re-syncs the farmers to the new tile
+        if (!(farmerToSync is null))
+        {
+            farmerToSync.GetComponent<Farmer>().AddToTile(coord);
         }
     }
 

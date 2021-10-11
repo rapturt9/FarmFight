@@ -58,9 +58,8 @@ public class SoldierTrip: NetworkBehaviour
                 yield return null;
             }
         }
-
         
-        TileManager.TM["Crops"][end].addExistingSoldier(soldier);
+        TileManager.TM["Crops"][end].addSoldier(soldier);
 
         //Repository.Central.cropHandler.SyncTile(end);
     }

@@ -11,26 +11,41 @@ public abstract class TileTemp : TileTempDepr
     public bool containsFarmer
     {
         get { return farmerObj != null; }
-        set
-        {
-            if (value & farmerObj == null )
-            {
-                farmerObj = SpriteRepo.Sprites["Farmer", hexCoord];
-                farmerObj.transform.position = hexCoord.world() + .25f * Vector2.right;
-            }
-            else
-            {
-                GameObject.Destroy(farmerObj);
-                farmerObj = null;
-            }
-        }
     }
 
-    public void addExistingSoldier(Soldier soldier)
+    public void addFarmer()
     {
+        if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not add farmers from the client! Wrap your method in a ServerRpc."); }
+
+        farmerObj = SpriteRepo.Sprites["Farmer", hexCoord];
+        farmerObj.transform.position = hexCoord.world() + .25f * Vector2.right;
+    }
+
+    public void removeFarmer()
+    {
+        if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not remove farmers from the client! Wrap your method in a ServerRpc."); }
+
+        GameObject.Destroy(farmerObj);
+        farmerObj = null;
+    }
+
+    public void addSoldier(int owner)
+    {
+        if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not add new soldiers from the client! Wrap your method in a ServerRpc."); }
+
+        Soldier soldier = SpriteRepo.Sprites["Soldier", hexCoord].GetComponent<Soldier>();
+        soldier.transform.position = hexCoord.world() + Vector2.left * .25f;
+        soldier.owner.Value = owner;
+        soldiers.Add(soldier);
+    }
+
+    public void addSoldier(Soldier soldier)
+    {
+        // It's fine to add existing soldiers directly from the client
+
         soldier.AddToTile(hexCoord);
 
-        soldier.transform.position = hexCoord.world() + Vector2.left * .25f;
+        soldier.transform.position = hexCoord.world() + .25f * Vector2.left;
 
         //Debug.Log($"Soldier added to {hexCoord}");
 
@@ -48,15 +63,17 @@ public abstract class TileTemp : TileTempDepr
 
 
 
-    public void sendSoldier(Hex end)
+    public bool sendSoldier(Hex end, int localPlayerId)
     {
-        if (soldierCount != 0 && end != hexCoord)
+        // Only send if there is a soldier, the end isn't the start, and if the soldier is ours
+        if (soldierCount != 0 && 
+            end != hexCoord &&
+            soldiers[0].owner.Value == localPlayerId)
         {
             //GameObject.Destroy(soldiers[0].GetComponent<SoldierTrip>());
 
             Soldier soldier = soldiers[0];
             SoldierTrip trip;
-
 
             if (!soldier.TryGetComponent(out trip))
             {
@@ -66,24 +83,25 @@ public abstract class TileTemp : TileTempDepr
             else
                 trip.init(hexCoord, end);
 
-
             soldiers.RemoveAt(0);
 
             if (soldierCount != 0)
             {
                 soldiers[0].FadeIn();
             }
-
-
+            return true;
         }
         else Debug.Log("cannot Send");
+        return false;
     }
 
     //destroys all associated gameobjects
     public override void End()
     {
-        GameObject.Destroy(farmerObj);
-        foreach(var soldier in soldiers)
+        // Destroying objects messed up things for me with networking - Eli
+
+        //GameObject.Destroy(farmerObj);
+        foreach (var soldier in soldiers)
         {
             //GameObject.Destroy(soldier.gameObject);
         }
@@ -94,6 +112,7 @@ public abstract class TileTemp : TileTempDepr
     /// list of the soldiers on the tile
     ///
     /// *may need to be split into multiple lists depending on what fights look like*
+    /// If you want to add to the list of soldiers, use soldier.AddToTile(hexCoord), NOT soldiers.Add(soldier)
     /// </summary>
     public List<Soldier> soldiers = new List<Soldier>();
 
@@ -181,9 +200,11 @@ public abstract class TileTemp : TileTempDepr
         frame = (int) (frameInternal / frameRate);
 
         //farmer autoharvest
-        if(containsFarmer & frame >= 6)
+        if(containsFarmer && frame >= 6)
         {
-            Repository.Central.money += reset();
+            double moneyToAdd = reset();
+            if (tileOwner == Repository.Central.localPlayerId)
+                Repository.Central.money += moneyToAdd;
         }
 
         if(TileName != "Blank")

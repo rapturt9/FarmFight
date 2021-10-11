@@ -637,7 +637,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7d83d5ea1929467b9cccde1ed9267c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  central: {fileID: 0}
   SpriteList:
   - {fileID: 2082715349369691973, guid: 9b343c7bbb512c44983d440951ed3179, type: 3}
   - {fileID: 6142443459459213303, guid: 7578e400634adf84399e87fc3357b6af, type: 3}
@@ -2234,7 +2233,7 @@ MonoBehaviour:
       - m_Target: {fileID: 1645006423}
         m_TargetAssemblyTypeName: Market, Assembly-CSharp
         m_MethodName: SetFarmer
-        m_Mode: 6
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
