@@ -77,6 +77,12 @@ public class CropManager : NetworkBehaviour
     
     public bool canPlant(Hex hex)
     {
+        // We can't overwrite an opponent's crop
+        if (handler[hex].cropType != CropType.blankTile && handler[hex].tileOwner != central.localPlayerId)
+        {
+            return false;
+        }
+        // Check if there is an adjacent tile owned by us
         foreach (var adj in TileManager.TM.getValidNeighbors(hex))
         {
             if (hasCrop(adj) && (handler[adj].tileOwner == central.localPlayerId))
@@ -113,22 +119,15 @@ public class CropManager : NetworkBehaviour
         {
             handler[hex] = new Rice();
         }
+        // Set owner
+        handler[hex].tileOwner = central.localPlayerId;
+        handler.SyncTile(hex);
         return true;
     }
 
     public void clearTile(Hex hex)
     {
         handler[hex] = new BlankTile();
-    }
-
-    // Toggles farmer from on to off
-    public bool switchFarmer(Hex hex)
-    {
-        if (handler[hex].containsFarmer == false)
-            addFarmer(hex);
-        else
-            removeFarmer(hex);
-        return false;
     }
 
     public bool addFarmer(Hex hex)
@@ -168,12 +167,16 @@ public class CropManager : NetworkBehaviour
         handler.SyncTile(hex);
     }
 
-    public void addSoldier(Hex hex)
+    public bool addSoldier(Hex hex)
     {
         int[] hexArray = BoardHelperFns.HexToArray(hex);
         int owner = central.localPlayerId;
         if (handler[hex].tileOwner == owner)
+        {
             addSoldierServerRpc(hexArray, owner);
+            return true;
+        }
+        return false;
     }
 
     // We initially spawn a soldier only on the server

@@ -214,12 +214,6 @@ public abstract class TileTemp : TileTempDepr
         } else {
             currentArt = tileArts[7];
         }
-
-
-
-
-
-
     }
 
     //return crop level and reset crop growth

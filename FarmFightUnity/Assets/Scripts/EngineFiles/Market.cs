@@ -21,6 +21,8 @@ public class Market : NetworkBehaviour
         {CropType.carrot, 2},
         {CropType.rice, 10},
     };
+    int soldierCost = 10;
+    int farmerCost = 5;
 
     void Start()
     {
@@ -86,25 +88,28 @@ public class Market : NetworkBehaviour
         if (central.money >= cost && crops.addCrop(coord, cropType))
         {
             central.money -= cost;
-            // Set owner
-            crops.handler[coord].tileOwner = central.localPlayerId;
-            crops.handler.SyncTile(coord);
         }
     }
 
     public void SetFarmer()
     {
-        crops.switchFarmer(selectedHex);
-        //if (state)
-        //    crops.addFarmer(selectedHex);
-        //else
-        //    crops.removeFarmer(selectedHex);
-
-        crops.handler.SyncTile(selectedHex);
+        // Add farmer
+        if (crops.handler[selectedHex].containsFarmer == false &&
+            central.money >= farmerCost &&
+            crops.addFarmer(selectedHex))
+        {
+            central.money -= farmerCost;
+        }
+        // Remove farmer
+        else
+        {
+            crops.removeFarmer(selectedHex);
+        }
     }
 
     public void AddSoldier()
     {
-        crops.addSoldier(selectedHex);
+        if (central.money >= soldierCost && crops.addSoldier(selectedHex))
+            central.money -= soldierCost;
     }
 }
