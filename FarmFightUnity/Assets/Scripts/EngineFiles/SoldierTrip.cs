@@ -55,7 +55,7 @@ public class SoldierTrip: NetworkBehaviour
             while(transform.position != wayPoint)
             {
                 transform.position = Vector3.MoveTowards(transform.position, wayPoint, soldier.travelSpeed);
-                yield return null;
+                yield return new WaitForFixedUpdate();
             }
         }
         

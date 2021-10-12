@@ -12,7 +12,7 @@ public class Soldier: NetworkBehaviour
 
     public TileHandler handler;
 
-    public float travelSpeed = .005f;
+    public float travelSpeed = 0.1f;
     
     public float fadesSpeed = .01f;
 

@@ -65,9 +65,10 @@ public abstract class TileTemp : TileTempDepr
 
     public bool sendSoldier(Hex end, int localPlayerId)
     {
-        // Only send if there is a soldier, the end isn't the start, and if the soldier is ours
-        if (soldierCount != 0 && 
+        // Only send if there is a soldier, the end isn't the start, the hex is on the board, and if the soldier is ours
+        if (soldierCount != 0 &&
             end != hexCoord &&
+            TileManager.TM.isValidHex(end) &&
             soldiers[0].owner.Value == localPlayerId)
         {
             //GameObject.Destroy(soldiers[0].GetComponent<SoldierTrip>());

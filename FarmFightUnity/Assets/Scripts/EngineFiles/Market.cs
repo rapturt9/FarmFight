@@ -45,11 +45,11 @@ public class Market : NetworkBehaviour
 
         ChangeSelectedHex();
         TryHarvestCrop();
+        TryHotkey();
 
         // Updates money text
         string dollars = "$" + (((int)(central.money * 100)) / 100.0).ToString();
         moneyText.text = dollars;
-
     }
 
     // Change selected hex
@@ -75,6 +75,35 @@ public class Market : NetworkBehaviour
             {
                 central.money += add * add / 200;
             }
+        }
+    }
+
+    // Plants a crop based on keyboard shortcuts
+    void TryHotkey()
+    {
+        if (Input.GetKeyDown("1"))
+        {
+            SetCrop((int)CropType.potato);
+        }
+        else if (Input.GetKeyDown("2"))
+        {
+            SetCrop((int)CropType.carrot);
+        }
+        else if (Input.GetKeyDown("3"))
+        {
+            SetCrop((int)CropType.rice);
+        }
+        else if (Input.GetKeyDown("4"))
+        {
+            //SetCrop((int)CropType.eggplant);
+        }
+        else if (Input.GetKeyDown("5"))
+        {
+            SetFarmer();
+        }
+        else if (Input.GetKeyDown("6"))
+        {
+            AddSoldier();
         }
     }
 

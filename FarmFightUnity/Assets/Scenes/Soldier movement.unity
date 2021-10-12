@@ -1092,7 +1092,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a1add2ae3604ae4793247b72ea82b31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startAsHost: 0
+  startAsHost: 1
 --- !u!4 &1041828389
 Transform:
   m_ObjectHideFlags: 0
