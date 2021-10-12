@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MLAPI;
 
-public class SoldierTrip: MonoBehaviour
+public class SoldierTrip: NetworkBehaviour
 {
     
 
@@ -54,22 +55,12 @@ public class SoldierTrip: MonoBehaviour
             while(transform.position != wayPoint)
             {
                 transform.position = Vector3.MoveTowards(transform.position, wayPoint, soldier.travelSpeed);
-                yield return null;
+                yield return new WaitForFixedUpdate();
             }
         }
-
         
         TileManager.TM["Crops"][end].addSoldier(soldier);
 
         //Repository.Central.cropHandler.SyncTile(end);
-
-
-
-
-
-    }    
-
-
-
-
+    }
 }

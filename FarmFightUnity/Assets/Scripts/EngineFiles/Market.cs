@@ -21,6 +21,8 @@ public class Market : NetworkBehaviour
         {CropType.carrot, 2},
         {CropType.rice, 10},
     };
+    int soldierCost = 10;
+    int farmerCost = 5;
 
     void Start()
     {
@@ -43,11 +45,11 @@ public class Market : NetworkBehaviour
 
         ChangeSelectedHex();
         TryHarvestCrop();
+        TryHotkey();
 
         // Updates money text
         string dollars = "$" + (((int)(central.money * 100)) / 100.0).ToString();
         moneyText.text = dollars;
-
     }
 
     // Change selected hex
@@ -76,6 +78,35 @@ public class Market : NetworkBehaviour
         }
     }
 
+    // Plants a crop based on keyboard shortcuts
+    void TryHotkey()
+    {
+        if (Input.GetKeyDown("1"))
+        {
+            SetCrop((int)CropType.potato);
+        }
+        else if (Input.GetKeyDown("2"))
+        {
+            SetCrop((int)CropType.carrot);
+        }
+        else if (Input.GetKeyDown("3"))
+        {
+            SetCrop((int)CropType.rice);
+        }
+        else if (Input.GetKeyDown("4"))
+        {
+            //SetCrop((int)CropType.eggplant);
+        }
+        else if (Input.GetKeyDown("5"))
+        {
+            SetFarmer();
+        }
+        else if (Input.GetKeyDown("6"))
+        {
+            AddSoldier();
+        }
+    }
+
     public void SetCrop(int cropInt)
     {
         CropType cropType = (CropType)cropInt;
@@ -86,32 +117,28 @@ public class Market : NetworkBehaviour
         if (central.money >= cost && crops.addCrop(coord, cropType))
         {
             central.money -= cost;
-            // Set owner
-            crops.handler[coord].tileOwner = central.localPlayerId;
-            crops.handler.SyncTile(coord);
         }
     }
 
-    public void SetFarmer(bool state = true)
+    public void SetFarmer()
     {
-        if (state)
-            crops.addFarmer(selectedHex);
+        // Add farmer
+        if (crops.handler[selectedHex].containsFarmer == false &&
+            central.money >= farmerCost &&
+            crops.addFarmer(selectedHex))
+        {
+            central.money -= farmerCost;
+        }
+        // Remove farmer
         else
+        {
             crops.removeFarmer(selectedHex);
-
-        //crops.handler.SyncTile(selectedHex);
+        }
     }
 
     public void AddSoldier()
     {
-        crops.addSoldier(selectedHex);
-        //crops.handler.SyncTile(selectedHex);
-    }
-
-    
-
-    public void Set()
-    {
-
+        if (central.money >= soldierCost && crops.addSoldier(selectedHex))
+            central.money -= soldierCost;
     }
 }

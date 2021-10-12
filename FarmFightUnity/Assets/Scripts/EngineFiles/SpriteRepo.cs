@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MLAPI;
+using MLAPI.Messaging;
 
-public class SpriteRepo : MonoBehaviour
+public class SpriteRepo : NetworkBehaviour
 {
     // Start is called before the first frame update
 
     public static SpriteRepo Sprites;
 
+    public List<GameObject> SpriteList;
     private Dictionary<string, GameObject> SpriteObjects;
 
     public GameObject this[string name, Hex hex]
@@ -16,7 +19,7 @@ public class SpriteRepo : MonoBehaviour
         {
             GameObject temp = Instantiate(SpriteObjects[name]);
             temp.transform.parent = gameObject.transform;
-            temp.SetActive(true);
+            temp.GetComponent<NetworkObject>().Spawn();
 
             return temp;
         }
@@ -25,8 +28,7 @@ public class SpriteRepo : MonoBehaviour
 
     public void Awake()
     {
-
-        if(Sprites != null)
+        if (Sprites != null)
         {
             Destroy(gameObject);
         }
@@ -37,14 +39,9 @@ public class SpriteRepo : MonoBehaviour
 
         SpriteObjects = new Dictionary<string, GameObject>();
 
-
-        List<GameObject> childrenTrans = new List<GameObject>();
-        foreach(Transform child in transform)
+        foreach (GameObject obj in SpriteList)
         {
-            SpriteObjects.Add(child.gameObject.name, child.gameObject);
+            SpriteObjects.Add(obj.name, obj);
         }
     }
-
-
-
 }
