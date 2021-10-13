@@ -329,3 +329,26 @@ public class HighLight: TileTemp
 
     }
 }
+
+
+public class SoldierDestination: TileTemp
+{
+    public override void LoadArt()
+    {
+        currentArt = TileArtRepository.Art["SoldierDestination"];
+    }
+    public override TileArt getCropArt()
+    {
+        return null;
+    }
+
+    public override void Start()
+    {
+
+    }
+
+    public override void Behavior()
+    {
+
+    }
+}

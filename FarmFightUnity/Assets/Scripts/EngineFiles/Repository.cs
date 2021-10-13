@@ -42,4 +42,18 @@ public class Repository : MonoBehaviour
     public TileHandler cropHandler;
 
 
+
+    public PlayState GamesMode;
+
+   
+}
+
+/// modes
+public enum PlayState
+{
+    NormalGame,
+    PauseGame,
+    SoldierSend
+
+
 }

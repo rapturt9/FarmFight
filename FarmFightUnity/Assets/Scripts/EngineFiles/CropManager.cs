@@ -26,9 +26,7 @@ public class CropManager : NetworkBehaviour
         // Right click to send a soldier
         if (Input.GetMouseButtonDown(1))
         {
-            sendSoldierServerRpc(BoardHelperFns.HexToArray(central.selectedHex),
-                BoardHelperFns.HexToArray(TileManager.TM.getMouseHex()),
-                central.localPlayerId);
+            
         }
 
         // Soldier on tile debugging
@@ -197,5 +195,13 @@ public class CropManager : NetworkBehaviour
         TileTemp startTile = handler[start];
         if (startTile.sendSoldier(end, localPlayerId))
             handler.SyncTile(start);
+    }
+
+
+    public void SendSoldier(Hex start, Hex end, int number = 1)
+    {
+        sendSoldierServerRpc(BoardHelperFns.HexToArray(start),
+                BoardHelperFns.HexToArray(end),
+                central.localPlayerId);
     }
 }
