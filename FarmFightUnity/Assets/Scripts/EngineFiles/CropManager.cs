@@ -16,8 +16,7 @@ public class CropManager : NetworkBehaviour
         central = Repository.Central;
         handler = GetComponent<TileHandler>();
     }
-
-
+}
 
     private void Update()
     {
@@ -72,6 +71,7 @@ public class CropManager : NetworkBehaviour
 
         return 0;
     }
+
     
     public bool canPlant(Hex hex)
     {
@@ -81,6 +81,12 @@ public class CropManager : NetworkBehaviour
             return false;
         }
         // Check if there is an adjacent tile owned by us
+    }
+
+
+    public bool canPlant(Hex hex)
+    {
+
         foreach (var adj in TileManager.TM.getValidNeighbors(hex))
         {
             if (hasCrop(adj) && (handler[adj].tileOwner == central.localPlayerId))
@@ -117,9 +123,11 @@ public class CropManager : NetworkBehaviour
         {
             handler[hex] = new Rice();
         }
+
         // Set owner
         handler[hex].tileOwner = central.localPlayerId;
         handler.SyncTile(hex);
+
         return true;
     }
 

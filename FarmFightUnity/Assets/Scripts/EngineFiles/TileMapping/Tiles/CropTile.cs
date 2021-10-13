@@ -200,6 +200,7 @@ public abstract class TileTemp : TileTempDepr
 
         frame = (int) (frameInternal / frameRate);
 
+
         //farmer autoharvest
         if(containsFarmer && frame >= 6)
         {
@@ -208,8 +209,6 @@ public abstract class TileTemp : TileTempDepr
                 Repository.Central.money += moneyToAdd;
         }
 
-        if(TileName != "Blank")
-            //Debug.Log(farmerObj == null);
         if(0 <= frame && frame <= 7){
             currentArt = tileArts[frame];
         } else {
