@@ -187,7 +187,7 @@ MonoBehaviour:
   localPlayerId: 0
   gameIsRunning: 0
   money: 100
-  cropHandler: {fileID: 1228046376}
+  cropHandler: {fileID: 0}
   GamesMode: 0
 --- !u!114 &58370723
 MonoBehaviour:
@@ -530,7 +530,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7331fdbad00441619c6516ff7a4c4aa, type: 3}
   m_Name: 
@@ -686,8 +686,8 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 627222476}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 90}
+  m_LocalScale: {x: 0.010638298, y: 0.010638298, z: 0.010638298}
   m_Children:
   - {fileID: 1645006419}
   m_Father: {fileID: 1721554659}
@@ -696,8 +696,8 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0}
+  m_SizeDelta: {x: 1053.0001, y: 658}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &627222478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -737,7 +737,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!223 &627222480
 Canvas:
   m_ObjectHideFlags: 0
@@ -747,7 +747,7 @@ Canvas:
   m_GameObject: {fileID: 627222476}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 2
   m_Camera: {fileID: 519420031}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -1765,7 +1765,7 @@ RectTransform:
   m_GameObject: {fileID: 1645006418}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0872862, y: 1.0872862, z: 1.0872862}
+  m_LocalScale: {x: 0.93844473, y: 0.93844473, z: 0.93844473}
   m_Children:
   - {fileID: 346193513}
   - {fileID: 1806827006}
