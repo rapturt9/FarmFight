@@ -16,7 +16,7 @@ public class CropManager : NetworkBehaviour
         central = Repository.Central;
         handler = GetComponent<TileHandler>();
     }
-}
+
 
     private void Update()
     {
@@ -72,7 +72,7 @@ public class CropManager : NetworkBehaviour
         return 0;
     }
 
-    
+    /*
     public bool canPlant(Hex hex)
     {
         // We can't overwrite an opponent's crop
@@ -82,7 +82,7 @@ public class CropManager : NetworkBehaviour
         }
         // Check if there is an adjacent tile owned by us
     }
-
+    */
 
     public bool canPlant(Hex hex)
     {
