@@ -134,7 +134,7 @@ public class Market : NetworkBehaviour
         }
         else if (Input.GetKeyDown("7"))
         {
-            SoldierSendUpdate();
+            SendSoldier();
         }
         
     }
