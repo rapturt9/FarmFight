@@ -48,9 +48,11 @@ public struct Hex
         Vector2Int cell = this.Cell();
         float R3 = Mathf.Sqrt(3);
 
-        float Y = (int)((cell.y * R3 / (2*yscale)) - ((R3*yscale / 4) * (cell.x & 1)));
+        float x = cell.x * R3 / 2 + ((cell.y & 1) * R3/4) ;
 
-        return new Vector2((cell.x * .75f), Y);
+        float y = cell.y * .75f;
+
+        return new Vector2(y, x);
     }
 
     public static Hex fromWorld(Vector3 coords, float yscale = 1)

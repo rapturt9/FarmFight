@@ -26,6 +26,9 @@ public class GameManager : NetworkBehaviour
     private void Start()
     {
         central = Repository.Central;
+
+        central.GamesMode = PlayState.NormalGame;
+
     }
 
     public override void NetworkStart()
@@ -46,6 +49,7 @@ public class GameManager : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+
         if (!gameIsRunning) { return; }
 
         Hex hex = TileManager.TM.getMouseHex();
@@ -56,8 +60,21 @@ public class GameManager : NetworkBehaviour
             Repository.Central.selectedHex = hex;
         }
 
-        //Debug.Log(central.selectedHex);
     }
+
+
+    /// <summary>
+    /// normalGame Function
+    /// </summary>
+
+    public void NormalGameFunction()
+    {
+        Market.market.MarketUpdateFunctionality();
+    }
+
+
+
+
 
     // Sets up corners for players to start. Only called server-side
     void SetupCorners()

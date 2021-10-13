@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MLAPI;
+using MLAPI.Messaging;
 
-public class CropManager : MonoBehaviour
+public class CropManager : NetworkBehaviour
 {
     // Start is called before the first frame update
 
@@ -14,24 +16,25 @@ public class CropManager : MonoBehaviour
         central = Repository.Central;
         handler = GetComponent<TileHandler>();
     }
+}
 
     private void Update()
     {
-        /*
-        if (Input.GetMouseButtonDown(0) &
-                TileManager.TM.isValidHex(TileManager.TM.getMouseHex()))
-        {
+        if (!central.gameIsRunning) { return; }
 
-            addCarrot(TileManager.TM.getMouseHex());
+        // Right click to send a soldier
+        if (Input.GetMouseButtonDown(1))
+        {
+            
         }
 
-        if (Input.GetMouseButtonDown(1) &
-                TileManager.TM.isValidHex(TileManager.TM.getMouseHex()))
-        {
-
-            clearTile(TileManager.TM.getMouseHex());
-        }
-        */
+        // Soldier on tile debugging
+        //List<Soldier> s = handler[central.selectedHex].soldiers;
+        //if (s.Count > 0)
+        //{
+        //    Debug.Log("Length " + s.Count.ToString());
+        //    Debug.Log(s[0].owner.Value);
+        //}
     }
 
     public double harvest(Hex hex)
@@ -69,9 +72,21 @@ public class CropManager : MonoBehaviour
         return 0;
     }
 
+    
+    public bool canPlant(Hex hex)
+    {
+        // We can't overwrite an opponent's crop
+        if (handler[hex].cropType != CropType.blankTile && handler[hex].tileOwner != central.localPlayerId)
+        {
+            return false;
+        }
+        // Check if there is an adjacent tile owned by us
+    }
+
 
     public bool canPlant(Hex hex)
     {
+
         foreach (var adj in TileManager.TM.getValidNeighbors(hex))
         {
             if (hasCrop(adj) && (handler[adj].tileOwner == central.localPlayerId))
@@ -108,6 +123,11 @@ public class CropManager : MonoBehaviour
         {
             handler[hex] = new Rice();
         }
+
+        // Set owner
+        handler[hex].tileOwner = central.localPlayerId;
+        handler.SyncTile(hex);
+
         return true;
     }
 
@@ -118,29 +138,78 @@ public class CropManager : MonoBehaviour
 
     public bool addFarmer(Hex hex)
     {
-        if (handler[hex].containsFarmer == false)
+        if (handler[hex].containsFarmer == false && handler[hex].tileOwner == central.localPlayerId)
         {
-            handler[hex].containsFarmer = true;
-            Debug.Log("Has Farmer");
+            addFarmerServerRpc(BoardHelperFns.HexToArray(hex));
             return true;
         }
         return false;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void addFarmerServerRpc(int[] hexArray)
+    {
+        Hex hex = BoardHelperFns.ArrayToHex(hexArray);
+        handler[hex].addFarmer();
+        handler.SyncTile(hex);
+        Debug.Log("Has Farmer");
     }
 
     public bool removeFarmer(Hex hex)
     {
-
         if (handler[hex].containsFarmer == true)
         {
-            handler[hex].containsFarmer = false;
+            removeFarmerServerRpc(BoardHelperFns.HexToArray(hex));
             return true;
         }
         return false;
     }
 
-
-    public void addSoldier(Hex hex, int number = 1)
+    [ServerRpc(RequireOwnership = false)]
+    public void removeFarmerServerRpc(int[] hexArray)
     {
-        handler[hex].soldiers += number;
+        Hex hex = BoardHelperFns.ArrayToHex(hexArray);
+        handler[hex].removeFarmer();
+        handler.SyncTile(hex);
+    }
+
+    public bool addSoldier(Hex hex)
+    {
+        int[] hexArray = BoardHelperFns.HexToArray(hex);
+        int owner = central.localPlayerId;
+        if (handler[hex].tileOwner == owner)
+        {
+            addSoldierServerRpc(hexArray, owner);
+            return true;
+        }
+        return false;
+    }
+
+    // We initially spawn a soldier only on the server
+    [ServerRpc(RequireOwnership = false)]
+    void addSoldierServerRpc(int[] hexArray, int owner)
+    {
+        Hex hex = BoardHelperFns.ArrayToHex(hexArray);
+        handler[hex].addSoldier(owner);
+        handler.SyncTile(hex);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void sendSoldierServerRpc(int[] startArray, int[] endArray, int localPlayerId)
+    {
+        Hex start = BoardHelperFns.ArrayToHex(startArray);
+        Hex end = BoardHelperFns.ArrayToHex(endArray);
+
+        TileTemp startTile = handler[start];
+        if (startTile.sendSoldier(end, localPlayerId))
+            handler.SyncTile(start);
+    }
+
+
+    public void SendSoldier(Hex start, Hex end, int number = 1)
+    {
+        sendSoldierServerRpc(BoardHelperFns.HexToArray(start),
+                BoardHelperFns.HexToArray(end),
+                central.localPlayerId);
     }
 }

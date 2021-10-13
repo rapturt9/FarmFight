@@ -2,19 +2,151 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MLAPI;
+using MLAPI.Messaging;
 
 public abstract class TileTemp : TileTempDepr
 {
     public CropType cropType = CropType.blankTile;
     public float timeLastPlanted = 0f;
-    public bool containsFarmer = false;
+    public bool containsFarmer
+    {
+        get { return farmerObj != null; }
+    }
+
+    public void addFarmer()
+    {
+        if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not add farmers from the client! Wrap your method in a ServerRpc."); }
+
+        farmerObj = SpriteRepo.Sprites["Farmer", hexCoord];
+        farmerObj.transform.position = hexCoord.world() + .25f * Vector2.right;
+    }
+
+    public void removeFarmer()
+    {
+        if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not remove farmers from the client! Wrap your method in a ServerRpc."); }
+
+        GameObject.Destroy(farmerObj);
+        farmerObj = null;
+    }
+
+    public void addSoldier(int owner)
+    {
+        if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not add new soldiers from the client! Wrap your method in a ServerRpc."); }
+
+        Soldier soldier = SpriteRepo.Sprites["Soldier", hexCoord].GetComponent<Soldier>();
+        soldier.transform.position = hexCoord.world() + Vector2.left * .25f;
+        soldier.owner.Value = owner;
+        soldiers.Add(soldier);
+    }
+
+    public void addSoldier(Soldier soldier)
+    {
+        // It's fine to add existing soldiers directly from the client
+
+        soldier.AddToTile(hexCoord);
+
+        soldier.transform.position = hexCoord.world() + .25f * Vector2.left;
+
+        //Debug.Log($"Soldier added to {hexCoord}");
+
+        if(soldierCount > 1)
+        {
+            soldier.FadeOut();
+        }
+
+        if (soldierCount == 0)
+        {
+            //Debug.Log("adding Failed");
+            //addSoldier(soldier);
+        }
+    }
+
+
+
+    public bool sendSoldier(Hex end, int localPlayerId)
+    {
+        // Only send if there is a soldier, the end isn't the start, the hex is on the board, and if the soldier is ours
+        if (soldierCount != 0 &&
+            end != hexCoord &&
+            TileManager.TM.isValidHex(end) &&
+            soldiers[0].owner.Value == localPlayerId)
+        {
+            //GameObject.Destroy(soldiers[0].GetComponent<SoldierTrip>());
+
+            Soldier soldier = soldiers[0];
+            SoldierTrip trip;
+
+            if (!soldier.TryGetComponent(out trip))
+            {
+                soldiers[0].gameObject.AddComponent<SoldierTrip>()
+                .init(hexCoord, end);
+            }
+            else
+                trip.init(hexCoord, end);
+
+            soldiers.RemoveAt(0);
+
+            if (soldierCount != 0)
+            {
+                soldiers[0].FadeIn();
+            }
+            return true;
+        }
+        else Debug.Log("cannot Send");
+        return false;
+    }
+
+    //destroys all associated gameobjects
+    public override void End()
+    {
+        // Destroying objects messed up things for me with networking - Eli
+
+        //GameObject.Destroy(farmerObj);
+        foreach (var soldier in soldiers)
+        {
+            //GameObject.Destroy(soldier.gameObject);
+        }
+    }
+
+
+    /// <summary>
+    /// list of the soldiers on the tile
+    ///
+    /// *may need to be split into multiple lists depending on what fights look like*
+    /// If you want to add to the list of soldiers, use soldier.AddToTile(hexCoord), NOT soldiers.Add(soldier)
+    /// </summary>
+    public List<Soldier> soldiers = new List<Soldier>();
+
+    /// <summary>
+    /// the Gameobject representing a farmer
+    /// </summary>
+    public GameObject farmerObj = null;
+
+    /// <summary>
+    /// the tiles owner
+    /// </summary>
     public int tileOwner = -1;
+
+    /// <summary>
+    /// name
+    /// </summary>
     public string TileName;
+
+    /// <summary>
+    /// self explamnatory
+    /// </summary>
     public float timeBetweenFrames = 0.5f;
 
+    /// <summary>
+    /// implement to set a crop art
+    /// </summary>
+    /// <returns></returns>
     public abstract TileArt getCropArt();
 
-    public int soldiers = 0;
+    /// <summary>
+    /// number of soldiers
+    /// </summary>
+    public int soldierCount { get { return soldiers.Count; } }
 
     public List<TileArt> tileArts;
 
@@ -34,6 +166,8 @@ public abstract class TileTemp : TileTempDepr
 
     public override void Start()
     {
+        soldiers = new List<Soldier>();
+
         if (timeLastPlanted == 0f)
             timeLastPlanted = NetworkManager.Singleton.NetworkTime;
         frame = 0;
@@ -41,8 +175,17 @@ public abstract class TileTemp : TileTempDepr
         frameInternal = 0;
     }
 
+    /// <summary>
+    /// the frame the tile is displaying
+    /// </summary>
     public int frame;
+
+    /// <summary>
+    /// the the framerate
+    /// </summary>
     public float frameRate;
+
+
     private float frameInternal;
 
     public override void Behavior()
@@ -57,12 +200,20 @@ public abstract class TileTemp : TileTempDepr
 
         frame = (int) (frameInternal / frameRate);
 
+
+        //farmer autoharvest
+        if(containsFarmer && frame >= 6)
+        {
+            double moneyToAdd = reset();
+            if (tileOwner == Repository.Central.localPlayerId)
+                Repository.Central.money += moneyToAdd;
+        }
+
         if(0 <= frame && frame <= 7){
             currentArt = tileArts[frame];
         } else {
             currentArt = tileArts[7];
         }
-
     }
 
     //return crop level and reset crop growth
@@ -161,6 +312,29 @@ public class HighLight: TileTemp
     public override void LoadArt()
     {
         currentArt = TileArtRepository.Art["Select"];
+    }
+    public override TileArt getCropArt()
+    {
+        return null;
+    }
+
+    public override void Start()
+    {
+
+    }
+
+    public override void Behavior()
+    {
+
+    }
+}
+
+
+public class SoldierDestination: TileTemp
+{
+    public override void LoadArt()
+    {
+        currentArt = TileArtRepository.Art["SoldierDestination"];
     }
     public override TileArt getCropArt()
     {
