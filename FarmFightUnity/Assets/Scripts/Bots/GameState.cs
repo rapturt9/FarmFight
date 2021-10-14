@@ -102,7 +102,7 @@ public class GameState : MonoBehaviour
         tile.timeLastPlanted = timeLastPlanted;
         //tile.containsFarmer = containsFarmer; // Can't sync now
         tile.tileOwner = tileOwner;
-
+        
         return tile;
     }
 
@@ -131,6 +131,7 @@ public class GameState : MonoBehaviour
             Hex coord = hexCoords[i];
             TileTemp tile = DeserializeTile(allTiles[i]);
             tileHandler.TileDict[coord].Tile = tile;
+            
         }
         // Add soldiers
         // TODO

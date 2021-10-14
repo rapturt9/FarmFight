@@ -39,7 +39,7 @@ public abstract class TileTemp : TileTempDepr
 
         soldiers.Add(soldier);
 
-        SortSoldiers();
+        //SortSoldiers();
     }
 
     public void addSoldier(Soldier soldier)
@@ -57,7 +57,7 @@ public abstract class TileTemp : TileTempDepr
             soldier.FadeOut();
         }
 
-        SortSoldiers();
+        //SortSoldiers();
 
     }
 
@@ -97,7 +97,7 @@ public abstract class TileTemp : TileTempDepr
             }
 
 
-            SortSoldiers();
+            //SortSoldiers();
 
             return true;
         }
@@ -243,7 +243,7 @@ public abstract class TileTemp : TileTempDepr
             //frameInternal += 1;
         }
 
-        SortSoldiers();
+        //SortSoldiers();
 
         frame = (int) (frameInternal / frameRate);
 
@@ -300,9 +300,9 @@ public abstract class TileTemp : TileTempDepr
     }
 
 
-    private Dictionary<int, List<Soldier>> SortedSoldiers = new Dictionary<int, List<Soldier>>();
+    private Dictionary<int, List<Soldier>> SortedSoldiers { get { return SortSoldiers(); } }
 
-    private void SortSoldiers()
+    private Dictionary<int, List<Soldier>> SortSoldiers()
     {
         
 
@@ -316,10 +316,10 @@ public abstract class TileTemp : TileTempDepr
         {
             temp[soldier.owner.Value].Add(soldier);
         }
+        //Debug.Log((SortedSoldiers[tileOwner].Count, soldierCount));
+        return temp;
 
-        SortedSoldiers = temp;
-
-        Debug.Log((SortedSoldiers[tileOwner].Count, soldierCount)) ;
+        
     }
 
 
