@@ -46,7 +46,7 @@ public class SoldierTrip: NetworkBehaviour
 
         soldier.FadeIn();
 
-        //soldier.GetComponent<SpriteRenderer>().color = Color.white;
+        
 
         soldier.GetComponent<SpriteRenderer>().enabled = true;
 
@@ -58,9 +58,10 @@ public class SoldierTrip: NetworkBehaviour
                 yield return new WaitForFixedUpdate();
             }
         }
-        
-        TileManager.TM["Crops"][end].addSoldier(soldier);
 
-        //Repository.Central.cropHandler.SyncTile(end);
+        soldier.AddToTile(end);
+        //TileManager.TM["Crops"][end].addSoldier(soldier);
+
+       
     }
 }

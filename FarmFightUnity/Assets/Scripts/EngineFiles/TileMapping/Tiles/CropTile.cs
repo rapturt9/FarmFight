@@ -36,7 +36,10 @@ public abstract class TileTemp : TileTempDepr
         Soldier soldier = SpriteRepo.Sprites["Soldier" + Repository.Central.localPlayerId.ToString(), hexCoord].GetComponent<Soldier>();
         soldier.transform.position = hexCoord.world() + Vector2.left * .25f;
         soldier.owner.Value = owner;
+
         soldiers.Add(soldier);
+
+        SortSoldiers();
     }
 
     public void addSoldier(Soldier soldier)
@@ -54,14 +57,55 @@ public abstract class TileTemp : TileTempDepr
             soldier.FadeOut();
         }
 
-        
-    }
+        SortSoldiers();
 
+    }
 
 
     public bool sendSoldier(Hex end, int localPlayerId)
     {
+
+        if (soldierCount != 0 &&
+            end != hexCoord &&
+            TileManager.TM.isValidHex(end) &&
+            SortedSoldiers[localPlayerId].Count != 0)
+        {
+            Debug.Log("I Got Inside");
+
+            Soldier soldier = FindFirstSoldierWithID(localPlayerId);
+
+            if (soldier == null)
+                return false;
+
+
+            SoldierTrip trip;
+
+            if (!soldier.TryGetComponent(out trip))
+            {
+                soldier.gameObject.AddComponent<SoldierTrip>()
+                .init(hexCoord, end);
+            }
+            else
+                trip.init(hexCoord, end);
+
+
+            soldiers.Remove(soldier);
+
+            if (soldierCount != 0 || false)
+            {
+                soldiers[0].FadeIn();
+            }
+
+
+            SortSoldiers();
+
+            return true;
+        }
+        else Debug.Log("cannot Send");
+
+
         // Only send if there is a soldier, the end isn't the start, the hex is on the board, and if the soldier is ours
+        /*
         if (soldierCount != 0 &&
             end != hexCoord &&
             TileManager.TM.isValidHex(end) &&
@@ -86,9 +130,15 @@ public abstract class TileTemp : TileTempDepr
             {
                 soldiers[0].FadeIn();
             }
+
+
+            SortSoldiers();
+
             return true;
         }
         else Debug.Log("cannot Send");
+        */
+
         return false;
     }
 
@@ -162,6 +212,8 @@ public abstract class TileTemp : TileTempDepr
     {
         soldiers = new List<Soldier>();
 
+        
+
         if (timeLastPlanted == 0f)
             timeLastPlanted = NetworkManager.Singleton.NetworkTime;
         frame = 0;
@@ -191,9 +243,9 @@ public abstract class TileTemp : TileTempDepr
             //frameInternal += 1;
         }
 
+        SortSoldiers();
 
         frame = (int) (frameInternal / frameRate);
-
 
         //farmer autoharvest
         if(containsFarmer && frame >= 6)
@@ -203,12 +255,19 @@ public abstract class TileTemp : TileTempDepr
                 Repository.Central.money += moneyToAdd;
         }
 
-        if(0 <= frame && frame <= 7){
+        if(0 <= frame && frame <= 7)
+        {
             currentArt = tileArts[frame];
-        } else {
+        } else
+        {
             currentArt = tileArts[7];
         }
+
+        Debug.Log(soldierCount);
     }
+
+
+    
 
     //return crop level and reset crop growth
     public double reset () {
@@ -225,6 +284,54 @@ public abstract class TileTemp : TileTempDepr
         frame = 0;
         return calc;
     }
+
+
+
+
+    /// BattleStuff
+    /// 
+    
+
+    public Soldier FindFirstSoldierWithID(int id)
+    {
+
+        return SortedSoldiers[id].Count == 0 ? null : SortedSoldiers[id][0];
+        
+    }
+
+
+    private Dictionary<int, List<Soldier>> SortedSoldiers = new Dictionary<int, List<Soldier>>();
+
+    private void SortSoldiers()
+    {
+        
+
+        Dictionary<int, List<Soldier>> temp = new Dictionary<int, List<Soldier>>();
+        for(int i = 0; i < 6; i++)
+        {
+            temp[i] = new List<Soldier>();
+        }
+
+        foreach (var soldier in soldiers)
+        {
+            temp[soldier.owner.Value].Add(soldier);
+        }
+
+        SortedSoldiers = temp;
+
+        Debug.Log((SortedSoldiers[tileOwner].Count, soldierCount)) ;
+    }
+
+
+    private void BattleHandler()
+    {
+        
+    }
+
+
+
+
+
 }
 
 public enum CropType

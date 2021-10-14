@@ -4,15 +4,34 @@ using UnityEngine;
 
 public class BoardChecker : MonoBehaviour
 {
+    public TileHandler cropTiles;
+
+    
+
+
+
+
+
+
+
+
+
+    /// <summary>
+    /// internal stuff
+    /// </summary>
     // Start is called before the first frame update
     void Start()
     {
         
     }
 
-    // Update is called once per frame
-    void Update()
+    
+
+    public IEnumerator CheckBoard()
     {
-        
+        while (true)
+        {
+            
+        }
     }
 }
