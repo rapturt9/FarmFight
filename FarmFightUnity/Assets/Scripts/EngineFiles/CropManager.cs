@@ -110,7 +110,10 @@ public class CropManager : NetworkBehaviour
         {
             return false;
         }
-
+        /*
+        if (handler[hex].cropType != CropType.blankTile)
+            central.money -= 5;
+        */
         if (cropType == CropType.potato)
         {
             handler[hex] = new Potato();

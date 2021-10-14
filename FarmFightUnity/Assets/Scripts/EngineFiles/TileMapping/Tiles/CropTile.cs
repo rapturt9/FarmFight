@@ -17,7 +17,7 @@ public abstract class TileTemp : TileTempDepr
     {
         if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not add farmers from the client! Wrap your method in a ServerRpc."); }
 
-        farmerObj = SpriteRepo.Sprites["Farmer", hexCoord];
+        farmerObj = SpriteRepo.Sprites["Farmer" + Repository.Central.localPlayerId.ToString(), hexCoord];
         farmerObj.transform.position = hexCoord.world() + .25f * Vector2.right;
     }
 
@@ -33,7 +33,7 @@ public abstract class TileTemp : TileTempDepr
     {
         if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not add new soldiers from the client! Wrap your method in a ServerRpc."); }
 
-        Soldier soldier = SpriteRepo.Sprites["Soldier", hexCoord].GetComponent<Soldier>();
+        Soldier soldier = SpriteRepo.Sprites["Soldier" + Repository.Central.localPlayerId.ToString(), hexCoord].GetComponent<Soldier>();
         soldier.transform.position = hexCoord.world() + Vector2.left * .25f;
         soldier.owner.Value = owner;
         soldiers.Add(soldier);
@@ -54,11 +54,7 @@ public abstract class TileTemp : TileTempDepr
             soldier.FadeOut();
         }
 
-        if (soldierCount == 0)
-        {
-            //Debug.Log("adding Failed");
-            //addSoldier(soldier);
-        }
+        
     }
 
 
@@ -141,7 +137,7 @@ public abstract class TileTemp : TileTempDepr
     /// implement to set a crop art
     /// </summary>
     /// <returns></returns>
-    public abstract TileArt getCropArt();
+    public abstract List<TileArt> getCropArt();
 
     /// <summary>
     /// number of soldiers
@@ -153,15 +149,13 @@ public abstract class TileTemp : TileTempDepr
     public override void LoadArt()
     {
         tileArts = new List<TileArt>();
-        for(int i = 0; i < 7; i++)
+        for(int i = 0; i < 5; i++)
         {
             tileArts.Add(getTileArt("Plant" + i.ToString()));
 
-            if(i == 4)
-            {
-                tileArts.Add(getCropArt());
-            }
         }
+
+        tileArts.AddRange(getCropArt());
     }
 
     public override void Start()
@@ -249,11 +243,16 @@ public class BlankTile: TileTemp
         cropType = CropType.blankTile;
 
     }
-    public override TileArt getCropArt()
+    public override void LoadArt()
     {
-        TileName = "Blank";
+        
+    }
+
+    public override List<TileArt> getCropArt()
+    {
         return null;
     }
+
 
     public override void Behavior()
     {
@@ -270,10 +269,15 @@ public class Rice : TileTemp
         cropType = CropType.rice;
     }
 
-    public override TileArt getCropArt()
+    public override List<TileArt> getCropArt()
     {
         TileName = "Rice";
-        return getTileArt("Wheat");
+        return new List<TileArt>
+            {
+                getTileArt("Wheat0"),
+                getTileArt("Wheat1"),
+                getTileArt("Wheat2")
+            };
     }
 }
 
@@ -285,10 +289,15 @@ public class Potato : TileTemp
         cropType = CropType.potato;
     }
 
-    public override TileArt getCropArt()
+    public override List<TileArt> getCropArt()
     {
         TileName = "Potato";
-        return getTileArt("Potato");
+        return new List<TileArt>
+            {
+                getTileArt("Potato0"),
+                getTileArt("Potato1"),
+                getTileArt("Potato2")
+            };
     }
 }
 
@@ -300,10 +309,15 @@ public class Carrot : TileTemp
         cropType = CropType.carrot;
     }
 
-    public override TileArt getCropArt()
+    public override List<TileArt> getCropArt()
     {
         TileName = "Carrot";
-        return getTileArt("Carrot");
+        return new List<TileArt>
+            {
+                getTileArt("Carrot0"),
+                getTileArt("Carrot1"),
+                getTileArt("Carrot2")
+            };
     }
 }
 
@@ -313,7 +327,7 @@ public class HighLight: TileTemp
     {
         currentArt = TileArtRepository.Art["Select"];
     }
-    public override TileArt getCropArt()
+    public override List<TileArt> getCropArt()
     {
         return null;
     }
@@ -336,7 +350,7 @@ public class SoldierDestination: TileTemp
     {
         currentArt = TileArtRepository.Art["SoldierDestination"];
     }
-    public override TileArt getCropArt()
+    public override List<TileArt> getCropArt()
     {
         return null;
     }
