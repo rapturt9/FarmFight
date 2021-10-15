@@ -185,7 +185,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e77e01bf03021465daca69c49332f5ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localPlayerId: 0
+  localPlayerId: 1
   gameIsRunning: 0
   money: 100
   cropHandler: {fileID: 0}
@@ -655,7 +655,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpriteList:
   - {fileID: 2082715349369691973, guid: 9b343c7bbb512c44983d440951ed3179, type: 3}
-  - {fileID: 2082715349369691973, guid: 2b4d415eaaa3042b5a556316ad115609, type: 3}
+  - {fileID: 2082715349369691973, guid: 2c2b823ae551947528d8e83cec387da2, type: 3}
   - {fileID: 2082715349369691973, guid: 77f20bb6b83e041e1b57912ce2ef867a, type: 3}
   - {fileID: 2082715349369691973, guid: 37771fb295a5b4f2992b5af6cd81e65b, type: 3}
   - {fileID: 2082715349369691973, guid: 24b43f392a7f14c8087dc3dffe1f2a91, type: 3}
@@ -1039,7 +1039,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a1add2ae3604ae4793247b72ea82b31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startAsHost: 1
+  startAsHost: 0
 --- !u!4 &1041828389
 Transform:
   m_ObjectHideFlags: 0

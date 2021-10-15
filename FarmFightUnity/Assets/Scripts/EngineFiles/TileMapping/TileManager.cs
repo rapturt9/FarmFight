@@ -196,4 +196,9 @@ public class TileManager : MonoBehaviour
 
         return relatives.ToArray();
     }
+
+    public Vector3 HexToWorld(Hex hex)
+    {
+        return hex.world(transform.lossyScale.y);
+    }
 }

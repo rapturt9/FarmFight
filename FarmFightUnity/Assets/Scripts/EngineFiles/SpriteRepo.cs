@@ -13,7 +13,7 @@ public class SpriteRepo : NetworkBehaviour
     public List<GameObject> SpriteList;
     private Dictionary<string, GameObject> SpriteObjects;
 
-    public GameObject this[string name, Hex hex]
+    public GameObject this[string name]
     {
         get
         {

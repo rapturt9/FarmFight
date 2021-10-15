@@ -20,7 +20,8 @@ public class GameManager : NetworkBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
-
+        Application.targetFrameRate = 30;
+        
     }
 
     private void Start()

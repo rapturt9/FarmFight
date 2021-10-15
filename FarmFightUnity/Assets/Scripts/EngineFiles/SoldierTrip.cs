@@ -59,9 +59,14 @@ public class SoldierTrip: NetworkBehaviour
             }
         }
 
+        if (TileManager.TM["Crops"][end].soldierCount != 0)
+            soldier.FadeOut();
+
         soldier.AddToTile(end);
+
+        
         //TileManager.TM["Crops"][end].addSoldier(soldier);
 
-       
+
     }
 }

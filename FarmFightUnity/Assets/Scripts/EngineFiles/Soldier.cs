@@ -98,4 +98,9 @@ public class Soldier: NetworkBehaviour
         StartCoroutine("FadeOutCoroutine");
     }
 
+    public void Kill()
+    {
+        Destroy(gameObject);
+    }
+
 }
