@@ -18,7 +18,7 @@ public class Soldier: NetworkBehaviour
 
     public void Start()
     {
-        //GetComponent<SpriteRenderer>().color = Color.clear;
+        
         handler = TileManager.TM["Crops"];
     }
     

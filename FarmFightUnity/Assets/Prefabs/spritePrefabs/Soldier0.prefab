@@ -102,6 +102,7 @@ MonoBehaviour:
     m_InternalValue: 100
   owner:
     m_InternalValue: -1
+  handler: {fileID: 0}
   travelSpeed: 0.1
   fadesSpeed: 0.1
 --- !u!114 &1694447431187925587
@@ -117,8 +118,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NetworkInstanceId: 0
-  PrefabHash: 2758235129643394653
-  PrefabHashGenerator: Soldier
+  PrefabHash: 8136575100811374647
+  PrefabHashGenerator: Soldier0
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
 --- !u!114 &6142443459459213301

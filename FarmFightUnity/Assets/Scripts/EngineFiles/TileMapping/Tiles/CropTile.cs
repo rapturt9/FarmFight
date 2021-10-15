@@ -58,6 +58,7 @@ public abstract class TileTemp : TileTempDepr
 
     }
 
+    public bool battleOccuring = false;
 
     public bool sendSoldier(Hex end, int localPlayerId)
     {
@@ -295,7 +296,7 @@ public abstract class TileTemp : TileTempDepr
     }
 
 
-    private Dictionary<int, List<Soldier>> SortedSoldiers { get { return SortSoldiers(); } }
+    public Dictionary<int, List<Soldier>> SortedSoldiers { get { return SortSoldiers(); } }
 
     private Dictionary<int, List<Soldier>> SortSoldiers()
     {
@@ -333,7 +334,7 @@ public abstract class TileTemp : TileTempDepr
             if(farmerObj != null)
                 removeFarmer();
             // Do battle Stuff
-            Battle.BattleFunction(SortedSoldiers,tileOwner);
+            Battle.BattleFunction(SortedSoldiers, soldiers, tileOwner);
 
             //Control Display
             if(battleCloud == null)

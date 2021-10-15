@@ -98,6 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15823ed7fd6864f54931840a4612b50c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  handler: {fileID: 0}
 --- !u!114 &2082715349369691832
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -111,8 +112,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NetworkInstanceId: 0
-  PrefabHash: 5778095455995659048
-  PrefabHashGenerator: Farmer
+  PrefabHash: 3238037061230386376
+  PrefabHashGenerator: Farmer0
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
 --- !u!114 &2082715349369691835

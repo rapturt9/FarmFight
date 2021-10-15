@@ -1627,7 +1627,6 @@ MonoBehaviour:
     - SampleScene
     - MultiplayerTest
     - TileFinal
-    - Soldier movement
     - MainScene
     AllowRuntimeSceneChanges: 0
     NetworkPrefabs:
@@ -1638,6 +1637,26 @@ MonoBehaviour:
     - Prefab: {fileID: 2082715349369691973, guid: 9b343c7bbb512c44983d440951ed3179, type: 3}
       PlayerPrefab: 0
     - Prefab: {fileID: 6142443459459213303, guid: 7578e400634adf84399e87fc3357b6af, type: 3}
+      PlayerPrefab: 0
+    - Prefab: {fileID: 2082715349369691973, guid: 2c2b823ae551947528d8e83cec387da2, type: 3}
+      PlayerPrefab: 0
+    - Prefab: {fileID: 6142443459459213303, guid: f9ad6632421f14d609afd45f2e94a158, type: 3}
+      PlayerPrefab: 0
+    - Prefab: {fileID: 2082715349369691973, guid: 77f20bb6b83e041e1b57912ce2ef867a, type: 3}
+      PlayerPrefab: 0
+    - Prefab: {fileID: 6142443459459213303, guid: 720b5eae88ea14b609f42c494a86e331, type: 3}
+      PlayerPrefab: 0
+    - Prefab: {fileID: 2082715349369691973, guid: 37771fb295a5b4f2992b5af6cd81e65b, type: 3}
+      PlayerPrefab: 0
+    - Prefab: {fileID: 6142443459459213303, guid: 451dcea5ff41e46a6bed63289a33bdbd, type: 3}
+      PlayerPrefab: 0
+    - Prefab: {fileID: 2082715349369691973, guid: 24b43f392a7f14c8087dc3dffe1f2a91, type: 3}
+      PlayerPrefab: 0
+    - Prefab: {fileID: 6142443459459213303, guid: 75c8509150263472c895148ef12b02e4, type: 3}
+      PlayerPrefab: 0
+    - Prefab: {fileID: 2082715349369691973, guid: 2bbd4ef948af94d9f97cc8ff46410914, type: 3}
+      PlayerPrefab: 0
+    - Prefab: {fileID: 6142443459459213303, guid: e9e2b6166249a4360a2b189f0b82641e, type: 3}
       PlayerPrefab: 0
     PlayerPrefabHash:
       id: 0

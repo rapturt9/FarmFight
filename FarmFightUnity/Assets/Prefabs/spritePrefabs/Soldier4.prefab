@@ -118,8 +118,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NetworkInstanceId: 0
-  PrefabHash: 2758235129643394653
-  PrefabHashGenerator: Soldier
+  PrefabHash: 8136575100811374643
+  PrefabHashGenerator: Soldier4
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
 --- !u!114 &6142443459459213301

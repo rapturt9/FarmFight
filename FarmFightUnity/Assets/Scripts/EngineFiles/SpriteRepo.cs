@@ -11,6 +11,7 @@ public class SpriteRepo : NetworkBehaviour
     public static SpriteRepo Sprites;
 
     public List<GameObject> SpriteList;
+
     private Dictionary<string, GameObject> SpriteObjects;
 
     public GameObject this[string name]

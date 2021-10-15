@@ -56,39 +56,38 @@ public static class Battle
 
 
 
-    static void KillSoldiers(Dictionary<int, List<Soldier>> SortedSoldiers)
+    static void KillSoldiers(List<Soldier> soldiers)
     {
 
-        foreach (var soldiers in SortedSoldiers.Values)
+        
+        int i = 0;
+        while (i < soldiers.Count)
         {
-            int i = 0;
-            while (i < soldiers.Count)
+            Soldier soldier = soldiers[0];
+
+            if (soldiers[i].Health.Value <= 0)
             {
-                Soldier soldier = soldiers[0];
 
-                if (soldiers[i].Health.Value <= 0)
-                {
-
-                    soldiers.RemoveAt(0);
-                    soldier.Kill();
-                }
-                else
-                {
-                    i++;
-                }
+                soldiers.RemoveAt(0);
+                soldier.Kill();
+            }
+            else
+            {
+                i++;
             }
         }
+        
         
     }
 
 
 
-    public static void BattleFunction(Dictionary<int, List<Soldier>> SortedSoldiers, int owner)
+    public static void BattleFunction(Dictionary<int, List<Soldier>> SortedSoldiers, List<Soldier> soldiers, int owner)
     {
         int[] damages = DamageCalculate(SortedSoldiers, owner);
 
         DamageDealing(SortedSoldiers, damages);
 
-        KillSoldiers(SortedSoldiers);
+        KillSoldiers(soldiers);
     }
 }

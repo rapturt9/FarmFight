@@ -112,8 +112,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NetworkInstanceId: 0
-  PrefabHash: 5778095455995659048
-  PrefabHashGenerator: Farmer
+  PrefabHash: 3238037061230386380
+  PrefabHashGenerator: Farmer4
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
 --- !u!114 &2082715349369691835
