@@ -5,7 +5,7 @@ using MLAPI;
 using MLAPI.Messaging;
 
 public abstract class TileTemp : TileTempDepr
-{
+{   
     public CropType cropType = CropType.blankTile;
     public float timeLastPlanted = 0f;
     public bool containsFarmer
@@ -41,6 +41,7 @@ public abstract class TileTemp : TileTempDepr
         soldiers.Add(soldier);
 
         soldier.Position = hexCoord;
+        soldier.tileOwner = tileOwner;
 
         //SortSoldiers();
     }

@@ -7,7 +7,7 @@ using MLAPI.Messaging;
 
 public class Soldier: NetworkBehaviour
 {
-    public NetworkVariable<int> Health = new NetworkVariable<int>(100);
+    public NetworkVariable<float> Health = new NetworkVariable<float>(100);
     public NetworkVariable<int> owner = new NetworkVariable<int>(-1);
 
     public TileHandler handler;
@@ -17,6 +17,8 @@ public class Soldier: NetworkBehaviour
     public float fadesSpeed = .01f;
 
     public Hex Position;
+
+    public int tileOwner;
 
     public void Start()
     {

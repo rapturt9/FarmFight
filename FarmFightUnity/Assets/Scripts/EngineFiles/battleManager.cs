@@ -15,10 +15,10 @@ public static class Battle
     /// <param name="SortedSoldiers"></param>
     /// <param name="owner"></param>
     /// <returns></returns>
-    static int[] DamageCalculate(Dictionary<int, List<Soldier>> SortedSoldiers, int owner)
+    static float[] DamageCalculate(Dictionary<int, List<Soldier>> SortedSoldiers, int owner)
     {
 
-        int[] col = new int[7];
+        int[] col = new int[6];
         int total = 0;
 
         foreach(var player in SortedSoldiers)
@@ -27,8 +27,14 @@ public static class Battle
             total += player.Value.Count;
         }
 
+        float[] damages = new float[6];
+        for(int i=0;i<6;i++){
+            damages[i]=col[i]!=0?(float) (total - col[i])/ col[i]:0.0f; 
+            //If 0 soldiers then 0 damage, otherwise damage from all other soldiers divided among them
+        }
+        return damages;
 
-        return new int[]
+        /*return new int[]
         {
             (total - 1)/ col[0],
             (total - 1)/ col[1],
@@ -36,20 +42,25 @@ public static class Battle
             (total - 1)/ col[3],
             (total - 1)/ col[4],
             (total - 1)/ col[5]
-        };
+        };*/
         
 
     }
 
     
 
-    static void DamageDealing(Dictionary<int, List<Soldier>> SortedSoldiers, int[] damages)
+    static void DamageDealing(Dictionary<int, List<Soldier>> SortedSoldiers, float[] damages)
     {
+        //make it so that home player soldiers take 50% less damage
         foreach(var player in SortedSoldiers)
         {
             foreach(var soldier in player.Value)
             {
-                soldier.Health.Value -= damages[player.Key];
+                if(soldier.tileOwner==player.Key){
+                    soldier.Health.Value -= damages[player.Key]/2;
+                } else {
+                    soldier.Health.Value -= damages[player.Key];
+                }
             }
         }
     }
@@ -84,7 +95,7 @@ public static class Battle
 
     public static void BattleFunction(Dictionary<int, List<Soldier>> SortedSoldiers, List<Soldier> soldiers, int owner)
     {
-        int[] damages = DamageCalculate(SortedSoldiers, owner);
+        float[] damages = DamageCalculate(SortedSoldiers, owner);
 
         DamageDealing(SortedSoldiers, damages);
 
