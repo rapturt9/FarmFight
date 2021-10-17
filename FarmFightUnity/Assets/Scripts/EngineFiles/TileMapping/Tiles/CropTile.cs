@@ -260,7 +260,7 @@ public abstract class TileTemp : TileTempDepr
 
         BattleFunctionality();
 
-        Debug.Log(soldierCount);
+        //Debug.Log(soldierCount);
     }
 
 
