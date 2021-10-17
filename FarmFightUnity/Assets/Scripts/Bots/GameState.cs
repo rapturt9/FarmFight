@@ -11,6 +11,8 @@ public class GameState : MonoBehaviour
 {
     public TileHandler tileHandler;
     public makeMove botControl;
+    /*Repository.Central.localPlayerID
+    Repository.Central.money*/
 
     // Hex coord, (crop#, time planted/time last clicked, farmer or not)
     public Dictionary<Hex, TileSyncData> cropTiles = new Dictionary<Hex, TileSyncData>();
