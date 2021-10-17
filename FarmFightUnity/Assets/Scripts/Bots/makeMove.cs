@@ -26,21 +26,45 @@ public class makeMove : MonoBehaviour
     }
 
     void pickMove () {
-        //gameData.tileHandler[new Hex(3,0)] = GameState.DeserializeTile(new TileSyncData(CropType.carrot, 0.0f, false, 0));
-        //gameData.tileHandler.SyncTile(new Hex(3,0));
         gameData.updateGameState();
         List<(Hex,string)> possibleMoves = getMoves(0);
+        (Hex, string) bestMove = evaluateStates(possibleMoves);
+    }
 
-        TileSyncData tile = gameData.cropTiles[new Hex(0,0)];
-        print(tile.tileOwner);
-        /*foreach (var coord in hexCoords)
-        {
-            print(coord);
-            print(gameData.cropTiles[coord]);
-        }*/
-        /*foreach (var elem in possibleMoves){
-            print(elem);
-        }*/
+    (Hex, string) evaluateStates(List<(Hex,string)> possibleMoves) {
+        int bestVal = -1;
+        (Hex,string) bestMove = (new Hex(0,0), "harvest");
+
+        foreach (var elem in possibleMoves){
+            var (loc,move) = elem;
+            var newState = getState(loc,move);
+
+            if (-1 >= bestVal){
+                bestVal = -1;
+                bestMove = elem;
+            }
+        }
+        return bestMove;
+        return (new Hex(0,0),"NotImplemented");
+    }
+
+    Dictionary<Hex, TileSyncData> getState(Hex loc, string move){
+        Dictionary<Hex, TileSyncData> res = gameData.cropTiles;
+        TileSyncData updatedTile = res[loc];
+        /*
+        if (move == "plantRice"){
+            updatedTile.cropNum == 1;
+        }
+        else if (move == "plantCarrot"){
+            updatedTile.cropNum == 2;
+        }
+        else if (move == "plantPotato"){
+            updatedTile.cropNum == 3;
+        }
+        */
+        res[loc] = updatedTile;
+
+        return res;
     }
 
     List<(Hex,string)> getMoves(int owner) {
@@ -55,7 +79,6 @@ public class makeMove : MonoBehaviour
         foreach (var coord in hexCoords){
             TileSyncData tile = gameData.cropTiles[coord];
             if (tile.tileOwner == owner) {
-                //print("owned tile");
                 if (tile.cropType == CropType.blankTile){
                     res.Add((coord,"plantRice"));
                     res.Add((coord,"plantCarrot"));
@@ -68,17 +91,15 @@ public class makeMove : MonoBehaviour
                 foreach (var dir in dirs){
                     Hex newLoc = coord+dir;
 
-                    //print(newLoc);
-
                     if (hexCoords.Contains(newLoc) && gameData.cropTiles[newLoc].tileOwner == -1){
                         if (!res.Contains((newLoc,"plantRice"))){
-                            res.Add((coord,"plantRice"));
+                            res.Add((newLoc,"plantRice"));
                         }
                         if (!res.Contains((newLoc,"plantCarrot"))){
-                            res.Add((coord,"plantCarrot"));
+                            res.Add((newLoc,"plantCarrot"));
                         }
                         if (!res.Contains((newLoc,"plantPotato"))){
-                            res.Add((coord,"plantPotato"));
+                            res.Add((newLoc,"plantPotato"));
                         }
                     }
                 }

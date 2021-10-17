@@ -36,8 +36,6 @@ public class GameState : MonoBehaviour
 
     public void Init()
     {
-        // Calling this in init wasn't working for me, idk why
-        // So i called it in start
         updateGameStateFirstTime();
         StartCoroutine(collectGameData());
         botControl.Init();
@@ -58,24 +56,18 @@ public class GameState : MonoBehaviour
     {
         foreach (var coord in hexCoords)
         {
-            if (coord == new Hex(0,0)){
+            /*if (coord == new Hex(0,0)){
                 cropTiles[coord] = new TileSyncData(CropType.carrot, 0.0f, false, 0);
                 tileHandler[coord] = DeserializeTile(cropTiles[coord]);
                 tileHandler[coord].tileOwner = 0;
                 tileHandler.SyncTile(coord);
-            }
-            else{
-                cropTiles[coord] = emptyTileSyncData;  
-            }
+            }*/
+            cropTiles[coord] = emptyTileSyncData;  
         }
-        TileSyncData tile = cropTiles[new Hex(0,0)];
-        print(tile.tileOwner);
     }
 
     public void updateGameState()
     {
-        TileSyncData tile = cropTiles[new Hex(0,0)];
-        print(tile.tileOwner);
         foreach (var coord in hexCoords)
         {
             var tileData = SerializeTile(tileHandler[coord]);
