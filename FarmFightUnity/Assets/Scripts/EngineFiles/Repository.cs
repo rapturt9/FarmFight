@@ -7,6 +7,8 @@ public class Repository : MonoBehaviour
 
     [SerializeField]
     public Hex selectedHex = Hex.zero;
+    
+
     public int localPlayerId;
     public bool gameIsRunning = false;
     public double money = 100.0;
@@ -34,6 +36,24 @@ public class Repository : MonoBehaviour
     }
 
 
+
+    /// just for ease of access
+    ///
+    public TileHandler cropHandler;
+
+
+
+    public PlayState GamesMode;
+
+   
+}
+
+/// modes
+public enum PlayState
+{
+    NormalGame,
+    PauseGame,
+    SoldierSend
 
 
 }

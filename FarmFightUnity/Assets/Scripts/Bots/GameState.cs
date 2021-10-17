@@ -104,9 +104,9 @@ public class GameState : MonoBehaviour
             tile = new BlankTile();
 
         tile.timeLastPlanted = timeLastPlanted;
-        tile.containsFarmer = containsFarmer;
+        //tile.containsFarmer = containsFarmer; // Can't sync now
         tile.tileOwner = tileOwner;
-
+        
         return tile;
     }
 
@@ -128,13 +128,17 @@ public class GameState : MonoBehaviour
     // Turns all of the tile strings into actual board tiles
     public void DeserializeBoard(TileSyncData[] allTiles)
     {
+        // Deserialize tiles
         int numTiles = hexCoords.Count;
         for (int i = 0; i < numTiles; i++)
         {
             Hex coord = hexCoords[i];
             TileTemp tile = DeserializeTile(allTiles[i]);
             tileHandler.TileDict[coord].Tile = tile;
+            
         }
+        // Add soldiers
+        // TODO
     }
 }
 
@@ -152,6 +156,7 @@ public struct TileSyncData : INetworkSerializable
         timeLastPlanted = timeLastPlantedArg;
         containsFarmer = containsFarmerArg;
         tileOwner = tileOwnerArg;
+        //soldiers = soldiersArg;
     }
 
     public void NetworkSerialize(NetworkSerializer serializer)

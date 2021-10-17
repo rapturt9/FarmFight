@@ -9,10 +9,10 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Tiles
   - Water
   - UI
-  - 
+  - Sprites
   - 
   - 
   - 
@@ -41,4 +41,16 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Tiles
+    uniqueID: 1506824093
+    locked: 0
+  - name: Sprites
+    uniqueID: 31518797
+    locked: 0
+  - name: UI
+    uniqueID: 3773060419
+    locked: 0
+  - name: Crops
+    uniqueID: 3620083653
     locked: 0
