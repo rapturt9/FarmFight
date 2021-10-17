@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MLAPI;
 using MLAPI.Messaging;
+using MLAPI.NetworkVariable;
 
 public class Farmer : NetworkBehaviour
 {
@@ -10,8 +11,10 @@ public class Farmer : NetworkBehaviour
 
     public void Awake()
     {
-        
+        Owner = new NetworkVariable<int>(-1);
     }
+
+    public NetworkVariable<int> Owner = new NetworkVariable<int>(-1);
 
     private void Start()
     {
@@ -29,6 +32,10 @@ public class Farmer : NetworkBehaviour
         {
             AddToTileClientRpc(BoardHelperFns.HexToArray(coord));
         }
+
+        //Owner = handler[coord].tileOwner;
+
+         
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -41,6 +48,7 @@ public class Farmer : NetworkBehaviour
     void AddToTileClientRpc(int[] coord)
     {
         _AddToTile(coord);
+        
     }
 
     // Internal function, actually changes the tile

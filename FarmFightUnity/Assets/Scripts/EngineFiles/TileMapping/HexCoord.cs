@@ -1,15 +1,54 @@
 ﻿using System;
 using UnityEngine;
+
+[Serializable]
 public struct Hex
 {
-    public int x, y;
+    private int X;
+
+    public int x
+    {
+        
+
+        get
+        {
+            return X;
+        }
+        set
+        {
+            X = value;
+            coords.x = value;
+        }
+        
+    }
+
+
+    private int Y;
+    public int y
+    {
+        get
+        {
+            return Y;
+        }
+        set
+        {
+            y = value;
+            coords.y = value;
+        }
+    }
+
+    [SerializeField]
+    private Vector2Int coords;
+    
+    
 
     public static Hex zero = new Hex(0, 0), up = new Hex(0, 1), down = new Hex(0, -1), right = new Hex(1, 0), left = new Hex(-1, 0);
 
     public Hex(int X, int Y)
     {
-        this.x = X;
-        this.y = Y;
+        this.X = X;
+        this.Y = Y;
+        coords = new Vector2Int(X, Y);
     }
 
 

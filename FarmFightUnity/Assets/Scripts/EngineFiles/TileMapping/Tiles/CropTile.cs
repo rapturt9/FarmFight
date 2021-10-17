@@ -17,9 +17,12 @@ public abstract class TileTemp : TileTempDepr
     {
         if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not add farmers from the client! Wrap your method in a ServerRpc."); }
 
+        
         Debug.Log("Farmer" + Repository.Central.localPlayerId.ToString());
         farmerObj = SpriteRepo.Sprites["Farmer" + Repository.Central.localPlayerId.ToString()];
+        farmerObj.GetComponent<Farmer>().Owner.Value = tileOwner;
         farmerObj.transform.position = (Vector2)TileManager.TM.HexToWorld(hexCoord) + .25f * Vector2.right;
+        
     }
 
     public void removeFarmer()
