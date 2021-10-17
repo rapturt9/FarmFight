@@ -16,6 +16,8 @@ public class Soldier: NetworkBehaviour
     
     public float fadesSpeed = .01f;
 
+    public Hex Position;
+
     public void Start()
     {
         
