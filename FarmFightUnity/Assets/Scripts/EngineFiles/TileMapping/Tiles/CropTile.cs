@@ -37,7 +37,8 @@ public abstract class TileTemp : TileTempDepr
         soldier.transform.position = hexCoord.world() + Vector2.left * .25f;
         soldier.owner.Value = owner;
 
-        soldiers.Add(soldier);
+        SortedSoldiers[owner].Add(soldier);
+        //soldiers.Add(soldier);
 
         //SortSoldiers();
     }
@@ -51,11 +52,6 @@ public abstract class TileTemp : TileTempDepr
         soldier.transform.position = hexCoord.world() + .25f * Vector2.left;
 
         //Debug.Log($"Soldier added to {hexCoord}");
-
-        
-
-        
-
     }
 
     public bool battleOccuring = false;
@@ -87,7 +83,7 @@ public abstract class TileTemp : TileTempDepr
                 trip.init(hexCoord, end);
 
 
-            soldiers.Remove(soldier);
+            SortedSoldiers[soldier.owner.Value].Remove(soldier);
 
             
 
@@ -143,10 +139,10 @@ public abstract class TileTemp : TileTempDepr
         // Destroying objects messed up things for me with networking - Eli
 
         //GameObject.Destroy(farmerObj);
-        foreach (var soldier in soldiers)
-        {
-            //GameObject.Destroy(soldier.gameObject);
-        }
+        //foreach (var soldier in soldiers)
+        //{
+        //    //GameObject.Destroy(soldier.gameObject);
+        //}
     }
 
 
@@ -156,7 +152,7 @@ public abstract class TileTemp : TileTempDepr
     /// *may need to be split into multiple lists depending on what fights look like*
     /// If you want to add to the list of soldiers, use soldier.AddToTile(hexCoord), NOT soldiers.Add(soldier)
     /// </summary>
-    public List<Soldier> soldiers = new List<Soldier>();
+    //public List<Soldier> soldiers = new List<Soldier>();
 
     /// <summary>
     /// the Gameobject representing a farmer
@@ -205,9 +201,10 @@ public abstract class TileTemp : TileTempDepr
 
     public override void Start()
     {
-        soldiers = new List<Soldier>();
+        //soldiers = new List<Soldier>();
+        SortedSoldiers = new Dictionary<int, List<Soldier>>();
 
-        
+
 
         if (timeLastPlanted == 0f)
             timeLastPlanted = NetworkManager.Singleton.NetworkTime;
@@ -284,7 +281,7 @@ public abstract class TileTemp : TileTempDepr
 
     void killSoldier(Soldier soldier)
     {
-        soldiers.Remove(soldier);
+        SortedSoldiers[soldier.owner.Value].Remove(soldier);
         soldier.Kill();
     }
 
@@ -296,7 +293,7 @@ public abstract class TileTemp : TileTempDepr
     }
 
 
-    public Dictionary<int, List<Soldier>> SortedSoldiers { get { return SortSoldiers(); } }
+    public Dictionary<int, List<Soldier>> SortedSoldiers; // { get { return SortSoldiers(); } }
 
     private Dictionary<int, List<Soldier>> SortSoldiers()
     {
@@ -308,10 +305,10 @@ public abstract class TileTemp : TileTempDepr
             temp[i] = new List<Soldier>();
         }
 
-        foreach (var soldier in soldiers)
-        {
-            temp[soldier.owner.Value].Add(soldier);
-        }
+        //foreach (var soldier in soldiers)
+        //{
+        //    temp[soldier.owner.Value].Add(soldier);
+        //}
         
         return temp;
 
@@ -334,7 +331,7 @@ public abstract class TileTemp : TileTempDepr
             if(farmerObj != null)
                 removeFarmer();
             // Do battle Stuff
-            Battle.BattleFunction(SortedSoldiers, soldiers, tileOwner);
+            Battle.BattleFunction(SortedSoldiers, tileOwner);
 
             //Control Display
             if(battleCloud == null)
@@ -360,7 +357,7 @@ public abstract class TileTemp : TileTempDepr
 
             if (soldierCount != 0)
             {
-                soldiers[0].FadeIn();
+                SortedSoldiers[tileOwner][0].FadeIn();
             }
 
             
