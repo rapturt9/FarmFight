@@ -13,12 +13,27 @@ public abstract class TileTemp : TileTempDepr
         get { return farmerObj != null; }
     }
 
-    public void addFarmer()
+    public override void Start()
+    {
+        //soldiers = new List<Soldier>();
+        SortedSoldiers = new Dictionary<int, List<Soldier>>();
+        for (int i = 0; i < Repository.maxPlayers; i++)
+            SortedSoldiers[i] = new List<Soldier>();
+
+        if (timeLastPlanted == 0f)
+            timeLastPlanted = NetworkManager.Singleton.NetworkTime;
+        frame = 0;
+        frameRate = 60;
+        frameInternal = 0;
+    }
+
+    public GameObject addFarmer()
     {
         if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not add farmers from the client! Wrap your method in a ServerRpc."); }
 
         farmerObj = SpriteRepo.Sprites["Farmer" + Repository.Central.localPlayerId.ToString()];
         farmerObj.transform.position = (Vector2)TileManager.TM.HexToWorld(hexCoord) + .25f * Vector2.right;
+        return farmerObj;
     }
 
     public void removeFarmer()
@@ -29,7 +44,7 @@ public abstract class TileTemp : TileTempDepr
         farmerObj = null;
     }
 
-    public void addSoldier(int owner)
+    public Soldier addSoldier(int owner)
     {
         if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not add new soldiers from the client! Wrap your method in a ServerRpc."); }
 
@@ -38,9 +53,7 @@ public abstract class TileTemp : TileTempDepr
         soldier.owner.Value = owner;
 
         SortedSoldiers[owner].Add(soldier);
-        //soldiers.Add(soldier);
-
-        //SortSoldiers();
+        return soldier;
     }
 
     public void addSoldier(Soldier soldier)
@@ -180,10 +193,24 @@ public abstract class TileTemp : TileTempDepr
     /// <returns></returns>
     public abstract List<TileArt> getCropArt();
 
+    public Dictionary<int, List<Soldier>> SortedSoldiers;
+
     /// <summary>
     /// number of soldiers
     /// </summary>
-    public int soldierCount { get { return soldiers.Count; } }
+    public int soldierCount {get { return new List<Soldier>(getSoldierEnumerator()).Count; } }
+
+    // Iterate over all soldiers the tile has
+    public IEnumerable<Soldier> getSoldierEnumerator()
+    {
+        foreach (var soldiersOfPlayer in SortedSoldiers.Values)
+        {
+            foreach (var soldier in soldiersOfPlayer)
+            {
+                yield return soldier;
+            }
+        }
+    }
 
     public List<TileArt> tileArts;
 
@@ -197,20 +224,6 @@ public abstract class TileTemp : TileTempDepr
         }
 
         tileArts.AddRange(getCropArt());
-    }
-
-    public override void Start()
-    {
-        //soldiers = new List<Soldier>();
-        SortedSoldiers = new Dictionary<int, List<Soldier>>();
-
-
-
-        if (timeLastPlanted == 0f)
-            timeLastPlanted = NetworkManager.Singleton.NetworkTime;
-        frame = 0;
-        frameRate = 60;
-        frameInternal = 0;
     }
 
     /// <summary>
@@ -292,31 +305,6 @@ public abstract class TileTemp : TileTempDepr
 
     }
 
-
-    public Dictionary<int, List<Soldier>> SortedSoldiers; // { get { return SortSoldiers(); } }
-
-    private Dictionary<int, List<Soldier>> SortSoldiers()
-    {
-
-
-        Dictionary<int, List<Soldier>> temp = new Dictionary<int, List<Soldier>>();
-        for (int i = 0; i < 6; i++)
-        {
-            temp[i] = new List<Soldier>();
-        }
-
-        //foreach (var soldier in soldiers)
-        //{
-        //    temp[soldier.owner.Value].Add(soldier);
-        //}
-        
-        return temp;
-
-
-    }
-
-
-
     /// BattleStuff
     /// 
 
@@ -340,10 +328,7 @@ public abstract class TileTemp : TileTempDepr
                 //battleCloud.transform.position = TileManager.TM.HexToWorld(hexCoord);
             }
 
-
             OwnershipSwitch();
-
-
         }
         
         else
@@ -354,41 +339,31 @@ public abstract class TileTemp : TileTempDepr
                 battleCloud = null;
             }
 
-
             if (soldierCount != 0)
             {
                 SortedSoldiers[tileOwner][0].FadeIn();
             }
-
-            
-
         }
-
-
     }
 
     private void OwnershipSwitch()
     {
         int newOwner = -1;
 
-        foreach(var player in SortedSoldiers)
+        foreach (var soldiersOfPlayer in SortedSoldiers)
         {
-            if (player.Value.Count != 0)
+            if (soldiersOfPlayer.Value.Count != 0)
             {
                 if (newOwner == -1)
-                    newOwner = player.Key;
+                    newOwner = soldiersOfPlayer.Key;
                 else
                     return;
             }
         }
 
-
         if (newOwner != -1)
             tileOwner = newOwner;
     }
-
-
-
 }
 
 

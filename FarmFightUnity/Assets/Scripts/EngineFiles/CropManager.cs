@@ -155,7 +155,8 @@ public class CropManager : NetworkBehaviour
     void addFarmerServerRpc(int[] hexArray)
     {
         Hex hex = BoardHelperFns.ArrayToHex(hexArray);
-        handler[hex].addFarmer();
+        GameObject farmer = handler[hex].addFarmer();
+        farmer.GetComponent<NetworkObject>().Spawn();
         handler.SyncTile(hex);
         Debug.Log("Has Farmer");
     }
@@ -196,8 +197,9 @@ public class CropManager : NetworkBehaviour
     void addSoldierServerRpc(int[] hexArray, int owner)
     {
         Hex hex = BoardHelperFns.ArrayToHex(hexArray);
-        handler[hex].addSoldier(owner);
-        handler.SyncTile(hex);
+        Soldier soldier = handler[hex].addSoldier(owner);
+        soldier.GetComponent<NetworkObject>().Spawn();
+        soldier.AddToTile(hex);
     }
 
     // Send soldier

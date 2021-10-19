@@ -58,18 +58,16 @@ public static class Battle
 
     static void KillSoldiers(Dictionary<int, List<Soldier>> SortedSoldiers)
     {
-        int maxPlayers = 5;
-
-        for (int playerId = 0; playerId<maxPlayers; playerId++)
+        for (int playerId = 0; playerId < Repository.maxPlayers; playerId++)
         {
             int i = 0;
             while (i < SortedSoldiers[playerId].Count)
             {
-                Soldier soldier = soldiers[0];
+                Soldier soldier = SortedSoldiers[playerId][i];
 
                 if (SortedSoldiers[playerId][i].Health.Value <= 0)
                 {
-                    SortedSoldiers[playerId].RemoveAt(0);
+                    SortedSoldiers[playerId].RemoveAt(i);
                     soldier.Kill();
                 }
                 else
