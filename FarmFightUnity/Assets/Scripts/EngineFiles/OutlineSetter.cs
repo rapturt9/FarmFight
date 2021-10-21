@@ -68,6 +68,8 @@ public class OutlineSetter : MonoBehaviour
     {
         if (crops.TileDict == null) return;
 
+        Tilemaps[owner].ClearAllTiles();
+
         foreach(var tile in crops.TileDict.Values)
         {
             //if (tile == null) continue;

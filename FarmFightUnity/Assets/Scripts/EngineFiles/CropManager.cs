@@ -87,6 +87,12 @@ public class CropManager : NetworkBehaviour
     public bool canPlant(Hex hex)
     {
 
+        // We can't overwrite an opponent's crop
+        if (handler[hex].cropType != CropType.blankTile && handler[hex].tileOwner != central.localPlayerId)
+        {
+            return false;
+        }
+
         foreach (var adj in TileManager.TM.getValidNeighbors(hex))
         {
             if (hasCrop(adj) && (handler[adj].tileOwner == central.localPlayerId))
@@ -110,10 +116,7 @@ public class CropManager : NetworkBehaviour
         {
             return false;
         }
-        /*
-        if (handler[hex].cropType != CropType.blankTile)
-            central.money -= 5;
-        */
+        
         if (cropType == CropType.potato)
         {
             handler[hex] = new Potato();
