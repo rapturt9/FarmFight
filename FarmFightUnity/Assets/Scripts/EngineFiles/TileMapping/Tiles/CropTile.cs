@@ -13,7 +13,21 @@ public abstract class TileTemp : TileTempDepr
         get { return farmerObj != null; }
     }
 
-    public void addFarmer()
+    public override void Start()
+    {
+        //soldiers = new List<Soldier>();
+        SortedSoldiers = new Dictionary<int, List<Soldier>>();
+        for (int i = 0; i < Repository.maxPlayers; i++)
+            SortedSoldiers[i] = new List<Soldier>();
+
+        if (timeLastPlanted == 0f)
+            timeLastPlanted = NetworkManager.Singleton.NetworkTime;
+        frame = 0;
+        frameRate = 60;
+        frameInternal = 0;
+    }
+
+    public GameObject addFarmer()
     {
         if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not add farmers from the client! Wrap your method in a ServerRpc."); }
 
@@ -22,7 +36,7 @@ public abstract class TileTemp : TileTempDepr
         farmerObj = SpriteRepo.Sprites["Farmer" + Repository.Central.localPlayerId.ToString()];
         farmerObj.GetComponent<Farmer>().Owner.Value = tileOwner;
         farmerObj.transform.position = (Vector2)TileManager.TM.HexToWorld(hexCoord) + .25f * Vector2.right;
-        
+        return farmerObj;
     }
 
     public void removeFarmer()
@@ -33,19 +47,16 @@ public abstract class TileTemp : TileTempDepr
         farmerObj = null;
     }
 
-    public void addSoldier(int owner)
+    public Soldier addSoldier(int owner)
     {
         if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not add new soldiers from the client! Wrap your method in a ServerRpc."); }
 
         Soldier soldier = SpriteRepo.Sprites["Soldier" + Repository.Central.localPlayerId.ToString()].GetComponent<Soldier>();
         soldier.transform.position = hexCoord.world() + Vector2.left * .25f;
-        soldier.owner.Value = owner;
-
-        soldiers.Add(soldier);
-
         soldier.Position = hexCoord;
-
-        //SortSoldiers();
+        soldier.owner.Value = owner;
+        SortedSoldiers[owner].Add(soldier);
+        return soldier;
     }
 
     public void addSoldier(Soldier soldier)
@@ -59,11 +70,6 @@ public abstract class TileTemp : TileTempDepr
         soldier.Position = hexCoord;
 
         //Debug.Log($"Soldier added to {hexCoord}");
-
-        
-
-        
-
     }
 
     public bool battleOccuring = false;
@@ -95,7 +101,7 @@ public abstract class TileTemp : TileTempDepr
                 trip.init(hexCoord, end);
 
 
-            soldiers.Remove(soldier);
+            SortedSoldiers[soldier.owner.Value].Remove(soldier);
 
             
 
@@ -151,10 +157,10 @@ public abstract class TileTemp : TileTempDepr
         // Destroying objects messed up things for me with networking - Eli
 
         //GameObject.Destroy(farmerObj);
-        foreach (var soldier in soldiers)
-        {
-            //GameObject.Destroy(soldier.gameObject);
-        }
+        //foreach (var soldier in soldiers)
+        //{
+        //    //GameObject.Destroy(soldier.gameObject);
+        //}
     }
 
 
@@ -164,7 +170,7 @@ public abstract class TileTemp : TileTempDepr
     /// *may need to be split into multiple lists depending on what fights look like*
     /// If you want to add to the list of soldiers, use soldier.AddToTile(hexCoord), NOT soldiers.Add(soldier)
     /// </summary>
-    public List<Soldier> soldiers = new List<Soldier>();
+    //public List<Soldier> soldiers = new List<Soldier>();
 
     /// <summary>
     /// the Gameobject representing a farmer
@@ -192,10 +198,24 @@ public abstract class TileTemp : TileTempDepr
     /// <returns></returns>
     public abstract List<TileArt> getCropArt();
 
+    public Dictionary<int, List<Soldier>> SortedSoldiers;
+
     /// <summary>
     /// number of soldiers
     /// </summary>
-    public int soldierCount { get { return soldiers.Count; } }
+    public int soldierCount {get { return new List<Soldier>(getSoldierEnumerator()).Count; } }
+
+    // Iterate over all soldiers the tile has
+    public IEnumerable<Soldier> getSoldierEnumerator()
+    {
+        foreach (var soldiersOfPlayer in SortedSoldiers.Values)
+        {
+            foreach (var soldier in soldiersOfPlayer)
+            {
+                yield return soldier;
+            }
+        }
+    }
 
     public List<TileArt> tileArts;
 
@@ -209,19 +229,6 @@ public abstract class TileTemp : TileTempDepr
         }
 
         tileArts.AddRange(getCropArt());
-    }
-
-    public override void Start()
-    {
-        soldiers = new List<Soldier>();
-
-        
-
-        if (timeLastPlanted == 0f)
-            timeLastPlanted = NetworkManager.Singleton.NetworkTime;
-        frame = 0;
-        frameRate = 60;
-        frameInternal = 0;
     }
 
     /// <summary>
@@ -292,41 +299,14 @@ public abstract class TileTemp : TileTempDepr
 
     void killSoldier(Soldier soldier)
     {
-        soldiers.Remove(soldier);
+        SortedSoldiers[soldier.owner.Value].Remove(soldier);
         soldier.Kill();
     }
 
     public Soldier FindFirstSoldierWithID(int id)
     {
-
         return SortedSoldiers[id].Count == 0 ? null : SortedSoldiers[id][0];
-
     }
-
-
-    public Dictionary<int, List<Soldier>> SortedSoldiers { get { return SortSoldiers(); } }
-
-    private Dictionary<int, List<Soldier>> SortSoldiers()
-    {
-
-
-        Dictionary<int, List<Soldier>> temp = new Dictionary<int, List<Soldier>>();
-        for (int i = -1; i < 6; i++)
-        {
-            temp.Add( i , new List<Soldier>());
-        }
-
-        foreach (var soldier in soldiers)
-        {
-            temp[soldier.owner.Value].Add(soldier);
-        }
-        
-        return temp;
-
-
-    }
-
-
 
     /// BattleStuff
     /// 
@@ -343,7 +323,7 @@ public abstract class TileTemp : TileTempDepr
                 removeFarmer();
 
             // Do battle Stuff
-            Battle.BattleFunction(SortedSoldiers, soldiers, tileOwner);
+            Battle.BattleFunction(SortedSoldiers, tileOwner);
 
             //Control Display
             if(battleCloud == null)
@@ -351,13 +331,8 @@ public abstract class TileTemp : TileTempDepr
                 battleCloud = SpriteRepo.Sprites["BattleCloud"];
                 battleCloud.transform.position = TileManager.TM.HexToWorld(hexCoord);
             }
-
             soldiers[0].FadeOut();
-
-
             OwnershipSwitch();
-
-
         }
         
         else
@@ -368,41 +343,31 @@ public abstract class TileTemp : TileTempDepr
                 battleCloud = null;
             }
 
-
             if (soldierCount != 0)
             {
-                soldiers[0].FadeIn();
+                SortedSoldiers[tileOwner][0].FadeIn();
             }
-
-            
-
         }
-
-
     }
 
     private void OwnershipSwitch()
     {
         int newOwner = -1;
 
-        foreach(var player in SortedSoldiers)
+        foreach (var soldiersOfPlayer in SortedSoldiers)
         {
-            if (player.Value.Count != 0)
+            if (soldiersOfPlayer.Value.Count != 0)
             {
                 if (newOwner == -1)
-                    newOwner = player.Key;
+                    newOwner = soldiersOfPlayer.Key;
                 else
                     return;
             }
         }
 
-
         if (newOwner != -1)
             tileOwner = newOwner;
     }
-
-
-
 }
 
 

@@ -20,7 +20,7 @@ public class SpriteRepo : NetworkBehaviour
         {
             GameObject temp = Instantiate(SpriteObjects[name]);
             temp.transform.parent = gameObject.transform;
-            temp.GetComponent<NetworkObject>().Spawn();
+            //temp.GetComponent<NetworkObject>().Spawn(); // Do this yourself
 
             return temp;
         }
