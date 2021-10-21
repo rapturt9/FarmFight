@@ -19,6 +19,12 @@ public class TileHandler : NetworkBehaviour
     Tilemap tilemap;
     public GameManager gameManager;
 
+
+    private void Awake()
+    {
+        TileDict = new Dictionary<Hex, TileInterFace>();
+    }
+
     public TileTemp this[Hex hex]
     {
         get

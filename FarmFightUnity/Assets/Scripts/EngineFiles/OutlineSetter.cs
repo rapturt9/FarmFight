@@ -63,16 +63,18 @@ public class OutlineSetter : MonoBehaviour
         
     }
 
+    
 
+    
     public void RedrawTiles(int owner)
     {
-        if (crops.TileDict == null) return;
+        
 
         Tilemaps[owner].ClearAllTiles();
 
         foreach(var tile in crops.TileDict.Values)
         {
-            //if (tile == null) continue;
+            
 
             if(tile.Tile.tileOwner == owner)
             {
@@ -84,6 +86,33 @@ public class OutlineSetter : MonoBehaviour
                     SortedTiles[0].Draw(Tilemaps[owner], tile.hexCoord);
             }
             
+        }
+    }
+    
+    public Tilemap tilemap;
+
+    public void RedrawTiles()
+    {
+
+
+        tilemap.ClearAllTiles();
+
+        foreach (var tile in crops.TileDict.Values)
+        {
+
+            int owner = tile.Tile.tileOwner;
+
+            if (owner == -1)
+                continue;
+            
+            int index = getOutlineIndex(tile.hexCoord, owner);
+
+            if (SortedTiles.ContainsKey(index))
+                SortedTiles[index].Draw(tilemap, tile.hexCoord, TeamColors[owner]);
+            else
+                SortedTiles[0].Draw(Tilemaps[owner], tile.hexCoord, TeamColors[owner]);
+            
+
         }
     }
 
@@ -114,8 +143,10 @@ public class OutlineSetter : MonoBehaviour
 
     private void Update()
     {
-        
+
         RedrawTiles(owner);
+
+        //RedrawTiles();
 
         owner++;
         owner %= 6;
@@ -126,7 +157,9 @@ public class OutlineSetter : MonoBehaviour
 
         while (true)
         {
-            RedrawTiles(owner);
+            //RedrawTiles(owner);
+
+            RedrawTiles();
 
             owner++;
             owner %= 6;
