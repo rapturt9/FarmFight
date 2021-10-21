@@ -66,7 +66,7 @@ public abstract class TileTemp : TileTempDepr
 
     }
 
-    public bool battleOccuring = false;
+    
 
     public bool sendSoldier(Hex end, int localPlayerId)
     {
@@ -326,7 +326,7 @@ public abstract class TileTemp : TileTempDepr
 
     }
 
-
+    public bool battleOccuring = false;
 
     /// BattleStuff
     /// 
