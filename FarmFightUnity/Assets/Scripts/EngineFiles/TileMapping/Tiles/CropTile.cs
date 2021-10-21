@@ -71,7 +71,7 @@ public abstract class TileTemp : TileTempDepr
         //Debug.Log($"Soldier added to {hexCoord}");
     }
 
-    public bool battleOccuring = false;
+    
 
     public bool sendSoldier(Hex end, int localPlayerId)
     {
@@ -304,6 +304,34 @@ public abstract class TileTemp : TileTempDepr
     {
         return SortedSoldiers[id].Count == 0 ? null : SortedSoldiers[id][0];
     }
+/*
+
+
+    public Dictionary<int, List<Soldier>> SortedSoldiers { get { return SortSoldiers(); } }
+
+    private Dictionary<int, List<Soldier>> SortSoldiers()
+    {
+
+
+        Dictionary<int, List<Soldier>> temp = new Dictionary<int, List<Soldier>>();
+        for (int i = -1; i < 6; i++)
+        {
+            temp.Add( i , new List<Soldier>());
+        }
+
+        foreach (var soldier in soldiers)
+        {
+            temp[soldier.owner.Value].Add(soldier);
+        }
+        
+        return temp;
+
+
+    }
+
+    public bool battleOccuring = false;
+
+*/
 
     /// BattleStuff
     /// 

@@ -47,7 +47,7 @@ public class SpriteSwitch : MonoBehaviour
         }
 
 
-        Debug.Log(owner);
+        
 
         GetComponent<SpriteRenderer>().sprite = sprites[owner];
 
