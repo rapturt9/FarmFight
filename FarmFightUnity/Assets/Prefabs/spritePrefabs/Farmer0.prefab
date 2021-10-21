@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2082715349369691833}
   - component: {fileID: 2082715349369691832}
   - component: {fileID: 2082715349369691835}
+  - component: {fileID: -3706531219537211659}
   m_Layer: 0
   m_Name: Farmer0
   m_TagString: Untagged
@@ -41,7 +42,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2082715349369691973}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -75,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 31518797
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 97fe3203964dd429fb2dad4bd46716d2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -83,7 +84,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 1
 --- !u!114 &2082715349369691833
@@ -99,6 +100,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handler: {fileID: 0}
+  Owner:
+    m_InternalValue: 0
 --- !u!114 &2082715349369691832
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,3 +167,22 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &-3706531219537211659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2082715349369691973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5579601da333c4af096a20c4d189658c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sprites:
+  - {fileID: 21300000, guid: 97fe3203964dd429fb2dad4bd46716d2, type: 3}
+  - {fileID: 21300000, guid: 0da2b85b8e24e4aa586d9adb11457f34, type: 3}
+  - {fileID: 21300000, guid: f5448c4d5eee544269a5f38f38c9f303, type: 3}
+  - {fileID: 21300000, guid: 97fe3203964dd429fb2dad4bd46716d2, type: 3}
+  - {fileID: 21300000, guid: 0da2b85b8e24e4aa586d9adb11457f34, type: 3}
+  - {fileID: 21300000, guid: f5448c4d5eee544269a5f38f38c9f303, type: 3}

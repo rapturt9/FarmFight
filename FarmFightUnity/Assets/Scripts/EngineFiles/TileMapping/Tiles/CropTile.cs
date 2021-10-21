@@ -31,7 +31,10 @@ public abstract class TileTemp : TileTempDepr
     {
         if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not add farmers from the client! Wrap your method in a ServerRpc."); }
 
+        
+        Debug.Log("Farmer" + Repository.Central.localPlayerId.ToString());
         farmerObj = SpriteRepo.Sprites["Farmer" + Repository.Central.localPlayerId.ToString()];
+        farmerObj.GetComponent<Farmer>().Owner.Value = tileOwner;
         farmerObj.transform.position = (Vector2)TileManager.TM.HexToWorld(hexCoord) + .25f * Vector2.right;
         return farmerObj;
     }
@@ -50,8 +53,8 @@ public abstract class TileTemp : TileTempDepr
 
         Soldier soldier = SpriteRepo.Sprites["Soldier" + Repository.Central.localPlayerId.ToString()].GetComponent<Soldier>();
         soldier.transform.position = hexCoord.world() + Vector2.left * .25f;
+        soldier.Position = hexCoord;
         soldier.owner.Value = owner;
-
         SortedSoldiers[owner].Add(soldier);
         return soldier;
     }
@@ -63,6 +66,8 @@ public abstract class TileTemp : TileTempDepr
         soldier.AddToTile(hexCoord);
 
         soldier.transform.position = hexCoord.world() + .25f * Vector2.left;
+
+        soldier.Position = hexCoord;
 
         //Debug.Log($"Soldier added to {hexCoord}");
     }
@@ -77,7 +82,7 @@ public abstract class TileTemp : TileTempDepr
             TileManager.TM.isValidHex(end) &&
             SortedSoldiers[localPlayerId].Count != 0)
         {
-            Debug.Log("I Got Inside");
+            
 
             Soldier soldier = FindFirstSoldierWithID(localPlayerId);
 
@@ -268,7 +273,7 @@ public abstract class TileTemp : TileTempDepr
             currentArt = tileArts[7];
         }
 
-        BattleFunctionality();
+        //BattleFunctionality();
 
         //Debug.Log(soldierCount);
     }
@@ -300,9 +305,7 @@ public abstract class TileTemp : TileTempDepr
 
     public Soldier FindFirstSoldierWithID(int id)
     {
-
         return SortedSoldiers[id].Count == 0 ? null : SortedSoldiers[id][0];
-
     }
 
     /// BattleStuff
@@ -311,23 +314,24 @@ public abstract class TileTemp : TileTempDepr
     GameObject battleCloud;
 
 
-    private void BattleFunctionality()
+    public void BattleFunctionality()
     {
 
         if (SortedSoldiers[tileOwner].Count != soldierCount)
         {
             if(farmerObj != null)
                 removeFarmer();
+
             // Do battle Stuff
             Battle.BattleFunction(SortedSoldiers, tileOwner);
 
             //Control Display
             if(battleCloud == null)
             {
-                //battleCloud = SpriteRepo.Sprites["BattleCloud"];
-                //battleCloud.transform.position = TileManager.TM.HexToWorld(hexCoord);
+                battleCloud = SpriteRepo.Sprites["BattleCloud"];
+                battleCloud.transform.position = TileManager.TM.HexToWorld(hexCoord);
             }
-
+            soldiers[0].FadeOut();
             OwnershipSwitch();
         }
         
@@ -399,6 +403,7 @@ public class BlankTile: TileTemp
     public override void Behavior()
     {
         currentArt = null;
+        //base.BattleFunctionality();
     }
 }
 

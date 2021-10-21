@@ -18,7 +18,7 @@ public static class Battle
     static int[] DamageCalculate(Dictionary<int, List<Soldier>> SortedSoldiers, int owner)
     {
 
-        int[] col = new int[6];
+        int[] col = new int[7];
         int total = 0;
 
         foreach(var player in SortedSoldiers)
