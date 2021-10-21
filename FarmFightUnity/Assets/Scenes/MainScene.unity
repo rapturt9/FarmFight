@@ -221,7 +221,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e3abe75865b044cba8c03d1f67b0d96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cropTiles: {fileID: 0}
+  cropTiles: {fileID: 1228046376}
 --- !u!1 &151232343
 GameObject:
   m_ObjectHideFlags: 0

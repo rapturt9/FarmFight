@@ -130,6 +130,7 @@ public class CropManager : NetworkBehaviour
         // Set owner
         handler[hex].tileOwner = central.localPlayerId;
         handler.SyncTile(hex);
+        CheckForWinServerRpc(central.localPlayerId);
 
         return true;
     }
@@ -139,6 +140,7 @@ public class CropManager : NetworkBehaviour
         handler[hex] = new BlankTile();
     }
 
+    // Add farmer
     public bool addFarmer(Hex hex)
     {
         if (handler[hex].containsFarmer == false && handler[hex].tileOwner == central.localPlayerId)
@@ -153,11 +155,13 @@ public class CropManager : NetworkBehaviour
     void addFarmerServerRpc(int[] hexArray)
     {
         Hex hex = BoardHelperFns.ArrayToHex(hexArray);
-        handler[hex].addFarmer();
+        GameObject farmer = handler[hex].addFarmer();
+        farmer.GetComponent<NetworkObject>().Spawn();
         handler.SyncTile(hex);
         Debug.Log("Has Farmer");
     }
 
+    // Remove farmer
     public bool removeFarmer(Hex hex)
     {
         if (handler[hex].containsFarmer == true)
@@ -176,6 +180,7 @@ public class CropManager : NetworkBehaviour
         handler.SyncTile(hex);
     }
 
+    // Add soldier
     public bool addSoldier(Hex hex)
     {
         int[] hexArray = BoardHelperFns.HexToArray(hex);
@@ -188,15 +193,16 @@ public class CropManager : NetworkBehaviour
         return false;
     }
 
-    // We initially spawn a soldier only on the server
     [ServerRpc(RequireOwnership = false)]
     void addSoldierServerRpc(int[] hexArray, int owner)
     {
         Hex hex = BoardHelperFns.ArrayToHex(hexArray);
-        handler[hex].addSoldier(owner);
-        handler.SyncTile(hex);
+        Soldier soldier = handler[hex].addSoldier(owner);
+        soldier.GetComponent<NetworkObject>().Spawn();
+        soldier.AddToTile(hex);
     }
 
+    // Send soldier
     [ServerRpc(RequireOwnership = false)]
     public void sendSoldierServerRpc(int[] startArray, int[] endArray, int localPlayerId)
     {
@@ -214,5 +220,11 @@ public class CropManager : NetworkBehaviour
         sendSoldierServerRpc(BoardHelperFns.HexToArray(start),
                 BoardHelperFns.HexToArray(end),
                 central.localPlayerId);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void CheckForWinServerRpc(int playerId)
+    {
+        BoardChecker.Checker.CheckForWin(playerId);
     }
 }

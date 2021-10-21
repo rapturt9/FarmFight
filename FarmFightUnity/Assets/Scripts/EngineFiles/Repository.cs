@@ -13,6 +13,7 @@ public class Repository : MonoBehaviour
     public bool gameIsRunning = false;
     public double money = 100.0;
 
+    public const int maxPlayers = 6;
 
     /// <summary>
     /// the central repository to store necessary game info inside
