@@ -15,7 +15,6 @@ public abstract class TileTemp : TileTempDepr
 
     public override void Start()
     {
-        //soldiers = new List<Soldier>();
         SortedSoldiers = new Dictionary<int, List<Soldier>>();
         for (int i = 0; i < Repository.maxPlayers; i++)
             SortedSoldiers[i] = new List<Soldier>();
@@ -253,8 +252,6 @@ public abstract class TileTemp : TileTempDepr
             //frameInternal += 1;
         }
 
-        //SortSoldiers();
-
         frame = (int) (frameInternal / frameRate);
 
         //farmer autoharvest
@@ -331,7 +328,7 @@ public abstract class TileTemp : TileTempDepr
                 battleCloud = SpriteRepo.Sprites["BattleCloud"];
                 battleCloud.transform.position = TileManager.TM.HexToWorld(hexCoord);
             }
-            soldiers[0].FadeOut();
+            SortedSoldiers[tileOwner][0].FadeOut();
             OwnershipSwitch();
         }
         
