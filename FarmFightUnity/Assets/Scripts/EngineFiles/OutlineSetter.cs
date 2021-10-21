@@ -103,15 +103,24 @@ public class OutlineSetter : MonoBehaviour
     private void Start()
     {
 
-        Debug.Log(SortedTiles.Count);
-        StartCoroutine("RefreshOutlines");
+        //Debug.Log(SortedTiles.Count);
+        //StartCoroutine("RefreshOutlines");
+    }
+
+
+    int owner = 0;
+
+    private void Update()
+    {
+        
+        RedrawTiles(owner);
+
+        owner++;
+        owner %= 6;
     }
 
     private IEnumerator RefreshOutlines()
     {
-
-
-        int owner = 0;
 
         while (true)
         {
@@ -122,5 +131,8 @@ public class OutlineSetter : MonoBehaviour
 
             yield return new WaitForSeconds(.05f);
         }
+
+
+
     }
 }
