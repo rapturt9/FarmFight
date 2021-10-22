@@ -10,8 +10,8 @@ public class SoldierTrip: NetworkBehaviour
 
     Soldier soldier { get { return GetComponent<Soldier>(); } }
 
-    [SerializeField]
-    List<Hex> Path;
+    
+    public List<Hex> Path;
 
     Hex start, end;
 
@@ -62,13 +62,16 @@ public class SoldierTrip: NetworkBehaviour
 
     }
 
+    public List<Hex> searched;
 
-List<Hex> PathCreator(Hex start, Hex end)
+    public PathFinder finder;
+
+    List<Hex> PathCreator(Hex start, Hex end)
     {
         List<Hex> temp;
 
 
-        PathFinder find = new PathFinder(start, end, soldier.owner.Value, out temp);
+        finder = new PathFinder(start, end, soldier.owner.Value, out temp, this);
 
         return temp;
 
@@ -90,14 +93,18 @@ public class PathFinder
 
     private int owner;
 
-    public PathFinder(Hex start, Hex end, int owner, out List<Hex> path)
+    private SoldierTrip trip;
+    
+            
+
+    public PathFinder(Hex start, Hex end, int owner,  out List<Hex> path, SoldierTrip soldierTrip = null)
     {
         this.start = start;
         this.end = end;
         this.owner = owner;
         searched = new HashSet<Hex>() { start};
 
-        
+        trip = soldierTrip;
         
         path = PathBuilder();
         if(path != null)
@@ -109,16 +116,17 @@ public class PathFinder
     {
         if (ForwardTrace())
         {
-            //Debug.Log(searched.Count);
+            Debug.Log("Forward Finished");
+            trip.searched = new List<Hex>(searched);
             return BackwardTrace();
         }
         else
         {
-            //Debug.Log(searched.Count);
+            
             return null;
         }
 
-        return null;
+        
         
     }
 
@@ -154,10 +162,12 @@ public class PathFinder
 
         List<Hex> nextStep = getNextStep(steps[steps.Count-1]);
 
-        //Debug.Log($"nextStep {nextStep[0]}");
+        
 
 
-        // add the found values to the searched set
+        
+
+        
         
 
         // if there is no way forward discard the current step and try again
@@ -167,6 +177,7 @@ public class PathFinder
             return NextStep(steps.GetRange(0, steps.Count - 1));
         }
 
+        // add the found values to the searched set
         searched.UnionWith(nextStep);
 
         // if the next step has the end, we are finished
@@ -196,7 +207,7 @@ public class PathFinder
         {
             nextProspects.UnionWith(ValidNeighbors(hex));
         }
-        Debug.Log($"temp init {nextProspects.Count}");
+        
 
         if (nextProspects.Count == 0)
             return new List<Hex>();
@@ -246,12 +257,13 @@ public class PathFinder
     
     private List<Hex> getSearchedNeighbors(Hex end)
     {
-        List<Hex> neighbors = new List<Hex>(TileManager.TM.getValidNeighbors(end));
+        List<Hex> neighbors = new List<Hex>(TileManager.TM.getNeighbors(end));
         List<Hex> temp = new List<Hex>();
         foreach(var hex in neighbors)
         {
-            if (searched.Contains(hex))
+            if (searched.Contains(hex) && hex != end)
                 temp.Add(hex);
+            
         }
 
         return temp;
@@ -259,60 +271,88 @@ public class PathFinder
 
     private List<Hex> pathTrace(List<Hex> path)
     {
+        // the end of the path
         Hex pathEnd = path[path.Count - 1];
 
+        // too long
+        if(path.Count >= 30)
+        {
+            Debug.LogError("Path too long");
+            
+        }
+
+        /// start has been found
         if (path.Contains(start))
         {
             return path;
         }
 
+        // the neighbors that have been searched
         List<Hex> searchedNeighbors = getSearchedNeighbors(pathEnd);
-        
 
-        if(searchedNeighbors.Count == 0)
+       
+
+        // if there is no way forward
+        if (searchedNeighbors.Count == 0)
         {
-            Debug.LogError("TraceBottleneck");
+            Debug.LogError($"TraceBottleneck length {path.Count}");
+            searched.Remove(pathEnd);
             return pathTrace(path.GetRange(0, path.Count - 1));
         }
+
         
 
-        Hex closest = new Hex();
+        /// the next section is about finding the closest neighbor
+
+        Hex closest = getClosest(start, searchedNeighbors, path);
+
+        searched.Remove(closest);
+        path.Add(closest);
+
+        return pathTrace(new List<Hex>(path));
+
+    }
+
+
+    public Hex getClosest(Hex goal, List<Hex> options, List<Hex> path)
+    {
+        Hex closest = new Hex(50,50);
+
         int closestDist = int.MaxValue;
 
-        foreach (var hex in searchedNeighbors )
+        foreach (var hex in options)
         {
             if (path.Contains(hex))
                 continue;
 
-            int dist = distance(hex, start);
+            int dist = distance(hex, goal);
 
             if (dist == 0)
             {
-                closest = hex;
-
-                path.Add(closest);
-
-                return path;
+                return hex;
             }
+
 
             else if (dist < closestDist)
             {
-                
+
                 closest = hex;
                 closestDist = dist;
             }
-            else if (dist == closestDist)
+
+            /// maybe randomly select if two are equally good
+            /// or select straightest path
+            
+            else if (false && dist == closestDist)
             {
-                if(Random.Range(0, 2) == 1)
+                if (Random.Range(0, 2) == 1)
                     closest = hex;
             }
 
         }
-
-        path.Add(closest);
-
-        return pathTrace(path);
-
+        if (closest == new Hex(50, 50))
+            Debug.LogError("somehow nothing is less than infinity");
+        return closest;
     }
 
 
