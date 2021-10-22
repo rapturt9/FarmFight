@@ -93,21 +93,26 @@ public abstract class TileTemp : TileTempDepr
 
             if (!soldier.TryGetComponent(out trip))
             {
-                soldier.gameObject.AddComponent<SoldierTrip>()
-                .init(hexCoord, end);
+                trip = soldier.gameObject.AddComponent<SoldierTrip>();
+                
             }
-            else
-                trip.init(hexCoord, end);
 
 
-            SortedSoldiers[soldier.owner.Value].Remove(soldier);
+            bool pathPossible = trip.init(hexCoord,end);
 
-            
+            if (pathPossible)
+            {
+                SortedSoldiers[soldier.owner.Value].Remove(soldier);
+                return pathPossible;
+            }
+                
+
+
 
 
             //SortSoldiers();
 
-            return true;
+            //return trip.init(hexCoord, end);
         }
         else Debug.Log("cannot Send");
 

@@ -134,7 +134,8 @@ public class Market : NetworkBehaviour
         }
         else if (Input.GetKeyDown("7"))
         {
-            SendSoldier();
+            if(crops.handler[selectedHex].tileOwner == Repository.Central.localPlayerId)
+                SendSoldier();
         }
         
     }
@@ -219,12 +220,14 @@ public class Market : NetworkBehaviour
 
     private void SoldierTrip(Hex start, Hex end)
     {
+        
         if(SoldierDestination != null && SoldierDestination != selectedHex)
         {
             crops.SendSoldier(start, end);
+            SendSoldier();
         }
-
-        SendSoldier();
+        
+        
 
         UIHandler[SoldierDestination] = new BlankTile();
 

@@ -21,9 +21,9 @@ public static class BoardHelperFns
 
         else
         {
-            int a = Mathf.Abs(pt1.x + pt2.x);
+            int a = Mathf.Abs(pt1.x - pt2.x);
             int b = Mathf.Abs(pt1.y - pt2.y);
-            return a < b ? a : b;
+            return a > b ? a : b;
         }
     }
 
