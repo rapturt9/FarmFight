@@ -3,17 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using MLAPI;
 
-public class SoldierTrip: NetworkBehaviour
+
+public class SoldierTrip : NetworkBehaviour
 {
-    
+
 
     Soldier soldier { get { return GetComponent<Soldier>(); } }
 
-    List<Vector3> Path;
+
+    public List<Hex> Path;
 
     Hex start, end;
 
-    public void init( Hex start, Hex end)
+    public bool init(Hex start, Hex end)
     {
         this.start = start;
         this.end = end;
@@ -21,40 +23,30 @@ public class SoldierTrip: NetworkBehaviour
         Path = PathCreator(start, end);
 
 
+        if (Path == null)
+            return false;
+
         StartCoroutine("Mover");
+
+        return true;
     }
 
-
-
-    
-
-
-    static List<Vector3> PathCreator(Hex start, Hex end)
-    {
-        List<Vector3> temp = new List<Vector3>();
-
-        
-
-        //if(TileManager.TM["Crops"][end].soldierCount != 0)
-            return new List<Vector3>() { start.world(), end.world() };
-
-        //else
-    }
 
     private IEnumerator Mover()
     {
 
         soldier.FadeIn();
 
-        
+
 
         soldier.GetComponent<SpriteRenderer>().enabled = true;
 
-        foreach (var wayPoint in Path)
+        foreach (var wayPoint in finder.optimalPath)
         {
-            while(transform.position != wayPoint)
+            Vector3 pos = TileManager.TM.HexToWorld(wayPoint);
+            while (transform.position != pos)
             {
-                transform.position = Vector3.MoveTowards(transform.position, wayPoint, soldier.travelSpeed);
+                transform.position = Vector3.MoveTowards(transform.position, pos, soldier.travelSpeed);
                 yield return new WaitForFixedUpdate();
             }
         }
@@ -64,9 +56,26 @@ public class SoldierTrip: NetworkBehaviour
 
         soldier.AddToTile(end);
 
-        
+
         //TileManager.TM["Crops"][end].addSoldier(soldier);
 
 
     }
+
+    public List<Hex> searched;
+
+    public PathFinder finder;
+
+    List<Hex> PathCreator(Hex start, Hex end)
+    {
+        List<Hex> temp;
+
+
+        finder = new PathFinder(start, end, soldier.owner.Value, out temp, this);
+
+        return temp;
+    }
+
+
 }
+

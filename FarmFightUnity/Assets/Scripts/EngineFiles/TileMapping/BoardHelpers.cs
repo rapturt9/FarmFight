@@ -12,6 +12,10 @@ public static class BoardHelperFns
 
     public static int distance(Hex pt1, Hex pt2)
     {
+        if(pt1 == pt2)
+        {
+            return 0;
+        }
         if ((pt1.x - pt2.x) * (pt1.y - pt2.y) >= 0)
         {
             int a = Mathf.Abs(pt1.x - pt2.x);
@@ -21,9 +25,9 @@ public static class BoardHelperFns
 
         else
         {
-            int a = Mathf.Abs(pt1.x + pt2.x);
+            int a = Mathf.Abs(pt1.x - pt2.x);
             int b = Mathf.Abs(pt1.y - pt2.y);
-            return a < b ? a : b;
+            return a >= b ? a : b;
         }
     }
 

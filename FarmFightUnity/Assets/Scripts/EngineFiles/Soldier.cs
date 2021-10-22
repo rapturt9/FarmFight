@@ -81,6 +81,7 @@ public class Soldier: NetworkBehaviour
         Hex coord = BoardHelperFns.ArrayToHex(coordArray);
         if (!handler[coord].SortedSoldiers[owner.Value].Contains(this))
             handler[coord].SortedSoldiers[owner.Value].Add(this);
+        transform.position = TileManager.TM.HexToWorld(coord) + .25f * Vector3.left;
     }
 
     public void Update()
