@@ -105,14 +105,18 @@ public abstract class TileTemp : TileTempDepr
                 SortedSoldiers[soldier.owner.Value].Remove(soldier);
                 return pathPossible;
             }
+
+            if(trip.init(hexCoord, end))
+            {
                 
+                return true;
+            }
 
+            else
+            {
+                Debug.Log("cannot Send");
+            }
 
-
-
-            //SortSoldiers();
-
-            //return trip.init(hexCoord, end);
         }
         else Debug.Log("cannot Send");
 

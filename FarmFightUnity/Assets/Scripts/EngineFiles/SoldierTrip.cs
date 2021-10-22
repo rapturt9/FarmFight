@@ -74,8 +74,6 @@ public class SoldierTrip : NetworkBehaviour
         finder = new PathFinder(start, end, soldier.owner.Value, out temp, this);
 
         return temp;
-
-
     }
 
 

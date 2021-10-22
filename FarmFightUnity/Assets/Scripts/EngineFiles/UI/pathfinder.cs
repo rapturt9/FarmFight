@@ -52,7 +52,7 @@ public class PathFinder
         }
         else
         {
-
+            optimalPath = null;
             return null;
         }
 
@@ -174,6 +174,7 @@ public class PathFinder
         return closestHexes;
 
     }
+
 
     private List<Hex> ValidNeighbors(Hex hex)
     {
