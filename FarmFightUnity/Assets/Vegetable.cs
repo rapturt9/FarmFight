@@ -8,6 +8,8 @@ public class Vegetable : MonoBehaviour
 
     public GameObject basket;
 
+    private GameObject SpriteFolder;
+
     public float InvSpeed;
 
     private float value;
@@ -17,6 +19,9 @@ public class Vegetable : MonoBehaviour
     
     public void init(Hex start, CropType crop, double cropValue)
     {
+        
+        transform.parent = SpriteRepo.Sprites.transform;
+
         startPos = TileManager.TM.HexToWorld(start);
         value = (float) cropValue;
 
@@ -55,14 +60,14 @@ public class Vegetable : MonoBehaviour
         float distance = direction.magnitude;
         direction.Normalize();
 
-        
+        float offsetDist = (distance / 2) - (distance/2) * Random.Range(-.25f, .25f);
 
         float along = 0;
 
         while(along <= 1)
         {
             transform.position = startPos + (direction * distance * along) +
-                                   (offset(along,distance/2) * OffsetDirection);
+                                   (offset(along,offsetDist) * OffsetDirection);
 
 
 

@@ -34,6 +34,8 @@ public class Repository : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        
     }
 
 

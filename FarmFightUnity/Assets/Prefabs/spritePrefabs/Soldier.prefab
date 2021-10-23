@@ -74,7 +74,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 31518797
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -104,7 +104,7 @@ MonoBehaviour:
   owner:
     m_InternalValue: -1
   handler: {fileID: 0}
-  travelSpeed: 0.1
+  travelSpeed: 0.03
   fadesSpeed: 0.1
   Position:
     coords: {x: 0, y: 0}

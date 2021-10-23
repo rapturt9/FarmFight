@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MLAPI;
+
 
 
 /// <summary>
@@ -91,13 +91,6 @@ public class PathFinder
             return false;
 
         List<Hex> nextStep = getNextStep(steps[steps.Count - 1]);
-
-
-
-
-
-
-
 
 
         // if there is no way forward discard the current step and try again
@@ -287,15 +280,19 @@ public class PathFinder
                 closestDist = dist;
             }
 
-            /// maybe randomly select if two are equally good
-            /// or select straightest path
-            /*
-            else if (false && dist == closestDist)
+            /// 
+            /// select straightest path
+            
+            else if(dist == closestDist && path.Count > 1)
             {
-                if (Random.Range(0, 2) == 1)
-                    closest = hex;
+                Hex close = closest ?? -hex;
+
+                Hex before = path[path.Count - 2];
+
+                closest = StraightOMeter(before, hex) < StraightOMeter(before,close) ?
+                    hex : close;
             }
-            */
+            
         }
         if (closest == null)
             Debug.LogError("somehow nothing is less than maxint");
@@ -355,7 +352,21 @@ public class PathFinder
 
     }
 
-    
+
+    public int StraightOMeter(Hex from, Hex to)
+    {
+
+        if (from == -to)
+        {
+            return 3;
+        }
+
+        else
+        {
+            return distance(from, to);
+        }
+
+    }
 
 
     private List<Hex> ReverseAndTrim(List <Hex> rawPath)
@@ -402,9 +413,6 @@ public class PathFinder
             to - from == new Hex(-1, 1);
 
     }
-
-
-
 
     /// <summary>
     /// distance from to
