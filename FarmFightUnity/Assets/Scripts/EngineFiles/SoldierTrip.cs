@@ -20,11 +20,14 @@ public class SoldierTrip : NetworkBehaviour
         this.start = start;
         this.end = end;
 
-        Path = PathCreator(start, end);
+        PathCreator(start, end);
 
+        Path = finder.Path;
 
         if (Path == null)
             return false;
+
+        
 
         StartCoroutine("Mover");
 
@@ -41,7 +44,7 @@ public class SoldierTrip : NetworkBehaviour
 
         soldier.GetComponent<SpriteRenderer>().enabled = true;
 
-        foreach (var wayPoint in finder.optimalPath)
+        foreach (var wayPoint in finder.Path)
         {
             Vector3 pos = TileManager.TM.HexToWorld(wayPoint);
             while (transform.position != pos)
@@ -62,18 +65,18 @@ public class SoldierTrip : NetworkBehaviour
 
     }
 
-    public List<Hex> searched;
+    
 
     public PathFinder finder;
 
-    List<Hex> PathCreator(Hex start, Hex end)
+    void PathCreator(Hex start, Hex end)
     {
-        List<Hex> temp;
+        
 
 
-        finder = new PathFinder(start, end, soldier.owner.Value, out temp, this);
+        finder = new PathFinder(start, end, soldier.owner.Value);
 
-        return temp;
+        
     }
 
 

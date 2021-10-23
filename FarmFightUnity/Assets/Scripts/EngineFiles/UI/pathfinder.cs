@@ -9,7 +9,7 @@ using MLAPI;
 /// </summary>
 public class PathFinder
 {
-    public List<Hex> optimalPath;
+    public List<Hex> Path;
 
     private HashSet<Hex> searched;
 
@@ -21,16 +21,14 @@ public class PathFinder
 
 
 
-    public PathFinder(Hex start, Hex end, int owner, out List<Hex> path, SoldierTrip soldierTrip = null)
+    public PathFinder(Hex start, Hex end, int owner)
     {
         this.start = start;
         this.end = end;
         this.owner = owner;
         searched = new HashSet<Hex>() { start };
 
-        trip = soldierTrip;
-
-        path = PathBuilder();
+        Path = PathBuilder();
 
         //if (path != null)
             //path.Reverse();
@@ -44,15 +42,15 @@ public class PathFinder
             Debug.Log("Forward Finished");
 
             searched.Add(end);
-            trip.searched = new List<Hex>(searched);
+            
 
-            var Path = BackwardTrace();
-            optimalPath = ReverseAndTrim(Path);
-            return optimalPath;
+            var RawPath = BackwardTrace();
+            
+            return ReverseAndTrim(RawPath);
         }
         else
         {
-            optimalPath = null;
+            Path = null;
             return null;
         }
 
@@ -184,16 +182,17 @@ public class PathFinder
 
         while (i < temp.Count)
         {
-            int tileowner = TileManager.TM["Crops", temp[i]].tileOwner;
+
+            int tileOwner = TileManager.TM["Crops", temp[i]].tileOwner;
 
             if (temp[i] == end)
             {
                 return new List<Hex>() { end };
             }
 
-            if (searched.Contains(temp[i]) ||
-                    (tileowner != -1 &&
-                     tileowner != owner)
+            else if (searched.Contains(temp[i]) ||
+                    (tileOwner != -1 &&
+                     tileOwner != owner)
                     )
             {
                 temp.RemoveAt(i);
