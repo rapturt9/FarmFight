@@ -96,6 +96,8 @@ public class GameState : MonoBehaviour
             tile = new Carrot();
         else if (cropType == CropType.rice)
             tile = new Rice();
+        else if (cropType == CropType.eggplant)
+            tile = new Eggplant();
         else
             tile = new BlankTile();
 

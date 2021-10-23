@@ -60,6 +60,10 @@ public class CropManager : NetworkBehaviour
             {
                 hLevel = 10;
             }
+            if (handler[hex].TileName == "Eggplant")
+            {
+                hLevel = 10;
+            }
 
             if (hLevel > 0)
             {
@@ -128,6 +132,10 @@ public class CropManager : NetworkBehaviour
         else if (cropType == CropType.rice)
         {
             handler[hex] = new Rice();
+        }
+        else if (cropType == CropType.eggplant)
+        {
+            handler[hex] = new Eggplant();
         }
 
         // Set owner

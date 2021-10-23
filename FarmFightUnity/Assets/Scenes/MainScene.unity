@@ -390,6 +390,7 @@ RectTransform:
   - {fileID: 1747498287}
   - {fileID: 1888252013}
   - {fileID: 1524123755}
+  - {fileID: 585339154}
   m_Father: {fileID: 1645006419}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -808,6 +809,138 @@ MonoBehaviour:
   PrefabHashGenerator: VariousSpriteObjects
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
+--- !u!1 &585339153
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 585339154}
+  - component: {fileID: 585339157}
+  - component: {fileID: 585339156}
+  - component: {fileID: 585339155}
+  m_Layer: 5
+  m_Name: Eggplant Button
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &585339154
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 585339153}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.12508805, y: 0.46497375, z: 0.5391}
+  m_Children: []
+  m_Father: {fileID: 346193513}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -39.2, y: -23.529}
+  m_SizeDelta: {x: 158.31, y: 27.114}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &585339155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 585339153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 585339156}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1645006423}
+        m_TargetAssemblyTypeName: Market, Assembly-CSharp
+        m_MethodName: SetCrop
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 3
+          m_FloatArgument: 0
+          m_StringArgument: SetRice
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &585339156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 585339153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &585339157
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 585339153}
+  m_CullTransparentMesh: 0
 --- !u!1 &627222476
 GameObject:
   m_ObjectHideFlags: 0
@@ -7232,6 +7365,15 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9268247ae10a143a4b56db20d8478656, type: 2}
   - {fileID: 11400000, guid: cc515ca3e1be54ee0835231d512ffcf0, type: 2}
   - {fileID: 11400000, guid: c327e94bd4cad48218ab8630edd7dfc6, type: 2}
+  - {fileID: 11400000, guid: 8fcddfcb922144d23a8f35d1af4d675a, type: 2}
+  - {fileID: 11400000, guid: 63853ffd957e649a6988fa8b2f9f9c4c, type: 2}
+  - {fileID: 11400000, guid: 08cbc3d14310241f5ae24c7a06e00d7f, type: 2}
+  - {fileID: 11400000, guid: d74e3af5a4d7048cdb74c08a3bd042cf, type: 2}
+  - {fileID: 11400000, guid: 2f703651737ed4613ba73d80cc132b0f, type: 2}
+  - {fileID: 11400000, guid: 43f91012ee481432a958f7d3ccfb22a1, type: 2}
+  - {fileID: 11400000, guid: 7df2ff78eb9d44d25b3461643378102d, type: 2}
+  - {fileID: 11400000, guid: fb3eb404bc31d4d2595a936741fbde19, type: 2}
+  - {fileID: 11400000, guid: 372a9add386424524ad11f90b357e96e, type: 2}
 --- !u!1 &2120205904
 GameObject:
   m_ObjectHideFlags: 0

@@ -270,15 +270,23 @@ public abstract class TileTemp : TileTempDepr
             if (tileOwner == Repository.Central.localPlayerId)
                 Repository.Central.money += moneyToAdd;
         }
-
-        if(0 <= frame && frame <= 7)
-        {
-            currentArt = tileArts[frame];
-        } else
-        {
-            currentArt = tileArts[7];
+        if(cropType == CropType.eggplant){
+            if(0 <= frame && frame <= 8)
+            {
+                currentArt = tileArts[frame+5];
+            } else
+            {
+                currentArt = tileArts[13];
+            }
+        } else {
+            if(0 <= frame && frame <= 7)
+            {
+                currentArt = tileArts[frame];
+            } else
+            {
+                currentArt = tileArts[7];
+            }
         }
-
         //BattleFunctionality();
 
         //Debug.Log(soldierCount);
@@ -412,7 +420,8 @@ public enum CropType
     blankTile = -1,
     potato,
     carrot,
-    rice
+    rice,
+    eggplant
 }
 
 public class BlankTile: TileTemp
@@ -498,6 +507,32 @@ public class Carrot : TileTemp
                 getTileArt("Carrot0"),
                 getTileArt("Carrot1"),
                 getTileArt("Carrot2")
+            };
+    }
+}
+
+public class Eggplant : TileTemp
+{
+    public override void Start()
+    {
+        base.Start();
+        cropType = CropType.eggplant;
+    }
+
+    public override List<TileArt> getCropArt()
+    {
+        TileName = "Eggplant";
+        return new List<TileArt>
+            {
+                getTileArt("Golden0"),
+                getTileArt("Golden1"),
+                getTileArt("Golden2"),
+                getTileArt("Golden3"),
+                getTileArt("Golden4"),
+                getTileArt("Golden5"),
+                getTileArt("Golden6"),
+                getTileArt("Golden7"),
+                getTileArt("Golden8")
             };
     }
 }

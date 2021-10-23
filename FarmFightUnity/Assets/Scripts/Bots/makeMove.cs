@@ -54,6 +54,7 @@ public class makeMove : MonoBehaviour
                     res.Add((coord,"plantRice"));
                     res.Add((coord,"plantCarrot"));
                     res.Add((coord,"plantPotato"));
+                    res.Add((coord,"plantEggplant"));
                 }
                 else{
                     res.Add((coord,"harvest"));
@@ -71,6 +72,9 @@ public class makeMove : MonoBehaviour
                         }
                         if (!res.Contains((newLoc,"plantPotato"))){
                             res.Add((coord,"plantPotato"));
+                        }
+                        if (!res.Contains((newLoc,"plantEggplant"))){
+                            res.Add((coord,"plantEggplant"));
                         }
                     }
                 }

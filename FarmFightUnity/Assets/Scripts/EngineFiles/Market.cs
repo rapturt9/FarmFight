@@ -22,7 +22,8 @@ public class Market : NetworkBehaviour
     {
         {CropType.potato, 1},
         {CropType.carrot, 2},
-        {CropType.rice, 10},
+        {CropType.rice, 4},
+        {CropType.eggplant, 10},
     };
     int soldierCost = 10;
     int farmerCost = 5;
@@ -122,7 +123,7 @@ public class Market : NetworkBehaviour
         }
         else if (Input.GetKeyDown("4"))
         {
-            //SetCrop((int)CropType.eggplant);
+            SetCrop((int)CropType.eggplant);
         }
         else if (Input.GetKeyDown("5"))
         {
