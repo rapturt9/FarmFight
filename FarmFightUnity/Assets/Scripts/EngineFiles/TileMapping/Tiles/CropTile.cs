@@ -31,8 +31,8 @@ public abstract class TileTemp : TileTempDepr
         if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not add farmers from the client! Wrap your method in a ServerRpc."); }
 
         
-        Debug.Log("Farmer" + Repository.Central.localPlayerId.ToString());
-        farmerObj = SpriteRepo.Sprites["Farmer" + Repository.Central.localPlayerId.ToString()];
+        
+        farmerObj = SpriteRepo.Sprites["Farmer"];
         farmerObj.GetComponent<Farmer>().Owner.Value = tileOwner;
         farmerObj.transform.position = (Vector2)TileManager.TM.HexToWorld(hexCoord) + .25f * Vector2.right;
         return farmerObj;
@@ -50,7 +50,7 @@ public abstract class TileTemp : TileTempDepr
     {
         if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not add new soldiers from the client! Wrap your method in a ServerRpc."); }
 
-        Soldier soldier = SpriteRepo.Sprites["Soldier" + Repository.Central.localPlayerId.ToString()].GetComponent<Soldier>();
+        Soldier soldier = SpriteRepo.Sprites["Soldier"].GetComponent<Soldier>();
         soldier.transform.position = hexCoord.world() + Vector2.left * .25f;
         soldier.Position = hexCoord;
         soldier.owner.Value = owner;
@@ -120,42 +120,6 @@ public abstract class TileTemp : TileTempDepr
         }
         else Debug.Log("cannot Send");
 
-
-        // Only send if there is a soldier, the end isn't the start, the hex is on the board, and if the soldier is ours
-        /*
-        if (soldierCount != 0 &&
-            end != hexCoord &&
-            TileManager.TM.isValidHex(end) &&
-            soldiers[0].owner.Value == localPlayerId)
-        {
-            //GameObject.Destroy(soldiers[0].GetComponent<SoldierTrip>());
-
-            Soldier soldier = soldiers[0];
-            SoldierTrip trip;
-
-            if (!soldier.TryGetComponent(out trip))
-            {
-                soldiers[0].gameObject.AddComponent<SoldierTrip>()
-                .init(hexCoord, end);
-            }
-            else
-                trip.init(hexCoord, end);
-
-            soldiers.RemoveAt(0);
-
-            if (soldierCount != 0)
-            {
-                soldiers[0].FadeIn();
-            }
-
-
-            SortSoldiers();
-
-            return true;
-        }
-        else Debug.Log("cannot Send");
-        */
-
         return false;
     }
 
@@ -172,13 +136,7 @@ public abstract class TileTemp : TileTempDepr
     }
 
 
-    /// <summary>
-    /// list of the soldiers on the tile
-    ///
-    /// *may need to be split into multiple lists depending on what fights look like*
-    /// If you want to add to the list of soldiers, use soldier.AddToTile(hexCoord), NOT soldiers.Add(soldier)
-    /// </summary>
-    //public List<Soldier> soldiers = new List<Soldier>();
+   
 
     /// <summary>
     /// the Gameobject representing a farmer

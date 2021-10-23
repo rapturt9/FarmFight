@@ -46,7 +46,7 @@ public class Repository : MonoBehaviour
 
     public PlayState GamesMode;
 
-   
+    public bool flyingVegies = true;
 }
 
 /// modes

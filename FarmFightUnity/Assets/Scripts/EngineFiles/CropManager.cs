@@ -22,45 +22,38 @@ public class CropManager : NetworkBehaviour
     {
         if (!central.gameIsRunning) { return; }
 
-        // Right click to send a soldier
-        if (Input.GetMouseButtonDown(1))
-        {
-            
-        }
-
-        // Soldier on tile debugging
-        //List<Soldier> s = handler[central.selectedHex].soldiers;
-        //if (s.Count > 0)
-        //{
-        //    Debug.Log("Length " + s.Count.ToString());
-        //    Debug.Log(s[0].owner.Value);
-        //}
+        
     }
+
+    public GameObject Vegetable;
+    
 
     public double harvest(Hex hex)
     {
         // Only harvest if owned by the local player
         if (handler[hex].tileOwner == central.localPlayerId)
         {
+
+            
+            CropType crop = handler[hex].cropType;
+
             //if crop there
             int hLevel = 0;
-            if (handler[hex].TileName == "Potato")
+            if (crop == CropType.potato)
             {
                 hLevel = 1;
+                
             }
-            if (handler[hex].TileName == "Carrot")
+            else if (crop == CropType.carrot)
             {
                 hLevel = 4;
             }
-            if (handler[hex].TileName == "Wheat")
+            else if (crop == CropType.rice)
             {
-                hLevel = 2;
+                hLevel = 6;
             }
-            if (handler[hex].TileName == "Rice")
-            {
-                hLevel = 10;
-            }
-            if (handler[hex].TileName == "Eggplant")
+            
+            else if (crop == CropType.eggplant)
             {
                 hLevel = 10;
             }
@@ -69,24 +62,24 @@ public class CropManager : NetworkBehaviour
             {
                 double add = handler[hex].reset() * hLevel;
                 handler.SyncTile(hex);
-                return add;
+
+                if (central.flyingVegies)
+                {
+                    var vegie = GameObject.Instantiate(Vegetable);
+                    vegie.GetComponent<Vegetable>().init(hex, crop, add);
+                    return 0;
+                }
+                else
+                    return add;
             }
+
+            else return 0;
         }
 
         return 0;
     }
 
-    /*
-    public bool canPlant(Hex hex)
-    {
-        // We can't overwrite an opponent's crop
-        if (handler[hex].cropType != CropType.blankTile && handler[hex].tileOwner != central.localPlayerId)
-        {
-            return false;
-        }
-        // Check if there is an adjacent tile owned by us
-    }
-    */
+    
 
     public bool canPlant(Hex hex)
     {
