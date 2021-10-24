@@ -237,26 +237,16 @@ public abstract class TileTemp : TileTempDepr
         }
 
 
-        if(cropType == CropType.eggplant){
-            if(0 <= frame && frame <= 8)
-            {
-                currentArt = tileArts[frame+5];
-            } else
-            {
-                currentArt = tileArts[13];
-            }
-        } else {
-            if(0 <= frame && frame <= 7)
+
+
+            if(0 <= frame && frame < tileArts.Count)
+
             {
                 currentArt = tileArts[frame];
             } else
             {
-                currentArt = tileArts[7];
+                currentArt = tileArts[tileArts.Count-1];
             }
-        }
-        //BattleFunctionality();
-
-        //Debug.Log(soldierCount);
     }
 
 
@@ -488,6 +478,7 @@ public class Eggplant : TileTemp
 
     public override List<TileArt> getCropArt()
     {
+        
         TileName = "Eggplant";
         return new List<TileArt>
             {
@@ -501,6 +492,11 @@ public class Eggplant : TileTemp
                 getTileArt("Golden7"),
                 getTileArt("Golden8")
             };
+    }
+
+    public override void LoadArt()
+    {
+        tileArts = getCropArt();
     }
 }
 
@@ -524,6 +520,7 @@ public class HighLight: TileTemp
     {
 
     }
+    
 }
 
 
