@@ -50,7 +50,7 @@ public class CropManager : NetworkBehaviour
             }
             else if (crop == CropType.rice)
             {
-                hLevel = 6;
+                hLevel = 2;
             }
             
             else if (crop == CropType.eggplant)
