@@ -34,6 +34,17 @@ public class makeMove : MonoBehaviour
         gameData.updateGameState();
         List<(Hex,string)> possibleMoves = getMoves(player);
         var (loc, bestMove) = evaluateStates(possibleMoves, player);
+        print(loc);
+        print(bestMove);
+
+        if (bestMove == "harvest"){
+            double add = cropManager.harvest(loc);
+            if (add > 0)
+            {
+                Repository.Central.money += add;
+            }
+        }
+        
         /*if (bestMove == "plantRice"){
             //update gameState
         }
