@@ -220,27 +220,10 @@ public abstract class TileTemp : TileTempDepr
         if(containsFarmer && frame >= 6)
         {
             double moneyToAdd = reset();
-
-            
             if (tileOwner == Repository.Central.localPlayerId)
-            {
-                if (Repository.Central.flyingVegies)
-                {
-                    var obj = GameObject.Instantiate(CropManager.Crops.Vegetable);
-
-                    obj.GetComponent<Vegetable>().init(hexCoord, cropType, moneyToAdd);
-                }
-                else 
-                    Repository.Central.money += moneyToAdd;
-            }
-                
+                Repository.Central.money += moneyToAdd;
         }
-
-
-
-
             if(0 <= frame && frame < tileArts.Count)
-
             {
                 currentArt = tileArts[frame];
             } else
@@ -250,22 +233,32 @@ public abstract class TileTemp : TileTempDepr
     }
 
 
-    
+    public double hReset () {
+        double mid = tileArts.Count / 2; //optimal harvest level
+        if(cropType == CropType.eggplant){
+            mid = 4.5;
+        } else {
+            mid = 5.5;
+        }
+
+        float calc;
+        double stage = frameInternal / frameRate;
+
+        Debug.Log(stage);        
+
+        calc = Mathf.Abs((float)(stage - mid));
+        calc = Mathf.Pow(0.25f,calc);
+
+        return calc;
+    }
 
     //return crop level and reset crop growth
     public double reset () {
-        double mid = 5.5; //optimal harvest level
-
-        double calc;
-        double stage = frameInternal / frameRate;
-
-        calc = Mathf.Abs((float)(stage - mid));
-        calc = mid - calc;
-
+        double hr = hReset();
         timeLastPlanted = NetworkManager.Singleton.NetworkTime;
         frameInternal = 0;
         frame = 0;
-        return calc;
+        return hr;
     }
 
     void killSoldier(Soldier soldier)
