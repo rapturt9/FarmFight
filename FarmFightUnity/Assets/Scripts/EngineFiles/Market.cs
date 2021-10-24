@@ -22,7 +22,7 @@ public class Market : NetworkBehaviour
     {
         {CropType.potato, 1},
         {CropType.carrot, 2},
-        {CropType.rice, 4},
+        {CropType.rice, 2},
         {CropType.eggplant, 10},
     };
     int soldierCost = 10;
