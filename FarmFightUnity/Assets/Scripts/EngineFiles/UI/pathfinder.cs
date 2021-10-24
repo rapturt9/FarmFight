@@ -37,9 +37,10 @@ public class PathFinder
 
     private List<Hex> PathBuilder()
     {
+        
         if (ForwardTrace())
         {
-            Debug.Log("Forward Finished");
+            //Debug.Log("Forward Finished");
 
             searched.Add(end);
             
@@ -176,12 +177,20 @@ public class PathFinder
         while (i < temp.Count)
         {
 
+
+
             int tileOwner = TileManager.TM["Crops", temp[i]].tileOwner;
 
-            if (temp[i] == end)
+
+            
+
+            if (temp[i] == end &&
+                TileManager.TM["Crops", hex].tileOwner != tileOwner)
             {
-                return new List<Hex>() { end };
+
+               return new List<Hex>() { end };
             }
+
 
             else if (searched.Contains(temp[i]) ||
                     (tileOwner != -1 &&
@@ -385,6 +394,8 @@ public class PathFinder
 
     private List<Hex> ReverseAndTrim(List <Hex> rawPath)
     {
+
+        
         Debug.Assert(rawPath[rawPath.Count - 1] == start, "start not at end");
         Debug.Assert(rawPath[0] == end, "end not at start");
 
@@ -401,9 +412,13 @@ public class PathFinder
 
                 
                 if (isNeighbor(temp[temp.Count - 1], hex))
+                   
                 {
-                    temp.Add(hex);
-                    break;
+                    
+                        temp.Add(hex);
+                        break;
+                    
+                    
                 }
 
                 

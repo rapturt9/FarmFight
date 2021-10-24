@@ -220,9 +220,23 @@ public abstract class TileTemp : TileTempDepr
         if(containsFarmer && frame >= 6)
         {
             double moneyToAdd = reset();
+
+            
             if (tileOwner == Repository.Central.localPlayerId)
-                Repository.Central.money += moneyToAdd;
+            {
+                if (Repository.Central.flyingVegies)
+                {
+                    var obj = GameObject.Instantiate(CropManager.Crops.Vegetable);
+
+                    obj.GetComponent<Vegetable>().init(hexCoord, cropType, moneyToAdd);
+                }
+                else 
+                    Repository.Central.money += moneyToAdd;
+            }
+                
         }
+
+
         if(cropType == CropType.eggplant){
             if(0 <= frame && frame <= 8)
             {

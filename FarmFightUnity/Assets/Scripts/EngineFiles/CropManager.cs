@@ -15,7 +15,11 @@ public class CropManager : NetworkBehaviour
     {
         central = Repository.Central;
         handler = GetComponent<TileHandler>();
+
+        Crops = this;
     }
+
+    public static CropManager Crops;
 
 
     private void Update()
