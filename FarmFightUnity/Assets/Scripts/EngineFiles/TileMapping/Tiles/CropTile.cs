@@ -234,13 +234,20 @@ public abstract class TileTemp : TileTempDepr
 
 
     public double hReset () {
-         double mid = tileArts.Count / 2; //optimal harvest level
+        double mid = tileArts.Count / 2; //optimal harvest level
+        if(cropType == CropType.eggplant){
+            mid = 4.5;
+        } else {
+            mid = 5.5;
+        }
 
-        double calc;
+        float calc;
         double stage = frameInternal / frameRate;
 
+        Debug.Log(stage);        
+
         calc = Mathf.Abs((float)(stage - mid));
-        calc = mid - calc;
+        calc = Mathf.Pow(0.25f,calc);
 
         return calc;
     }
