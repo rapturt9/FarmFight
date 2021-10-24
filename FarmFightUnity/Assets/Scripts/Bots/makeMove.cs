@@ -25,7 +25,7 @@ public class makeMove : MonoBehaviour
 
         while (gameIsRunning){
             yield return new WaitForSeconds(2.0F);
-            pickMove(0);
+            pickMove(Repository.Central.localPlayerId);
         }
 
     }
@@ -71,15 +71,18 @@ public class makeMove : MonoBehaviour
             foreach (var coord in hexCoords){
                 TileSyncData tile = newState[coord];
                 if (tile.tileOwner == player) {
-                    currentVal += 12.0f;
+                    currentVal += 10.0f;
                     if (tile.cropType == CropType.potato){
-                        currentVal += 1.5f;
+                        currentVal += 1.2f;
                     }
                     else if (tile.cropType == CropType.carrot){
-                        currentVal += 3.0f;
+                        currentVal += 2.4f;
                     }
                     else if (tile.cropType == CropType.rice){
-                        currentVal += 15.0f;
+                        currentVal += 2.4f;
+                    }
+                    else if (tile.cropType == CropType.eggplant){
+                        currentVal += 12.0f;
                     }
                 }
             }
@@ -99,7 +102,7 @@ public class makeMove : MonoBehaviour
         double gainedMoney = 0.0;
         if (move == "plantRice"){
             updatedTile = new TileSyncData(CropType.rice, 0.0f, oldTile.containsFarmer, player);
-            gainedMoney = -10.0f;
+            gainedMoney = -2.0f;
         }
         else if (move == "plantCarrot"){
             updatedTile = new TileSyncData(CropType.carrot, 0.0f, oldTile.containsFarmer, player);
@@ -109,10 +112,10 @@ public class makeMove : MonoBehaviour
             updatedTile = new TileSyncData(CropType.potato, 0.0f, oldTile.containsFarmer, player);
             gainedMoney = -1.0f;
         }
-        /*
         else if (move == "plantEggplant"){
             updatedTile = new TileSyncData(CropType.eggplant, oldTile.timeLastPlanted, oldTile.containsFarmer, player);
-        }*/
+            gainedMoney = -10.0f;
+        }
         else if (move == "harvest") {
             updatedTile = new TileSyncData(oldTile.cropType, NetworkManager.Singleton.NetworkTime, oldTile.containsFarmer, oldTile.tileOwner);
             gainedMoney = getCropVal(oldTile.cropType, oldTile.timeLastPlanted);
@@ -131,19 +134,20 @@ public class makeMove : MonoBehaviour
         if (cropType == CropType.potato)
         {
             hLevel = 1;
+            
         }
-        if (cropType == CropType.carrot)
-        {
-            hLevel = 2;
-        }
-        if (cropType == CropType.rice)
+        else if (cropType == CropType.carrot)
         {
             hLevel = 4;
         }
-        /*if (cropType == CropType.potato)
+        else if (cropType == CropType.rice)
+        {
+            hLevel = 2;
+        }
+        else if (cropType == CropType.eggplant)
         {
             hLevel = 10;
-        }*/
+        }
 
         double mid = 5.5; //optimal harvest level
 
@@ -171,6 +175,9 @@ public class makeMove : MonoBehaviour
             if (tile.tileOwner == owner) {
                 if (tile.cropType == CropType.blankTile){
                     if (Repository.Central.money >= 10) {
+                        res.Add((coord,"plantEggplant"));
+                    }
+                    else if (Repository.Central.money >= 2) {
                         res.Add((coord,"plantRice"));
                     }
                     else if (Repository.Central.money >= 2) {
