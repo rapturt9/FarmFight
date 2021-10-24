@@ -184,6 +184,9 @@ public class makeMove : MonoBehaviour
                         if (!res.Contains((newLoc,"plantPotato"))){
                             res.Add((newLoc,"plantPotato"));
                         }
+                        if (!res.Contains((newLoc,"plantEggplant"))){
+                            res.Add((coord,"plantEggplant"));
+                        }
                     }
                 }
             }

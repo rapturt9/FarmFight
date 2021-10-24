@@ -79,8 +79,9 @@ public class Soldier: NetworkBehaviour
     void _AddToTile(int[] coordArray)
     {
         Hex coord = BoardHelperFns.ArrayToHex(coordArray);
-        if (!handler[coord].soldiers.Contains(this))
-            handler[coord].soldiers.Add(this);
+        if (!handler[coord].SortedSoldiers[owner.Value].Contains(this))
+            handler[coord].SortedSoldiers[owner.Value].Add(this);
+        transform.position = TileManager.TM.HexToWorld(coord) + .25f * Vector3.left;
     }
 
     public void Update()

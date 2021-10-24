@@ -13,13 +13,29 @@ public abstract class TileTemp : TileTempDepr
         get { return farmerObj != null; }
     }
 
-    public void addFarmer()
+    public override void Start()
+    {
+        SortedSoldiers = new Dictionary<int, List<Soldier>>();
+        for (int i = 0; i < Repository.maxPlayers; i++)
+            SortedSoldiers[i] = new List<Soldier>();
+
+        if (timeLastPlanted == 0f)
+            timeLastPlanted = NetworkManager.Singleton.NetworkTime;
+        frame = 0;
+        frameRate = 60;
+        frameInternal = 0;
+    }
+
+    public GameObject addFarmer()
     {
         if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not add farmers from the client! Wrap your method in a ServerRpc."); }
 
-        Debug.Log("Farmer" + Repository.Central.localPlayerId.ToString());
-        farmerObj = SpriteRepo.Sprites["Farmer" + Repository.Central.localPlayerId.ToString()];
+        
+        
+        farmerObj = SpriteRepo.Sprites["Farmer"];
+        farmerObj.GetComponent<Farmer>().Owner.Value = tileOwner;
         farmerObj.transform.position = (Vector2)TileManager.TM.HexToWorld(hexCoord) + .25f * Vector2.right;
+        return farmerObj;
     }
 
     public void removeFarmer()
@@ -30,19 +46,16 @@ public abstract class TileTemp : TileTempDepr
         farmerObj = null;
     }
 
-    public void addSoldier(int owner)
+    public Soldier addSoldier(int owner)
     {
         if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not add new soldiers from the client! Wrap your method in a ServerRpc."); }
 
-        Soldier soldier = SpriteRepo.Sprites["Soldier" + Repository.Central.localPlayerId.ToString()].GetComponent<Soldier>();
+        Soldier soldier = SpriteRepo.Sprites["Soldier"].GetComponent<Soldier>();
         soldier.transform.position = hexCoord.world() + Vector2.left * .25f;
-        soldier.owner.Value = owner;
-
-        soldiers.Add(soldier);
-
         soldier.Position = hexCoord;
-
-        //SortSoldiers();
+        soldier.owner.Value = owner;
+        SortedSoldiers[owner].Add(soldier);
+        return soldier;
     }
 
     public void addSoldier(Soldier soldier)
@@ -56,14 +69,9 @@ public abstract class TileTemp : TileTempDepr
         soldier.Position = hexCoord;
 
         //Debug.Log($"Soldier added to {hexCoord}");
-
-        
-
-        
-
     }
 
-    public bool battleOccuring = false;
+    
 
     public bool sendSoldier(Hex end, int localPlayerId)
     {
@@ -85,59 +93,27 @@ public abstract class TileTemp : TileTempDepr
 
             if (!soldier.TryGetComponent(out trip))
             {
-                soldier.gameObject.AddComponent<SoldierTrip>()
-                .init(hexCoord, end);
+                trip = soldier.gameObject.AddComponent<SoldierTrip>();
+                
+            }
+
+
+            bool pathPossible = trip.init(hexCoord,end);
+
+            if (pathPossible)
+            {
+                SortedSoldiers[soldier.owner.Value].Remove(soldier);
+               
             }
             else
-                trip.init(hexCoord, end);
-
-
-            soldiers.Remove(soldier);
-
-            
-
-
-            //SortSoldiers();
-
-            return true;
-        }
-        else Debug.Log("cannot Send");
-
-
-        // Only send if there is a soldier, the end isn't the start, the hex is on the board, and if the soldier is ours
-        /*
-        if (soldierCount != 0 &&
-            end != hexCoord &&
-            TileManager.TM.isValidHex(end) &&
-            soldiers[0].owner.Value == localPlayerId)
-        {
-            //GameObject.Destroy(soldiers[0].GetComponent<SoldierTrip>());
-
-            Soldier soldier = soldiers[0];
-            SoldierTrip trip;
-
-            if (!soldier.TryGetComponent(out trip))
             {
-                soldiers[0].gameObject.AddComponent<SoldierTrip>()
-                .init(hexCoord, end);
-            }
-            else
-                trip.init(hexCoord, end);
-
-            soldiers.RemoveAt(0);
-
-            if (soldierCount != 0)
-            {
-                soldiers[0].FadeIn();
+                Debug.Log("cannot Send");
             }
 
+            return pathPossible;
 
-            SortSoldiers();
-
-            return true;
         }
         else Debug.Log("cannot Send");
-        */
 
         return false;
     }
@@ -148,20 +124,14 @@ public abstract class TileTemp : TileTempDepr
         // Destroying objects messed up things for me with networking - Eli
 
         //GameObject.Destroy(farmerObj);
-        foreach (var soldier in soldiers)
-        {
-            //GameObject.Destroy(soldier.gameObject);
-        }
+        //foreach (var soldier in soldiers)
+        //{
+        //    //GameObject.Destroy(soldier.gameObject);
+        //}
     }
 
 
-    /// <summary>
-    /// list of the soldiers on the tile
-    ///
-    /// *may need to be split into multiple lists depending on what fights look like*
-    /// If you want to add to the list of soldiers, use soldier.AddToTile(hexCoord), NOT soldiers.Add(soldier)
-    /// </summary>
-    public List<Soldier> soldiers = new List<Soldier>();
+   
 
     /// <summary>
     /// the Gameobject representing a farmer
@@ -189,10 +159,24 @@ public abstract class TileTemp : TileTempDepr
     /// <returns></returns>
     public abstract List<TileArt> getCropArt();
 
+    public Dictionary<int, List<Soldier>> SortedSoldiers;
+
     /// <summary>
     /// number of soldiers
     /// </summary>
-    public int soldierCount { get { return soldiers.Count; } }
+    public int soldierCount {get { return new List<Soldier>(getSoldierEnumerator()).Count; } }
+
+    // Iterate over all soldiers the tile has
+    public IEnumerable<Soldier> getSoldierEnumerator()
+    {
+        foreach (var soldiersOfPlayer in SortedSoldiers.Values)
+        {
+            foreach (var soldier in soldiersOfPlayer)
+            {
+                yield return soldier;
+            }
+        }
+    }
 
     public List<TileArt> tileArts;
 
@@ -206,19 +190,6 @@ public abstract class TileTemp : TileTempDepr
         }
 
         tileArts.AddRange(getCropArt());
-    }
-
-    public override void Start()
-    {
-        soldiers = new List<Soldier>();
-
-        
-
-        if (timeLastPlanted == 0f)
-            timeLastPlanted = NetworkManager.Singleton.NetworkTime;
-        frame = 0;
-        frameRate = 60;
-        frameInternal = 0;
     }
 
     /// <summary>
@@ -243,8 +214,6 @@ public abstract class TileTemp : TileTempDepr
             //frameInternal += 1;
         }
 
-        //SortSoldiers();
-
         frame = (int) (frameInternal / frameRate);
 
         //farmer autoharvest
@@ -254,15 +223,23 @@ public abstract class TileTemp : TileTempDepr
             if (tileOwner == Repository.Central.localPlayerId)
                 Repository.Central.money += moneyToAdd;
         }
-
-        if(0 <= frame && frame <= 7)
-        {
-            currentArt = tileArts[frame];
-        } else
-        {
-            currentArt = tileArts[7];
+        if(cropType == CropType.eggplant){
+            if(0 <= frame && frame <= 8)
+            {
+                currentArt = tileArts[frame+5];
+            } else
+            {
+                currentArt = tileArts[13];
+            }
+        } else {
+            if(0 <= frame && frame <= 7)
+            {
+                currentArt = tileArts[frame];
+            } else
+            {
+                currentArt = tileArts[7];
+            }
         }
-
         //BattleFunctionality();
 
         //Debug.Log(soldierCount);
@@ -289,16 +266,15 @@ public abstract class TileTemp : TileTempDepr
 
     void killSoldier(Soldier soldier)
     {
-        soldiers.Remove(soldier);
+        SortedSoldiers[soldier.owner.Value].Remove(soldier);
         soldier.Kill();
     }
 
     public Soldier FindFirstSoldierWithID(int id)
     {
-
         return SortedSoldiers[id].Count == 0 ? null : SortedSoldiers[id][0];
-
     }
+/*
 
 
     public Dictionary<int, List<Soldier>> SortedSoldiers { get { return SortSoldiers(); } }
@@ -323,7 +299,9 @@ public abstract class TileTemp : TileTempDepr
 
     }
 
+    public bool battleOccuring = false;
 
+*/
 
     /// BattleStuff
     /// 
@@ -340,7 +318,7 @@ public abstract class TileTemp : TileTempDepr
                 removeFarmer();
 
             // Do battle Stuff
-            Battle.BattleFunction(SortedSoldiers, soldiers, tileOwner);
+            Battle.BattleFunction(SortedSoldiers, tileOwner);
 
             //Control Display
             if(battleCloud == null)
@@ -348,13 +326,8 @@ public abstract class TileTemp : TileTempDepr
                 battleCloud = SpriteRepo.Sprites["BattleCloud"];
                 battleCloud.transform.position = TileManager.TM.HexToWorld(hexCoord);
             }
-
-            soldiers[0].FadeOut();
-
-
+            SortedSoldiers[tileOwner][0].FadeOut();
             OwnershipSwitch();
-
-
         }
         
         else
@@ -365,41 +338,31 @@ public abstract class TileTemp : TileTempDepr
                 battleCloud = null;
             }
 
-
             if (soldierCount != 0)
             {
-                soldiers[0].FadeIn();
+                SortedSoldiers[tileOwner][0].FadeIn();
             }
-
-            
-
         }
-
-
     }
 
     private void OwnershipSwitch()
     {
         int newOwner = -1;
 
-        foreach(var player in SortedSoldiers)
+        foreach (var soldiersOfPlayer in SortedSoldiers)
         {
-            if (player.Value.Count != 0)
+            if (soldiersOfPlayer.Value.Count != 0)
             {
                 if (newOwner == -1)
-                    newOwner = player.Key;
+                    newOwner = soldiersOfPlayer.Key;
                 else
                     return;
             }
         }
 
-
         if (newOwner != -1)
             tileOwner = newOwner;
     }
-
-
-
 }
 
 
@@ -410,7 +373,8 @@ public enum CropType
     blankTile = -1,
     potato,
     carrot,
-    rice
+    rice,
+    eggplant
 }
 
 public class BlankTile: TileTemp
@@ -496,6 +460,32 @@ public class Carrot : TileTemp
                 getTileArt("Carrot0"),
                 getTileArt("Carrot1"),
                 getTileArt("Carrot2")
+            };
+    }
+}
+
+public class Eggplant : TileTemp
+{
+    public override void Start()
+    {
+        base.Start();
+        cropType = CropType.eggplant;
+    }
+
+    public override List<TileArt> getCropArt()
+    {
+        TileName = "Eggplant";
+        return new List<TileArt>
+            {
+                getTileArt("Golden0"),
+                getTileArt("Golden1"),
+                getTileArt("Golden2"),
+                getTileArt("Golden3"),
+                getTileArt("Golden4"),
+                getTileArt("Golden5"),
+                getTileArt("Golden6"),
+                getTileArt("Golden7"),
+                getTileArt("Golden8")
             };
     }
 }

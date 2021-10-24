@@ -13,6 +13,7 @@ public class Repository : MonoBehaviour
     public bool gameIsRunning = false;
     public double money = 100.0;
 
+    public const int maxPlayers = 6;
 
     /// <summary>
     /// the central repository to store necessary game info inside
@@ -33,6 +34,8 @@ public class Repository : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        
     }
 
 
@@ -45,7 +48,7 @@ public class Repository : MonoBehaviour
 
     public PlayState GamesMode;
 
-   
+    public bool flyingVegies = true;
 }
 
 /// modes

@@ -19,6 +19,12 @@ public class TileHandler : NetworkBehaviour
     Tilemap tilemap;
     public GameManager gameManager;
 
+
+    private void Awake()
+    {
+        TileDict = new Dictionary<Hex, TileInterFace>();
+    }
+
     public TileTemp this[Hex hex]
     {
         get
@@ -108,7 +114,7 @@ public class TileHandler : NetworkBehaviour
     {
         // Gets tile data and soldier data
         TileSyncData tileData = GameState.SerializeTile(this[coord]);
-        List<Soldier> soldiersToSync = new List<Soldier>(this[coord].soldiers);
+        List<Soldier> soldiersToSync = new List<Soldier>(this[coord].getSoldierEnumerator());
         GameObject farmerToSync = this[coord].farmerObj;
 
         if (IsClient)
@@ -155,4 +161,9 @@ public class TileHandler : NetworkBehaviour
             TileDict[coord].Tile = tile;
         }
     }
+
+    
+
+
+
 }

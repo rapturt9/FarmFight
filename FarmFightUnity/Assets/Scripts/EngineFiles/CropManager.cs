@@ -22,41 +22,38 @@ public class CropManager : NetworkBehaviour
     {
         if (!central.gameIsRunning) { return; }
 
-        // Right click to send a soldier
-        if (Input.GetMouseButtonDown(1))
-        {
-            
-        }
-
-        // Soldier on tile debugging
-        //List<Soldier> s = handler[central.selectedHex].soldiers;
-        //if (s.Count > 0)
-        //{
-        //    Debug.Log("Length " + s.Count.ToString());
-        //    Debug.Log(s[0].owner.Value);
-        //}
+        
     }
+
+    public GameObject Vegetable;
+    
 
     public double harvest(Hex hex)
     {
         // Only harvest if owned by the local player
         if (handler[hex].tileOwner == central.localPlayerId)
         {
+
+            
+            CropType crop = handler[hex].cropType;
+
             //if crop there
             int hLevel = 0;
-            if (handler[hex].TileName == "Potato")
+            if (crop == CropType.potato)
             {
                 hLevel = 1;
+                
             }
-            if (handler[hex].TileName == "Carrot")
+            else if (crop == CropType.carrot)
             {
                 hLevel = 4;
             }
-            if (handler[hex].TileName == "Wheat")
+            else if (crop == CropType.rice)
             {
-                hLevel = 2;
+                hLevel = 6;
             }
-            if (handler[hex].TileName == "Rice")
+            
+            else if (crop == CropType.eggplant)
             {
                 hLevel = 10;
             }
@@ -65,27 +62,33 @@ public class CropManager : NetworkBehaviour
             {
                 double add = handler[hex].reset() * hLevel;
                 handler.SyncTile(hex);
-                return add;
+
+                if (central.flyingVegies)
+                {
+                    var vegie = GameObject.Instantiate(Vegetable);
+                    vegie.GetComponent<Vegetable>().init(hex, crop, add);
+                    return 0;
+                }
+                else
+                    return add;
             }
+
+            else return 0;
         }
 
         return 0;
     }
 
-    /*
+    
+
     public bool canPlant(Hex hex)
     {
+
         // We can't overwrite an opponent's crop
         if (handler[hex].cropType != CropType.blankTile && handler[hex].tileOwner != central.localPlayerId)
         {
             return false;
         }
-        // Check if there is an adjacent tile owned by us
-    }
-    */
-
-    public bool canPlant(Hex hex)
-    {
 
         foreach (var adj in TileManager.TM.getValidNeighbors(hex))
         {
@@ -110,10 +113,7 @@ public class CropManager : NetworkBehaviour
         {
             return false;
         }
-        /*
-        if (handler[hex].cropType != CropType.blankTile)
-            central.money -= 5;
-        */
+        
         if (cropType == CropType.potato)
         {
             handler[hex] = new Potato();
@@ -126,10 +126,15 @@ public class CropManager : NetworkBehaviour
         {
             handler[hex] = new Rice();
         }
+        else if (cropType == CropType.eggplant)
+        {
+            handler[hex] = new Eggplant();
+        }
 
         // Set owner
         handler[hex].tileOwner = central.localPlayerId;
         handler.SyncTile(hex);
+        CheckForWinServerRpc(central.localPlayerId);
 
         return true;
     }
@@ -139,6 +144,7 @@ public class CropManager : NetworkBehaviour
         handler[hex] = new BlankTile();
     }
 
+    // Add farmer
     public bool addFarmer(Hex hex)
     {
         if (handler[hex].containsFarmer == false && handler[hex].tileOwner == central.localPlayerId)
@@ -153,11 +159,13 @@ public class CropManager : NetworkBehaviour
     void addFarmerServerRpc(int[] hexArray)
     {
         Hex hex = BoardHelperFns.ArrayToHex(hexArray);
-        handler[hex].addFarmer();
+        GameObject farmer = handler[hex].addFarmer();
+        farmer.GetComponent<NetworkObject>().Spawn();
         handler.SyncTile(hex);
         Debug.Log("Has Farmer");
     }
 
+    // Remove farmer
     public bool removeFarmer(Hex hex)
     {
         if (handler[hex].containsFarmer == true)
@@ -176,6 +184,7 @@ public class CropManager : NetworkBehaviour
         handler.SyncTile(hex);
     }
 
+    // Add soldier
     public bool addSoldier(Hex hex)
     {
         int[] hexArray = BoardHelperFns.HexToArray(hex);
@@ -188,15 +197,16 @@ public class CropManager : NetworkBehaviour
         return false;
     }
 
-    // We initially spawn a soldier only on the server
     [ServerRpc(RequireOwnership = false)]
     void addSoldierServerRpc(int[] hexArray, int owner)
     {
         Hex hex = BoardHelperFns.ArrayToHex(hexArray);
-        handler[hex].addSoldier(owner);
-        handler.SyncTile(hex);
+        Soldier soldier = handler[hex].addSoldier(owner);
+        soldier.GetComponent<NetworkObject>().Spawn();
+        soldier.AddToTile(hex);
     }
 
+    // Send soldier
     [ServerRpc(RequireOwnership = false)]
     public void sendSoldierServerRpc(int[] startArray, int[] endArray, int localPlayerId)
     {
@@ -214,5 +224,11 @@ public class CropManager : NetworkBehaviour
         sendSoldierServerRpc(BoardHelperFns.HexToArray(start),
                 BoardHelperFns.HexToArray(end),
                 central.localPlayerId);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void CheckForWinServerRpc(int playerId)
+    {
+        BoardChecker.Checker.CheckForWin(playerId);
     }
 }

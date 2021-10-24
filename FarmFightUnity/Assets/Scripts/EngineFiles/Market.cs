@@ -22,7 +22,8 @@ public class Market : NetworkBehaviour
     {
         {CropType.potato, 1},
         {CropType.carrot, 2},
-        {CropType.rice, 10},
+        {CropType.rice, 4},
+        {CropType.eggplant, 10},
     };
     int soldierCost = 10;
     int farmerCost = 5;
@@ -100,7 +101,7 @@ public class Market : NetworkBehaviour
             double add = crops.harvest(selectedHex);
             if (add > 0)
             {
-                central.money += add * add / 200;
+                central.money += add;
             }
         }
     }
@@ -122,7 +123,7 @@ public class Market : NetworkBehaviour
         }
         else if (Input.GetKeyDown("4"))
         {
-            //SetCrop((int)CropType.eggplant);
+            SetCrop((int)CropType.eggplant);
         }
         else if (Input.GetKeyDown("5"))
         {
@@ -134,7 +135,8 @@ public class Market : NetworkBehaviour
         }
         else if (Input.GetKeyDown("7"))
         {
-            SendSoldier();
+            if(crops.handler[selectedHex].tileOwner == Repository.Central.localPlayerId)
+                SendSoldier();
         }
         
     }
@@ -219,12 +221,14 @@ public class Market : NetworkBehaviour
 
     private void SoldierTrip(Hex start, Hex end)
     {
+        
         if(SoldierDestination != null && SoldierDestination != selectedHex)
         {
             crops.SendSoldier(start, end);
+            SendSoldier();
         }
-
-        SendSoldier();
+        
+        
 
         UIHandler[SoldierDestination] = new BlankTile();
 

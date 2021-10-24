@@ -3,43 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 using MLAPI;
 
-public class SoldierTrip: NetworkBehaviour
+
+public class SoldierTrip : NetworkBehaviour
 {
-    
+
 
     Soldier soldier { get { return GetComponent<Soldier>(); } }
 
-    List<Vector3> Path;
+
+    public List<Hex> Path;
 
     Hex start, end;
 
-    public void init( Hex start, Hex end)
+    public bool init(Hex start, Hex end)
     {
         this.start = start;
         this.end = end;
 
-        Path = PathCreator(start, end);
+        PathCreator(start, end);
 
+        Path = finder.Path;
 
-        StartCoroutine("Mover");
-    }
-
-
-
-    
-
-
-    static List<Vector3> PathCreator(Hex start, Hex end)
-    {
-        List<Vector3> temp = new List<Vector3>();
+        if (Path == null)
+            return false;
 
         
 
-        //if(TileManager.TM["Crops"][end].soldierCount != 0)
-            return new List<Vector3>() { start.world(), end.world() };
+        StartCoroutine("Mover");
 
-        //else
+        return true;
     }
+
 
     private IEnumerator Mover()
     {
@@ -50,13 +44,21 @@ public class SoldierTrip: NetworkBehaviour
 
         soldier.GetComponent<SpriteRenderer>().enabled = true;
 
-        foreach (var wayPoint in Path)
+        foreach (var wayPoint in finder.Path)
         {
-            while(transform.position != wayPoint)
+            Vector3 pos = TileManager.TM.HexToWorld(wayPoint);
+            while (transform.position != pos)
             {
-                transform.position = Vector3.MoveTowards(transform.position, wayPoint, soldier.travelSpeed);
+                transform.position = Vector3.MoveTowards(transform.position, pos, soldier.travelSpeed);
                 yield return new WaitForFixedUpdate();
             }
+        }
+
+        Vector3 finalposition = TileManager.TM.HexToWorld(end) + .25f * Vector3.left;
+        while (transform.position != finalposition)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, finalposition, soldier.travelSpeed);
+            yield return new WaitForFixedUpdate();
         }
 
         if (TileManager.TM["Crops"][end].soldierCount != 0)
@@ -64,9 +66,26 @@ public class SoldierTrip: NetworkBehaviour
 
         soldier.AddToTile(end);
 
-        
+
         //TileManager.TM["Crops"][end].addSoldier(soldier);
 
 
     }
+
+    
+
+    public PathFinder finder;
+
+    void PathCreator(Hex start, Hex end)
+    {
+        
+
+
+        finder = new PathFinder(start, end, soldier.owner.Value);
+
+        
+    }
+
+
 }
+

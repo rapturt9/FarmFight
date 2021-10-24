@@ -45,6 +45,9 @@ TagManager:
   - name: Tiles
     uniqueID: 1506824093
     locked: 0
+  - name: outlines
+    uniqueID: 1333491749
+    locked: 0
   - name: Sprites
     uniqueID: 31518797
     locked: 0
