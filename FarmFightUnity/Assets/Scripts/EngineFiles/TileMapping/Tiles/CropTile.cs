@@ -233,11 +233,8 @@ public abstract class TileTemp : TileTempDepr
     }
 
 
-    
-
-    //return crop level and reset crop growth
-    public double reset () {
-        double mid = 5.5; //optimal harvest level
+    public double hReset () {
+         double mid = tileArts.Count / 2; //optimal harvest level
 
         double calc;
         double stage = frameInternal / frameRate;
@@ -245,10 +242,16 @@ public abstract class TileTemp : TileTempDepr
         calc = Mathf.Abs((float)(stage - mid));
         calc = mid - calc;
 
+        return calc;
+    }
+
+    //return crop level and reset crop growth
+    public double reset () {
+        double hr = hReset();
         timeLastPlanted = NetworkManager.Singleton.NetworkTime;
         frameInternal = 0;
         frame = 0;
-        return calc;
+        return hr;
     }
 
     void killSoldier(Soldier soldier)
