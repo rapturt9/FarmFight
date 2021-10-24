@@ -51,6 +51,39 @@ public class Soldier: NetworkBehaviour
     }
 
     // Add to all client tiles
+    public void RemoveFromTile(Hex coord)
+    {
+        if (IsClient)
+        {
+            RemoveFromTileServerRpc(BoardHelperFns.HexToArray(coord));
+        }
+        else if (IsServer)
+        {
+            RemoveFromTileClientRpc(BoardHelperFns.HexToArray(coord));
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void RemoveFromTileServerRpc(int[] coord)
+    {
+        RemoveFromTileClientRpc(coord);
+    }
+
+    [ClientRpc]
+    void RemoveFromTileClientRpc(int[] coord)
+    {
+        _RemoveFromTile(coord);
+    }
+
+    // Internal function, actually changes the tile
+    void _RemoveFromTile(int[] coordArray)
+    {
+        Hex coord = BoardHelperFns.ArrayToHex(coordArray);
+        if (handler[coord].SortedSoldiers[owner.Value].Contains(this))
+            handler[coord].SortedSoldiers[owner.Value].Remove(this);
+    }
+
+    // Add to all client tiles
     public void AddToTile(Hex coord)
     {
         if (IsClient)
@@ -103,6 +136,7 @@ public class Soldier: NetworkBehaviour
 
     public void Kill()
     {
+        RemoveFromTile(Position);
         Destroy(gameObject);
     }
 

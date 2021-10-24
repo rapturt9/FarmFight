@@ -72,20 +72,12 @@ public class SoldierTrip : NetworkBehaviour
 
     }
 
-    
-
     public PathFinder finder;
 
     void PathCreator(Hex start, Hex end)
     {
-        
-
-
         finder = new PathFinder(start, end, soldier.owner.Value);
-
-        
     }
-
 
 }
 

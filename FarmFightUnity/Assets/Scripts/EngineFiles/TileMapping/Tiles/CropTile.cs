@@ -263,7 +263,6 @@ public abstract class TileTemp : TileTempDepr
 
     void killSoldier(Soldier soldier)
     {
-        SortedSoldiers[soldier.owner.Value].Remove(soldier);
         soldier.Kill();
     }
 
@@ -271,46 +270,21 @@ public abstract class TileTemp : TileTempDepr
     {
         return SortedSoldiers[id].Count == 0 ? null : SortedSoldiers[id][0];
     }
-/*
-
-
-    public Dictionary<int, List<Soldier>> SortedSoldiers { get { return SortSoldiers(); } }
-
-    private Dictionary<int, List<Soldier>> SortSoldiers()
-    {
-
-
-        Dictionary<int, List<Soldier>> temp = new Dictionary<int, List<Soldier>>();
-        for (int i = -1; i < 6; i++)
-        {
-            temp.Add( i , new List<Soldier>());
-        }
-
-        foreach (var soldier in soldiers)
-        {
-            temp[soldier.owner.Value].Add(soldier);
-        }
-        
-        return temp;
-
-
-    }
 
     public bool battleOccuring = false;
-
-*/
 
     /// BattleStuff
     /// 
 
     GameObject battleCloud;
-
+    bool fighting = false;
 
     public void BattleFunctionality()
     {
-
         if (SortedSoldiers[tileOwner].Count != soldierCount)
         {
+            fighting = true;
+
             if(farmerObj != null)
                 removeFarmer();
 
@@ -329,6 +303,7 @@ public abstract class TileTemp : TileTempDepr
         
         else
         {
+            fighting = false;
             if (battleCloud != null)
             {
                 GameObject.Destroy(battleCloud);
