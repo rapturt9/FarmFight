@@ -101,7 +101,7 @@ public class Market : NetworkBehaviour
             double add = crops.harvest(selectedHex);
             if (add > 0)
             {
-                central.money += add * add / 200;
+                central.money += add;
             }
         }
     }

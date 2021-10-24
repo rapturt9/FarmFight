@@ -283,14 +283,28 @@ public class PathFinder
             /// 
             /// select straightest path
             
-            else if(dist == closestDist && path.Count > 1)
+            else if(dist == closestDist  )
             {
-                Hex close = closest ?? -hex;
+                if(path.Count > 1)
+                {
 
-                Hex before = path[path.Count - 2];
+                    Hex current = path[path.Count - 1];
+                    Hex before = path[path.Count - 2];
 
-                closest = StraightOMeter(before, hex) < StraightOMeter(before,close) ?
-                    hex : close;
+                    Hex close = closest ?? before;
+
+                    closest = StraightOMeter(before-current, hex-current)
+                        > StraightOMeter(before-current, close-current) ?
+                        hex : close;
+
+                     
+                }
+                else if (Random.Range(0, 2) == 1)
+                {
+                    
+                        closest = hex;
+                }
+                
             }
             
         }

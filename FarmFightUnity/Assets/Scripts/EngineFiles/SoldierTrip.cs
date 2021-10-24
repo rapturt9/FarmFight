@@ -40,7 +40,7 @@ public class SoldierTrip : NetworkBehaviour
 
         soldier.FadeIn();
 
-
+        
 
         soldier.GetComponent<SpriteRenderer>().enabled = true;
 
@@ -52,6 +52,13 @@ public class SoldierTrip : NetworkBehaviour
                 transform.position = Vector3.MoveTowards(transform.position, pos, soldier.travelSpeed);
                 yield return new WaitForFixedUpdate();
             }
+        }
+
+        Vector3 finalposition = TileManager.TM.HexToWorld(end) + .25f * Vector3.left;
+        while (transform.position != finalposition)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, finalposition, soldier.travelSpeed);
+            yield return new WaitForFixedUpdate();
         }
 
         if (TileManager.TM["Crops"][end].soldierCount != 0)
