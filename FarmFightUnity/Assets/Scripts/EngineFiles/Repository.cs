@@ -11,7 +11,7 @@ public class Repository : MonoBehaviour
 
     public int localPlayerId;
     public bool gameIsRunning = false;
-    public double money = 100.0;
+    public double money = 1.0;
 
     public const int maxPlayers = 6;
 

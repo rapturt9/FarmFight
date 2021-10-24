@@ -24,7 +24,7 @@ public class makeMove : MonoBehaviour
     {
 
         while (gameIsRunning){
-            yield return new WaitForSeconds(2.0F);
+            yield return new WaitForSeconds(0.5F);
             pickMove(Repository.Central.localPlayerId);
         }
 
@@ -44,53 +44,57 @@ public class makeMove : MonoBehaviour
                 Repository.Central.money += add;
             }
         }
-        
-        /*if (bestMove == "plantRice"){
-            //update gameState
+        else if (bestMove == "plantRice"){
+            cropManager.addCrop(loc,CropType.rice);
+            Repository.Central.money -= 2.0;
         }
         else if (bestMove == "plantCarrot"){
-            //update gameState
+            cropManager.addCrop(loc,CropType.carrot);
+            Repository.Central.money -= 2.0;
         }
         else if (bestMove == "plantPotato"){
-            //update gameState
+            cropManager.addCrop(loc,CropType.potato);
+            Repository.Central.money -= 1.0;
         }
-        else if (bestMove == "harvest"){
-            //update gameState
-        }*/
+        else if (bestMove == "plantEggplant"){
+            cropManager.addCrop(loc,CropType.eggplant);
+            Repository.Central.money -= 10;
+        }
     }
 
     (Hex, string) evaluateStates(List<(Hex,string)> possibleMoves, int player) {
         float bestVal = -1.0f;
-        (Hex,string) bestMove = (new Hex(0,0), "harvest");
+        (Hex,string) bestMove = (new Hex(0,0), "None");
 
         foreach (var elem in possibleMoves){
             var (loc,move) = elem;
-            var (newState,moneyGained) = getState(loc,move, player);
-            float currentVal = (float)moneyGained;
-            
-            foreach (var coord in hexCoords){
-                TileSyncData tile = newState[coord];
-                if (tile.tileOwner == player) {
-                    currentVal += 10.0f;
-                    if (tile.cropType == CropType.potato){
-                        currentVal += 1.2f;
-                    }
-                    else if (tile.cropType == CropType.carrot){
-                        currentVal += 2.4f;
-                    }
-                    else if (tile.cropType == CropType.rice){
-                        currentVal += 2.4f;
-                    }
-                    else if (tile.cropType == CropType.eggplant){
-                        currentVal += 12.0f;
-                    }
-                }
+            float currentVal = 0.0f;
+            if (move == "harvest"){
+                var (newState,moneyGained) = getState(loc,move, player);
+                currentVal = (float)(moneyGained);
+            }
+            else if (move == "plantPotato") {
+                currentVal = 1.0f;
+            }
+            else if (move == "plantRice") {
+                currentVal = 2.0f;
+            }
+            else if (move == "plantCarrot") {
+                currentVal = 4.0f;
+            }
+            else if (move == "plantEggplant") {
+                currentVal = 10.0f;
             }
 
             if (currentVal >= bestVal){
                 bestVal = currentVal;
                 bestMove = elem;
             }
+        }
+        print(bestMove);
+        print(bestVal);
+        if (bestVal < 0.5){
+            return (new Hex (0,0),"None");
         }
         return bestMove;
     }
@@ -118,7 +122,7 @@ public class makeMove : MonoBehaviour
         }
         else if (move == "harvest") {
             updatedTile = new TileSyncData(oldTile.cropType, NetworkManager.Singleton.NetworkTime, oldTile.containsFarmer, oldTile.tileOwner);
-            gainedMoney = getCropVal(oldTile.cropType, oldTile.timeLastPlanted);
+            gainedMoney = getCropVal(oldTile.cropType, loc);
         }
         else{
             updatedTile = oldTile;
@@ -129,12 +133,11 @@ public class makeMove : MonoBehaviour
         return (res,gainedMoney);
     }
 
-    double getCropVal (CropType cropType, float timeLastPlanted) {
+    double getCropVal (CropType cropType, Hex loc) {
         int hLevel = 0;
         if (cropType == CropType.potato)
         {
             hLevel = 1;
-            
         }
         else if (cropType == CropType.carrot)
         {
@@ -149,15 +152,8 @@ public class makeMove : MonoBehaviour
             hLevel = 10;
         }
 
-        double mid = 5.5; //optimal harvest level
-
-        double calc;
-        int frameRate = 60;
-        int frameInternal = (int)((NetworkManager.Singleton.NetworkTime - timeLastPlanted) * frameRate);
-        double stage = frameInternal / frameRate; //get frameInternal and frameRate
-
-        calc = Mathf.Abs((float)(stage - mid));
-        calc = mid - calc;
+        double calc = tileHandler[loc].botReset();
+        calc = (double)Mathf.Pow((float)calc,3.0f);
 
         if (hLevel > 0)
         {
@@ -193,16 +189,16 @@ public class makeMove : MonoBehaviour
 
                 foreach (var newLoc in tileManager.getValidNeighbors(coord)){
                     if (hexCoords.Contains(newLoc) && gameData.cropTiles[newLoc].tileOwner == -1){
-                        if (!res.Contains((newLoc,"plantRice"))){
+                        if (!res.Contains((newLoc,"plantRice")) && Repository.Central.money >= 2){
                             res.Add((newLoc,"plantRice"));
                         }
-                        if (!res.Contains((newLoc,"plantCarrot"))){
+                        if (!res.Contains((newLoc,"plantCarrot")) && Repository.Central.money >= 2){
                             res.Add((newLoc,"plantCarrot"));
                         }
-                        if (!res.Contains((newLoc,"plantPotato"))){
+                        if (!res.Contains((newLoc,"plantPotato")) && Repository.Central.money >= 1){
                             res.Add((newLoc,"plantPotato"));
                         }
-                        if (!res.Contains((newLoc,"plantEggplant"))){
+                        if (!res.Contains((newLoc,"plantEggplant")) && Repository.Central.money >= 10){
                             res.Add((coord,"plantEggplant"));
                         }
                     }

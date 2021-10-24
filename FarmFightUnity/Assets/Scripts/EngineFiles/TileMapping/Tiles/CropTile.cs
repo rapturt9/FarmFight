@@ -232,6 +232,26 @@ public abstract class TileTemp : TileTempDepr
             }
     }
 
+    public double botReset () {
+        double mid = tileArts.Count / 2; //optimal harvest level
+        if(cropType == CropType.eggplant){
+            mid = 4.5;
+        } else {
+            mid = 5.5;
+        }
+
+        float calc;
+        double stage = frameInternal / frameRate;      
+
+        calc = (float)(stage - mid);
+        if (calc > 0){
+            calc = 0.80f;
+        }
+        else {
+            calc = Mathf.Pow(0.25f,calc);
+        }
+        return calc;
+    }
 
     public double hReset () {
         double mid = tileArts.Count / 2; //optimal harvest level
@@ -242,9 +262,7 @@ public abstract class TileTemp : TileTempDepr
         }
 
         float calc;
-        double stage = frameInternal / frameRate;
-
-        Debug.Log(stage);        
+        double stage = frameInternal / frameRate;      
 
         calc = Mathf.Abs((float)(stage - mid));
         calc = Mathf.Pow(0.25f,calc);
