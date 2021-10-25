@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,35 +16,40 @@ public static class Battle
     /// <param name="SortedSoldiers"></param>
     /// <param name="owner"></param>
     /// <returns></returns>
-    static int[] DamageCalculate(Dictionary<int, List<Soldier>> SortedSoldiers, int owner)
+    static float[] DamageCalculate(Dictionary<int, List<Soldier>> SortedSoldiers, int soldierCount, int owner)
     {
+        //int[] col = new int[7];
+        //int total = 0;
 
-        int[] col = new int[7];
-        int total = 0;
+        //foreach(var player in SortedSoldiers)
+        //{
+        //    col[player.Key] = player.Value.Count;
+        //    total += player.Value.Count;
+        //}
 
-        foreach(var player in SortedSoldiers)
+
+        //return new int[]
+        //{
+        //    (total - 1)/ col[0],
+        //    (total - 1)/ col[1],
+        //    (total - 1)/ col[2],
+        //    (total - 1)/ col[3],
+        //    (total - 1)/ col[4],
+        //    (total - 1)/ col[5]
+        //};
+
+        float[] damages = new float[Repository.maxPlayers];
+        for (int playerId = 0; playerId<Repository.maxPlayers; playerId++)
         {
-            col[player.Key] = player.Value.Count;
-            total += player.Value.Count;
+            damages[playerId] = (soldierCount - SortedSoldiers[playerId].Count) / (float)soldierCount;
         }
-
-
-        return new int[]
-        {
-            (total - 1)/ col[0],
-            (total - 1)/ col[1],
-            (total - 1)/ col[2],
-            (total - 1)/ col[3],
-            (total - 1)/ col[4],
-            (total - 1)/ col[5]
-        };
-        
+        return damages;
 
     }
 
-    
 
-    static void DamageDealing(Dictionary<int, List<Soldier>> SortedSoldiers, int[] damages)
+
+    static void DamageDealing(Dictionary<int, List<Soldier>> SortedSoldiers, float[] damages)
     {
         foreach(var player in SortedSoldiers)
         {
@@ -56,7 +62,7 @@ public static class Battle
 
 
 
-    static void KillSoldiers(Dictionary<int, List<Soldier>> SortedSoldiers)
+    static bool KillSoldiers(Dictionary<int, List<Soldier>> SortedSoldiers)
     {
         //for (int playerId = 0; playerId < Repository.maxPlayers; playerId++)
         //{
@@ -86,21 +92,26 @@ public static class Battle
                     toRemove.Add(soldier);
             }
         }
+
+        bool killed = false;
         // Kill all dead soldiers
         foreach (var soldier in toRemove)
         {
             soldier.Kill();
+            Debug.Log("killed soldier owned by " + soldier.owner.Value.ToString());
+            killed = true;
         }
+        return killed;
     }
 
 
-
-    public static void BattleFunction(Dictionary<int, List<Soldier>> SortedSoldiers, int owner)
+    // Returns true if we've killed a soldier
+    public static bool BattleFunction(Dictionary<int, List<Soldier>> SortedSoldiers, int soldierCount, int owner)
     {
-        int[] damages = DamageCalculate(SortedSoldiers, owner);
+        float[] damages = DamageCalculate(SortedSoldiers, soldierCount, owner);
 
         DamageDealing(SortedSoldiers, damages);
 
-        KillSoldiers(SortedSoldiers);
+        return KillSoldiers(SortedSoldiers);
     }
 }

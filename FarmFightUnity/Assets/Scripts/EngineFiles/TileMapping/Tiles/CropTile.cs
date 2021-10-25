@@ -12,6 +12,10 @@ public abstract class TileTemp : TileTempDepr
     {
         get { return farmerObj != null; }
     }
+    public bool fighting = false;
+
+    // Something changed so TileHandler should sync it
+    public bool dirty = false;
 
     public override void Start()
     {
@@ -55,13 +59,12 @@ public abstract class TileTemp : TileTempDepr
         soldier.Position = hexCoord;
         soldier.owner.Value = owner;
         SortedSoldiers[owner].Add(soldier);
+        BattleFunctionality();
         return soldier;
     }
 
     public void addSoldier(Soldier soldier)
     {
-        // It's fine to add existing soldiers directly from the client
-
         soldier.AddToTile(hexCoord);
 
         soldier.transform.position = hexCoord.world() + .25f * Vector2.left;
@@ -209,9 +212,9 @@ public abstract class TileTemp : TileTempDepr
     {
         if(frameInternal >= tileArts.Count * frameRate){
             frameInternal = tileArts.Count * frameRate;
-        } else {
+        } 
+        else {
             frameInternal = (int)((NetworkManager.Singleton.NetworkTime - timeLastPlanted) * frameRate);
-            //frameInternal += 1;
         }
 
         frame = (int) (frameInternal / frameRate);
@@ -223,13 +226,20 @@ public abstract class TileTemp : TileTempDepr
             if (tileOwner == Repository.Central.localPlayerId)
                 Repository.Central.money += moneyToAdd;
         }
-            if(0 <= frame && frame < tileArts.Count)
-            {
-                currentArt = tileArts[frame];
-            } else
-            {
-                currentArt = tileArts[tileArts.Count-1];
-            }
+
+        if(0 <= frame && frame < tileArts.Count)
+        {
+            currentArt = tileArts[frame];
+        } 
+        else
+        {
+            currentArt = tileArts[tileArts.Count-1];
+        }
+
+        if (fighting)
+        {
+            BattleFunctionality();
+        }
     }
 
 
@@ -244,7 +254,7 @@ public abstract class TileTemp : TileTempDepr
         float calc;
         double stage = frameInternal / frameRate;
 
-        Debug.Log(stage);        
+        //Debug.Log(stage);
 
         calc = Mathf.Abs((float)(stage - mid));
         calc = Mathf.Pow(0.25f,calc);
@@ -277,28 +287,37 @@ public abstract class TileTemp : TileTempDepr
     /// 
 
     GameObject battleCloud;
-    bool fighting = false;
 
     public void BattleFunctionality()
     {
-        if (SortedSoldiers[tileOwner].Count != soldierCount)
+        if ((tileOwner == -1 && CheckForEmptyTileFight()) || (tileOwner != -1 && SortedSoldiers[tileOwner].Count != soldierCount))
         {
             fighting = true;
 
-            if(farmerObj != null)
-                removeFarmer();
-
-            // Do battle Stuff
-            Battle.BattleFunction(SortedSoldiers, tileOwner);
+            PruneSoldiers();
 
             //Control Display
-            if(battleCloud == null)
+            if (battleCloud == null)
             {
-                battleCloud = SpriteRepo.Sprites["BattleCloud"];
-                battleCloud.transform.position = TileManager.TM.HexToWorld(hexCoord);
+                //battleCloud = SpriteRepo.Sprites["BattleCloud"];
+                //battleCloud.transform.position = TileManager.TM.HexToWorld(hexCoord);
             }
-            SortedSoldiers[tileOwner][0].FadeOut();
-            OwnershipSwitch();
+
+            bool killed = false;
+            // Do battle Stuff
+            if (NetworkManager.Singleton.IsServer)
+            {
+                if (farmerObj != null)
+                    removeFarmer();
+                killed = Battle.BattleFunction(SortedSoldiers, soldierCount, tileOwner);
+            }
+            if (killed)
+            {
+                OwnershipSwitch();
+            }
+
+            if (soldierCount != 0)
+                SortedSoldiers[tileOwner][0].FadeOut();
         }
         
         else
@@ -310,7 +329,7 @@ public abstract class TileTemp : TileTempDepr
                 battleCloud = null;
             }
 
-            if (soldierCount != 0)
+            if (soldierCount != 0 && tileOwner != -1)
             {
                 SortedSoldiers[tileOwner][0].FadeIn();
             }
@@ -320,20 +339,63 @@ public abstract class TileTemp : TileTempDepr
     private void OwnershipSwitch()
     {
         int newOwner = -1;
+        int maxCount = SortedSoldiers[tileOwner].Count;
 
         foreach (var soldiersOfPlayer in SortedSoldiers)
         {
-            if (soldiersOfPlayer.Value.Count != 0)
+            if (soldiersOfPlayer.Value.Count > maxCount)
             {
-                if (newOwner == -1)
-                    newOwner = soldiersOfPlayer.Key;
-                else
-                    return;
+                newOwner = soldiersOfPlayer.Key;
             }
         }
 
-        if (newOwner != -1)
+        if (newOwner != -1 && newOwner != tileOwner)
+        {
             tileOwner = newOwner;
+            if (NetworkManager.Singleton.IsServer)
+            {
+                dirty = true;
+            }
+        }
+    }
+
+    // Removes all killed soldiers, which now show up as null
+    void PruneSoldiers()
+    {
+        for (int playerId = 0; playerId < Repository.maxPlayers; playerId++)
+        {
+            int i = 0;
+            while (i < SortedSoldiers[playerId].Count)
+            {
+                if (SortedSoldiers[playerId][i] == null)
+                {
+                    SortedSoldiers[playerId].RemoveAt(i);
+                }
+                else
+                {
+                    i++;
+                }
+            }
+        }
+    }
+
+    bool CheckForEmptyTileFight()
+    {
+        bool foundSoldier = false;
+        foreach (var soldiersOfPlayer in SortedSoldiers.Values)
+        {
+            if (soldiersOfPlayer.Count > 0)
+            {
+                // If we already have soldiers from another team, fight
+                if (foundSoldier)
+                {
+                    return true;
+                }
+                // These are the first soldiers from any team
+                foundSoldier = true;
+            }
+        }
+        return false;
     }
 }
 

@@ -40,8 +40,6 @@ public class SoldierTrip : NetworkBehaviour
 
         soldier.FadeIn();
 
-        
-
         soldier.GetComponent<SpriteRenderer>().enabled = true;
 
         foreach (var wayPoint in finder.Path)
@@ -65,8 +63,6 @@ public class SoldierTrip : NetworkBehaviour
             soldier.FadeOut();
 
         soldier.AddToTile(end);
-
-
         //TileManager.TM["Crops"][end].addSoldier(soldier);
 
 

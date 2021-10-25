@@ -7,7 +7,7 @@ using MLAPI.Messaging;
 
 public class Soldier: NetworkBehaviour
 {
-    public NetworkVariable<int> Health = new NetworkVariable<int>(100);
+    public NetworkVariable<float> Health = new NetworkVariable<float>(100);
     public NetworkVariable<int> owner = new NetworkVariable<int>(-1);
 
     public TileHandler handler;
@@ -115,6 +115,7 @@ public class Soldier: NetworkBehaviour
         if (!handler[coord].SortedSoldiers[owner.Value].Contains(this))
             handler[coord].SortedSoldiers[owner.Value].Add(this);
         transform.position = TileManager.TM.HexToWorld(coord) + .25f * Vector3.left;
+        handler[coord].BattleFunctionality();
     }
 
     public void Update()
@@ -136,7 +137,7 @@ public class Soldier: NetworkBehaviour
 
     public void Kill()
     {
-        RemoveFromTile(Position);
+        //RemoveFromTile(Position);
         Destroy(gameObject);
     }
 

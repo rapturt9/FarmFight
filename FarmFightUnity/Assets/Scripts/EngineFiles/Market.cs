@@ -85,6 +85,10 @@ public class Market : NetworkBehaviour
             UIHandler[selectedHex] = new BlankTile();
             selectedHex = central.selectedHex;
             UIHandler[selectedHex] = new HighLight();
+
+            //TileTemp tile = crops.handler[selectedHex];
+            //if (tile.soldierCount > 0)
+            //    Debug.Log(tile.SortedSoldiers[tile.tileOwner][0].Health.Value);
         }
     }
 

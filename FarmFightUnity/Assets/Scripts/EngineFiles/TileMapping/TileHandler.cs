@@ -94,9 +94,11 @@ public class TileHandler : NetworkBehaviour
             tile.Update();
             if(automaticRedraw)
                 tile.Draw(tilemap);
+            if (tile.Tile.dirty)
+            {
+                SyncTile(tile.hexCoord);
+            }
         }
-
-
     }
 
     public bool automaticRedraw;
