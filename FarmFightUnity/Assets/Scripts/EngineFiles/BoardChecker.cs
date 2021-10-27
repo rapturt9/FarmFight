@@ -1,14 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MLAPI;
+using MLAPI.Messaging;
 
-public class BoardChecker : MonoBehaviour
+public class BoardChecker : NetworkBehaviour
 {
     public TileHandler cropTiles;
 
     public static BoardChecker Checker;
 
+    public int[] ownedTileCount;
+
     public List<Hex> hexCoords;
+    int totalTiles;
 
     void Awake()
     {
@@ -29,6 +34,8 @@ public class BoardChecker : MonoBehaviour
     void Start()
     {
         hexCoords = BoardHelperFns.HexList(TileManager.TM.size);
+        totalTiles = hexCoords.Count;
+        ownedTileCount = new int[Repository.maxPlayers];
     }
 
     public IEnumerator CheckBoard()
@@ -39,15 +46,39 @@ public class BoardChecker : MonoBehaviour
         }
     }
 
-    public void CheckForWin(int playerId)
+    public bool CheckForWin(int playerId)
     {
-        foreach (Hex hex in hexCoords)
+        // Total domination of all tiles
+        if (ownedTileCount[playerId] == totalTiles)
         {
-            if (cropTiles[hex].tileOwner != playerId)
+            return true;
+        }
+        // Nobody else has anything
+        else
+        {
+            for (int id = 0; id<Repository.maxPlayers; id++)
             {
-                return;
+                if (id != playerId && ownedTileCount[id] != 0)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    // Keeps track of tiles owned by everybody
+    [ServerRpc(RequireOwnership = false)]
+    public void changeTileOwnershipCountServerRpc(int playerId, int count, bool checkForWin = true)
+    {
+        ownedTileCount[playerId] += count;
+
+        if (checkForWin)
+        {
+            if (CheckForWin(playerId))
+            {
+                Debug.Log("Player " + playerId.ToString() + " has won");
             }
         }
-        Debug.Log("Player " + playerId.ToString() + " has won");
     }
 }

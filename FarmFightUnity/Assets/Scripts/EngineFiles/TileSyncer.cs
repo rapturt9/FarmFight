@@ -181,6 +181,7 @@ public class TileSyncer : NetworkBehaviour
 
     void _SyncTileUpdateFarmer(TileSyncData tileData, ref TileTemp oldTile)
     {
+        // Change sprite
         if (oldTile.containsFarmer)
         {
             oldTile.farmerObj.GetComponent<SpriteSwitch>().StartCoroutine("change");
