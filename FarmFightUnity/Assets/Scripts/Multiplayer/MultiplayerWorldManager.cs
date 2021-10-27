@@ -2,16 +2,19 @@ using System.Collections;
 using System.IO;
 using UnityEngine;
 using MLAPI;
-using MLAPI.NetworkVariable;
 using MLAPI.Serialization;
 using MLAPI.Serialization.Pooled;
+using MLAPI.Transports.UNET;
 
 public class MultiplayerWorldManager : MonoBehaviour
 {
     public bool startAsHost = true;
     private bool hostStarted = false;
 
+    public GameObject UIPanel;
+
     public string IPAddress = "127.0.0.1";
+    UNetTransport transport;
 
     private void Start()
     {
@@ -54,10 +57,10 @@ public class MultiplayerWorldManager : MonoBehaviour
         }
     }
 
-    static void StartButtons()
+    void StartButtons()
     {
-        if (GUILayout.Button("Host")) NetworkManager.Singleton.StartHost();
-        if (GUILayout.Button("Client")) NetworkManager.Singleton.StartClient();
+        if (GUILayout.Button("Host")) Host();
+        if (GUILayout.Button("Client")) Join();
         if (GUILayout.Button("Server")) NetworkManager.Singleton.StartServer();
     }
 
@@ -77,6 +80,28 @@ public class MultiplayerWorldManager : MonoBehaviour
                 print("This doesn't do anything yet!");
             }
         }
+    }
+
+    public void Host()
+    {
+        UIPanel.SetActive(false);
+        NetworkManager.Singleton.ConnectionApprovalCallback += ApprovalCheck;
+        NetworkManager.Singleton.StartHost();
+    }
+
+    private void ApprovalCheck(byte[] connectionData, ulong clientID, NetworkManager.ConnectionApprovedDelegate callback)
+    {
+        bool approve = System.Text.Encoding.ASCII.GetString(connectionData) == "FarmFight";
+        callback(true, null, approve, Vector3.zero, Quaternion.identity);
+    }
+
+    public void Join()
+    {
+        transport = NetworkManager.Singleton.GetComponent<UNetTransport>();
+        transport.ConnectAddress = IPAddress;
+        UIPanel.SetActive(false);
+        NetworkManager.Singleton.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes("FarmFight");
+        NetworkManager.Singleton.StartClient();
     }
 
     public void IPAddressChanged(string newAddress)
