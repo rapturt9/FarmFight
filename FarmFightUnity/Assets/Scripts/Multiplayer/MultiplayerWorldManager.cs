@@ -11,6 +11,8 @@ public class MultiplayerWorldManager : MonoBehaviour
     public bool startAsHost = true;
     private bool hostStarted = false;
 
+    public string IPAddress = "127.0.0.1";
+
     private void Start()
     {
         // Makes Hex serializable on the network
@@ -75,5 +77,10 @@ public class MultiplayerWorldManager : MonoBehaviour
                 print("This doesn't do anything yet!");
             }
         }
+    }
+
+    public void IPAddressChanged(string newAddress)
+    {
+        IPAddress = newAddress;
     }
 }

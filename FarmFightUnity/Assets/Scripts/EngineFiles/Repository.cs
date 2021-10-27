@@ -7,7 +7,6 @@ public class Repository : MonoBehaviour
 
     [SerializeField]
     public Hex selectedHex = Hex.zero;
-    
 
     public int localPlayerId;
     public bool gameIsRunning = false;
@@ -34,17 +33,11 @@ public class Repository : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
-        
     }
-
-
 
     /// just for ease of access
     ///
     public TileHandler cropHandler;
-
-
 
     public PlayState GamesMode;
 
@@ -57,6 +50,4 @@ public enum PlayState
     NormalGame,
     PauseGame,
     SoldierSend
-
-
 }

@@ -89,7 +89,6 @@ public abstract class TileTemp : TileTempDepr
         {
             StartCapturing();
         }
-        //Debug.Log($"Soldier added to {hexCoord}");
     }
 
     
@@ -265,21 +264,28 @@ public abstract class TileTemp : TileTempDepr
         BattleFunctionality();
 
         // Capturing
-        if (hostileOccupation && NetworkManager.Singleton.IsServer)
+        if (hostileOccupation && NetworkManager.Singleton.IsServer && (NetworkManager.Singleton.NetworkTime - timeStartedCapturing) >= maxTimeToCapture)
         {
-            if ((NetworkManager.Singleton.NetworkTime - timeStartedCapturing) >= maxTimeToCapture)
-            {
-                StopCapturing();
-                tileOwner = GetCapturingPlayer();
-                TileSyncer.Syncer.SyncTileUpdate(hexCoord, new[] { CropTileSyncTypes.tileOwner });
-                // Capture farmer as well
-                if (containsFarmer)
-                {
-                    Debug.Log("capturing farmer");
-                    farmerObj.GetComponent<Farmer>().Owner.Value = tileOwner;
-                    TileSyncer.Syncer.SyncTileUpdate(hexCoord, new[] { CropTileSyncTypes.containsFarmer });
-                }
-            }
+            CaptureThis();
+        }
+    }
+
+    void CaptureThis()
+    {
+        StopCapturing();
+        int newTileOwner = GetCapturingPlayer();
+
+        // Change tile owned counts
+        BoardChecker.Checker.changeTileOwnershipCountServerRpc(tileOwner, -1);
+        BoardChecker.Checker.changeTileOwnershipCountServerRpc(newTileOwner, +1);
+
+        tileOwner = newTileOwner;
+        TileSyncer.Syncer.SyncTileUpdate(hexCoord, new[] { CropTileSyncTypes.tileOwner });
+        // Capture farmer as well
+        if (containsFarmer)
+        {
+            farmerObj.GetComponent<Farmer>().Owner.Value = tileOwner;
+            TileSyncer.Syncer.SyncTileUpdate(hexCoord, new[] { CropTileSyncTypes.containsFarmer });
         }
     }
 

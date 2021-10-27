@@ -223,6 +223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cropTiles: {fileID: 1228046376}
+  ownedTileCount: 
   hexCoords: []
 --- !u!1 &151232343
 GameObject:
@@ -1813,6 +1814,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handler: {fileID: 1228046376}
+  gameManager: {fileID: 0}
   Vegetable: {fileID: 6691272625109682036, guid: e3aa8ca6f4dd643b489f057dd6426411, type: 3}
 --- !u!114 &1228046378
 MonoBehaviour:
@@ -1945,7 +1947,7 @@ MonoBehaviour:
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 0
     ConnectionData: 
-    EnableTimeResync: 0
+    EnableTimeResync: 1
     TimeResyncInterval: 30
     EnableNetworkVariable: 1
     EnsureNetworkVariableLengthSafety: 0

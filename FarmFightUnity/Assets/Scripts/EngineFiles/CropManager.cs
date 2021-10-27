@@ -20,6 +20,7 @@ public class CropManager : NetworkBehaviour
     }
 
     public static CropManager Crops;
+    public GameManager gameManager;
 
 
     private void Update()
@@ -132,9 +133,12 @@ public class CropManager : NetworkBehaviour
         }
 
         // Set owner
+        if (handler[hex].tileOwner != central.localPlayerId)
+        {
+            BoardChecker.Checker.changeTileOwnershipCountServerRpc(central.localPlayerId, +1);
+        }
         handler[hex].tileOwner = central.localPlayerId;
         handler.SyncTileUpdate(hex, new[] { CropTileSyncTypes.cropNum, CropTileSyncTypes.tileOwner });
-        CheckForWinServerRpc(central.localPlayerId);
 
         return true;
     }
