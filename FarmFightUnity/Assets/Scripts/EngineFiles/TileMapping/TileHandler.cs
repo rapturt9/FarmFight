@@ -140,7 +140,7 @@ public class TileHandler : NetworkBehaviour
             farmerToSync.GetComponent<Farmer>().AddToTile(coord);
         }
         // Re-syncs the battle cloud to the new tile
-        if (!(battlecloudToSync is null))
+        if (!(battlecloudToSync == null))
         {
             battlecloudToSync.GetComponent<BattleCloud>().AddToTile(coord);
         }

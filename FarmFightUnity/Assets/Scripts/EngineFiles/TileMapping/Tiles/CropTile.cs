@@ -70,7 +70,6 @@ public abstract class TileTemp : TileTempDepr
         soldier.Position = hexCoord;
 
         BattleFunctionality();
-
         //Debug.Log($"Soldier added to {hexCoord}");
     }
 
@@ -342,6 +341,7 @@ public abstract class TileTemp : TileTempDepr
         }
         PruneSoldiers();
         FadeInSoldiers();
+        OwnershipSwitch();
         battleOccurring = false;
         Debug.Log("Stopping battle");
     }
