@@ -118,6 +118,7 @@ public class TileHandler : NetworkBehaviour
         TileSyncData tileData = GameState.SerializeTile(this[coord]);
         List<Soldier> soldiersToSync = new List<Soldier>(this[coord].getSoldierEnumerator());
         GameObject farmerToSync = this[coord].farmerObj;
+        GameObject battlecloudToSync = this[coord].battleCloud;
 
         if (IsClient)
         {
@@ -138,6 +139,14 @@ public class TileHandler : NetworkBehaviour
         {
             farmerToSync.GetComponent<Farmer>().AddToTile(coord);
         }
+        // Re-syncs the battle cloud to the new tile
+        if (!(battlecloudToSync is null))
+        {
+            battlecloudToSync.GetComponent<BattleCloud>().AddToTile(coord);
+        }
+
+        // See if a battle would occur
+        //TileDict[coord].Tile.CheckForBattle();
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -163,9 +172,4 @@ public class TileHandler : NetworkBehaviour
             TileDict[coord].Tile = tile;
         }
     }
-
-    
-
-
-
 }

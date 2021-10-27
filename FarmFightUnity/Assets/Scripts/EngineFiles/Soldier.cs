@@ -5,6 +5,7 @@ using MLAPI;
 using MLAPI.NetworkVariable;
 using MLAPI.Messaging;
 using MLAPI.Prototyping;
+using System.Collections.Generic;
 
 public class Soldier: NetworkBehaviour
 {
@@ -113,10 +114,19 @@ public class Soldier: NetworkBehaviour
     void _AddToTile(int[] coordArray)
     {
         Hex coord = BoardHelperFns.ArrayToHex(coordArray);
-        if (!handler[coord].SortedSoldiers[owner.Value].Contains(this))
-            handler[coord].SortedSoldiers[owner.Value].Add(this);
+        List<Soldier> fellowSoldiers = handler[coord].SortedSoldiers[owner.Value];
+
+        // Adds to SortedSoldiers
+        if (!fellowSoldiers.Contains(this))
+        {
+            if (handler[coord].battleOccurring)
+            {
+                FadeOut();
+            }
+            fellowSoldiers.Add(this);
+        }
+        // Changes position
         transform.position = TileManager.TM.HexToWorld(coord) + .25f * Vector3.left;
-        handler[coord].BattleFunctionality();
     }
 
     // Starting trip as a client, for smoothness
@@ -175,7 +185,6 @@ public class Soldier: NetworkBehaviour
 
     public void Kill()
     {
-        //RemoveFromTile(Position);
         Destroy(gameObject);
     }
 

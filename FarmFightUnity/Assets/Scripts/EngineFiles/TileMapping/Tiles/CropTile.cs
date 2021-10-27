@@ -12,7 +12,7 @@ public abstract class TileTemp : TileTempDepr
     {
         get { return farmerObj != null; }
     }
-    public bool fighting = false;
+    public bool battleOccurring = false;
 
     // Something changed so TileHandler should sync it
     public bool dirty = false;
@@ -33,8 +33,6 @@ public abstract class TileTemp : TileTempDepr
     public GameObject addFarmer()
     {
         if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not add farmers from the client! Wrap your method in a ServerRpc."); }
-
-        
         
         farmerObj = SpriteRepo.Sprites["Farmer"];
         farmerObj.GetComponent<Farmer>().Owner.Value = tileOwner;
@@ -70,6 +68,8 @@ public abstract class TileTemp : TileTempDepr
         soldier.transform.position = hexCoord.world() + .25f * Vector2.left;
 
         soldier.Position = hexCoord;
+
+        BattleFunctionality();
 
         //Debug.Log($"Soldier added to {hexCoord}");
     }
@@ -184,7 +184,6 @@ public abstract class TileTemp : TileTempDepr
         for(int i = 0; i < 5; i++)
         {
             tileArts.Add(getTileArt("Plant" + i.ToString()));
-
         }
 
         tileArts.AddRange(getCropArt());
@@ -222,19 +221,23 @@ public abstract class TileTemp : TileTempDepr
                 Repository.Central.money += moneyToAdd;
         }
 
-        if(0 <= frame && frame < tileArts.Count)
+        if (!battleOccurring)
         {
-            currentArt = tileArts[frame];
-        } 
+            if (0 <= frame && frame < tileArts.Count)
+            {
+                currentArt = tileArts[frame];
+            }
+            else
+            {
+                currentArt = tileArts[tileArts.Count - 1];
+            }
+        }
         else
         {
-            currentArt = tileArts[tileArts.Count-1];
+            currentArt = null;
         }
 
-        if (fighting)
-        {
-            BattleFunctionality();
-        }
+        BattleFunctionality();
     }
 
 
@@ -276,81 +279,102 @@ public abstract class TileTemp : TileTempDepr
         return SortedSoldiers[id].Count == 0 ? null : SortedSoldiers[id][0];
     }
 
-    public bool battleOccuring = false;
-
     /// BattleStuff
     /// 
 
-    GameObject battleCloud;
+    public GameObject battleCloud;
 
     public void BattleFunctionality()
     {
-        if ((tileOwner == -1 && CheckForEmptyTileFight()) || (tileOwner != -1 && SortedSoldiers[tileOwner].Count != soldierCount))
+        PruneSoldiers();
+        if (NetworkManager.Singleton.IsServer)
         {
-            fighting = true;
-
-            PruneSoldiers();
-
-            bool killed = false;
-            if (NetworkManager.Singleton.IsServer)
+            if (CheckForTileFight())
             {
-                //Control Display
-                if (battleCloud == null)
+                // Battling for the first time
+                if (!battleOccurring)
                 {
-                    battleCloud = SpriteRepo.Sprites["Cloud"];
-                    battleCloud.transform.position = TileManager.TM.HexToWorld(hexCoord);
-                    battleCloud.GetComponent<NetworkObject>().Spawn();
+                    battleOccurring = true;
+                    StartBattle();
+                    SoldierManager.SM.StartBattleClientRpc(BoardHelperFns.HexToArray(hexCoord));
                 }
-
-                if (farmerObj != null)
-                    removeFarmer();
-
-                killed = Battle.BattleFunction(SortedSoldiers, soldierCount, tileOwner);
+                Battle.BattleFunction(SortedSoldiers, soldierCount, tileOwner);
             }
-            if (killed)
+            else if (battleOccurring)
             {
-                OwnershipSwitch();
+                battleOccurring = false;
+                StopBattle();
+                SoldierManager.SM.StopBattleClientRpc(BoardHelperFns.HexToArray(hexCoord));
             }
-
-            if (soldierCount != 0)
-                SortedSoldiers[tileOwner][0].FadeOut();
         }
-        
-        else
+        if (battleOccurring)
         {
-            fighting = false;
-            if (battleCloud != null && NetworkManager.Singleton.IsServer)
+            FadeOutSoldiers();
+        }
+    }
+
+    public void StartBattle()
+    {
+        if (NetworkManager.Singleton.IsServer)
+        {
+            //Control Display
+            if (battleCloud == null)
             {
-                GameObject.Destroy(battleCloud);
-                battleCloud = null;
+                battleCloud = SpriteRepo.Sprites["Cloud"];
+                battleCloud.transform.position = TileManager.TM.HexToWorld(hexCoord);
+                battleCloud.GetComponent<NetworkObject>().Spawn();
+                battleCloud.GetComponent<BattleCloud>().AddToTile(hexCoord);
             }
 
-            if (soldierCount != 0 && tileOwner != -1)
-            {
-                SortedSoldiers[tileOwner][0].FadeIn();
-            }
+            if (farmerObj != null)
+                removeFarmer();
         }
+        battleOccurring = true;
+        FadeOutSoldiers();
+    }
+
+    public void StopBattle()
+    {
+        if (battleCloud != null && NetworkManager.Singleton.IsServer)
+        {
+            GameObject.Destroy(battleCloud);
+            battleCloud = null;
+        }
+        PruneSoldiers();
+        FadeInSoldiers();
+        battleOccurring = false;
+        Debug.Log("Stopping battle");
     }
 
     private void OwnershipSwitch()
     {
-        int newOwner = -1;
-        int maxCount = SortedSoldiers[tileOwner].Count;
-
-        foreach (var soldiersOfPlayer in SortedSoldiers)
+        // We don't switch ownership of empty tiles
+        if (tileOwner == -1)
         {
-            if (soldiersOfPlayer.Value.Count > maxCount)
-            {
-                newOwner = soldiersOfPlayer.Key;
-            }
+            return;
         }
 
-        if (newOwner != -1 && newOwner != tileOwner)
+        int newOwner = -1;
+        int currentCount = SortedSoldiers[tileOwner].Count;
+        // Only switch if all of the previous soldiers are dead
+        if (currentCount == 0)
         {
-            tileOwner = newOwner;
-            if (NetworkManager.Singleton.IsServer)
+            int maxCount = 0;
+            foreach (var soldiersOfPlayer in SortedSoldiers)
             {
-                dirty = true;
+                if (soldiersOfPlayer.Value.Count > maxCount)
+                {
+                    newOwner = soldiersOfPlayer.Key;
+                }
+            }
+
+            if (newOwner != -1 && newOwner != tileOwner)
+            {
+                tileOwner = newOwner;
+                if (NetworkManager.Singleton.IsServer)
+                {
+                    dirty = true;
+                }
             }
         }
     }
@@ -375,20 +399,75 @@ public abstract class TileTemp : TileTempDepr
         }
     }
 
-    bool CheckForEmptyTileFight()
+    // Fades out whatever soldiers are likely to be visible
+    void FadeOutSoldiers()
     {
-        bool foundSoldier = false;
-        foreach (var soldiersOfPlayer in SortedSoldiers.Values)
+        foreach (var soldier in getSoldierEnumerator())
         {
-            if (soldiersOfPlayer.Count > 0)
+            soldier.FadeOut();
+        }
+    }
+
+    // Fades out whatever soldier is likely to be visible
+    void FadeInSoldiers()
+    {
+        //// No soldiers to fade in
+        //if (soldierCount < 0)
+        //{
+        //    return;
+        //}
+        //// Fade in normally
+        //else if (tileOwner != -1 && SortedSoldiers[tileOwner].Count > 0)
+        //{
+        //    SortedSoldiers[tileOwner][0].FadeIn();
+        //    return;
+        //}
+        //// We are occupied by hostile soldiers, so fade in whichever we find first
+        //else if (soldierCount > 0)
+        //{
+        //    var iter = getSoldierEnumerator().GetEnumerator();
+        //    iter.MoveNext();
+        //    iter.Current.FadeIn();
+        //}
+        foreach (var soldier in getSoldierEnumerator())
+        {
+            soldier.FadeIn();
+        }
+    }
+
+    bool CheckForTileFight()
+    {
+        // Empty tile
+        if (tileOwner == -1)
+        {
+            bool foundSoldier = false;
+            foreach (var soldiersOfPlayer in SortedSoldiers.Values)
             {
-                // If we already have soldiers from another team, fight
-                if (foundSoldier)
+                if (soldiersOfPlayer.Count > 0)
                 {
-                    return true;
+                    // If we already have soldiers from another team, fight
+                    if (foundSoldier)
+                    {
+                        return true;
+                    }
+                    // These are the first soldiers from any team
+                    foundSoldier = true;
                 }
-                // These are the first soldiers from any team
-                foundSoldier = true;
+            }
+            return false;
+        }
+        // Owned tile
+        else if (SortedSoldiers[tileOwner].Count != soldierCount)
+        {
+            // We have some of our soldiers and some other soldiers
+            if (SortedSoldiers[tileOwner].Count > 0)
+            {
+                return true;
+            }
+            // All of our soldiers are dead, so we can't fight
+            else
+            {
+                return false;
             }
         }
         return false;
@@ -429,7 +508,7 @@ public class BlankTile: TileTemp
     public override void Behavior()
     {
         currentArt = null;
-        //base.BattleFunctionality();
+        base.BattleFunctionality();
     }
 }
 

@@ -61,10 +61,9 @@ public class SoldierTrip : NetworkBehaviour
 
         if (IsServer)
         {
-            soldier.AddToTile(end);
+            TileManager.TM["Crops"][end].addSoldier(soldier);
             soldier.EndTripAsClientRpc(BoardHelperFns.HexToArray(end));
         }
-        //TileManager.TM["Crops"][end].addSoldier(soldier);
     }
 
     public PathFinder finder;

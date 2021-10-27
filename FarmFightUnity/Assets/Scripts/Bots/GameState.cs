@@ -16,7 +16,7 @@ public class GameState : MonoBehaviour
 
     public List<Hex> hexCoords;
 
-    private static TileSyncData emptyTileSyncData = new TileSyncData(CropType.blankTile, 0.0f, false, -1);
+    private static TileSyncData emptyTileSyncData = new TileSyncData(CropType.blankTile, 0.0f, false, -1, false);
 
     enum CropTileSyncTypes
     {
@@ -24,7 +24,8 @@ public class GameState : MonoBehaviour
         cropNum,
         lastPlanted,
         containsFarmer,
-        tileOwner
+        tileOwner,
+        battleOccurring
     }
 
     // Start is called before the first frame update
@@ -78,7 +79,7 @@ public class GameState : MonoBehaviour
     // Turns TileTemp into tuple
     public static TileSyncData SerializeTile(TileTemp tile)
     {
-        return new TileSyncData(tile.cropType, tile.timeLastPlanted, tile.containsFarmer, tile.tileOwner);
+        return new TileSyncData(tile.cropType, tile.timeLastPlanted, tile.containsFarmer, tile.tileOwner, tile.battleOccurring);
     }
 
     // Goes from TileSyncData to TileTemp
@@ -88,6 +89,7 @@ public class GameState : MonoBehaviour
         float timeLastPlanted = tileData.timeLastPlanted;
         bool containsFarmer = tileData.containsFarmer;
         int tileOwner = tileData.tileOwner;
+        bool battleOccurring = tileData.battleOccurring;
 
         TileTemp tile;
         if (cropType == CropType.potato)
@@ -104,6 +106,7 @@ public class GameState : MonoBehaviour
         tile.timeLastPlanted = timeLastPlanted;
         //tile.containsFarmer = containsFarmer; // Can't sync now
         tile.tileOwner = tileOwner;
+        tile.battleOccurring = battleOccurring;
         
         return tile;
     }
@@ -147,13 +150,15 @@ public struct TileSyncData : INetworkSerializable
     public float timeLastPlanted;
     public bool containsFarmer;
     public int tileOwner;
+    public bool battleOccurring;
 
-    public TileSyncData(CropType cropTypeArg, float timeLastPlantedArg, bool containsFarmerArg, int tileOwnerArg) : this()
+    public TileSyncData(CropType cropTypeArg, float timeLastPlantedArg, bool containsFarmerArg, int tileOwnerArg, bool battleOccurringArg) : this()
     {
         cropType = cropTypeArg;
         timeLastPlanted = timeLastPlantedArg;
         containsFarmer = containsFarmerArg;
         tileOwner = tileOwnerArg;
+        battleOccurring = battleOccurringArg;
         //soldiers = soldiersArg;
     }
 
@@ -163,6 +168,7 @@ public struct TileSyncData : INetworkSerializable
         serializer.Serialize(ref timeLastPlanted);
         serializer.Serialize(ref containsFarmer);
         serializer.Serialize(ref tileOwner);
+        serializer.Serialize(ref battleOccurring);
     }
 
     // Equality
@@ -176,17 +182,21 @@ public struct TileSyncData : INetworkSerializable
             return false;
 
         var b = (TileSyncData)obj;
-        return (cropType == b.cropType) && (timeLastPlanted == b.timeLastPlanted) && (containsFarmer == b.containsFarmer) && (tileOwner == b.tileOwner);
+        return (cropType == b.cropType) && 
+            (timeLastPlanted == b.timeLastPlanted) && 
+            (containsFarmer == b.containsFarmer) && 
+            (tileOwner == b.tileOwner) &&
+            (battleOccurring == b.battleOccurring);
     }
 
     public override int GetHashCode()
     {
-        return (cropType, timeLastPlanted, containsFarmer, tileOwner).GetHashCode();
+        return (cropType, timeLastPlanted, containsFarmer, tileOwner, battleOccurring).GetHashCode();
     }
 
     // String representation
     public override string ToString()
     {
-        return (cropType, timeLastPlanted, containsFarmer, tileOwner).ToString();
+        return (cropType, timeLastPlanted, containsFarmer, tileOwner, battleOccurring).ToString();
     }
 }

@@ -100,7 +100,7 @@ public class Market : NetworkBehaviour
     {
         // Clicking a new tile.
         Hex hex = TileManager.TM.getMouseHex();
-        if (Input.GetMouseButtonDown(0) & TileManager.TM.isValidHex(hex))
+        if (Input.GetMouseButtonDown(0) && TileManager.TM.isValidHex(hex) && !crops.handler[hex].battleOccurring)
         {
             double add = crops.harvest(selectedHex);
             if (add > 0)
