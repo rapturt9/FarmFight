@@ -43,7 +43,6 @@ public class BattleCloud : NetworkBehaviour
     void AddToTileClientRpc(int[] coord)
     {
         _AddToTile(coord);
-        
     }
 
     // Internal function, actually changes the tile
@@ -98,7 +97,7 @@ public class BattleCloud : NetworkBehaviour
         while (true)
         {
             GetComponent<SpriteRenderer>().color = getColor();
-            yield return new WaitForSeconds(.05f);
+            yield return new WaitForSeconds(.1f);
         }
     }
 }

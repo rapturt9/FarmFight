@@ -14,6 +14,7 @@ public class Market : NetworkBehaviour
 
     public TileHandler UIHandler;
     public CropManager crops;
+    public SoldierManager soldierManager;
     public PeopleManager people;
 
     public Text moneyText;
@@ -31,7 +32,6 @@ public class Market : NetworkBehaviour
     void Start()
     {
         central = Repository.Central;
-        
     }
 
     private void Awake()
@@ -47,9 +47,6 @@ public class Market : NetworkBehaviour
         }
     }
 
-
-    
-
     // Update is called once per frame
     void Update()
     {
@@ -60,14 +57,11 @@ public class Market : NetworkBehaviour
             MarketUpdateFunctionality();
         else if (central.GamesMode == PlayState.SoldierSend)
             SoldierSendUpdate();
-       
 
         // Updates money text
         string dollars = "$" + (((int)(central.money * 100)) / 100.0).ToString();
         moneyText.text = dollars;
     }
-
-
 
     public void MarketUpdateFunctionality()
     {
@@ -75,7 +69,6 @@ public class Market : NetworkBehaviour
         TryHarvestCrop();
         TryHotkey();
     }
-
 
     // Change selected hex
     void ChangeSelectedHex()
@@ -91,9 +84,6 @@ public class Market : NetworkBehaviour
             //    Debug.Log(tile.SortedSoldiers[tile.tileOwner][0].Health.Value);
         }
     }
-
-
-    
 
     // Sees if we clicked on a crop, then tries to harvest it
     void TryHarvestCrop()
@@ -142,7 +132,6 @@ public class Market : NetworkBehaviour
             if(crops.handler[selectedHex].tileOwner == Repository.Central.localPlayerId)
                 SendSoldier();
         }
-        
     }
 
     public void SetCrop(int cropInt)
@@ -176,13 +165,9 @@ public class Market : NetworkBehaviour
 
     public void AddSoldier()
     {
-        if (central.money >= soldierCost && crops.addSoldier(selectedHex))
+        if (central.money >= soldierCost && soldierManager.addSoldier(selectedHex))
             central.money -= soldierCost;
     }
-
-
-
-
 
     /// <summary>
     /// wanting to Send Soldiers
@@ -202,11 +187,6 @@ public class Market : NetworkBehaviour
 
             SetSoldierDestination();
         }
-
-
-        
-
-
     }
 
     private void SetSoldierDestination()
@@ -228,12 +208,10 @@ public class Market : NetworkBehaviour
         
         if(SoldierDestination != null && SoldierDestination != selectedHex)
         {
-            crops.SendSoldier(start, end);
+            soldierManager.SendSoldier(start, end);
             SendSoldier();
         }
         
-        
-
         UIHandler[SoldierDestination] = new BlankTile();
 
     }
@@ -250,10 +228,4 @@ public class Market : NetworkBehaviour
             central.GamesMode = PlayState.NormalGame;
         }
     }
-    
-
-    
-
-
-    
 }

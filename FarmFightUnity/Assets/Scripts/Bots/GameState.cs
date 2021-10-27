@@ -7,6 +7,16 @@ using MLAPI.NetworkVariable.Collections;
 using MLAPI.Messaging;
 using MLAPI.Serialization;
 
+public enum CropTileSyncTypes
+{
+    blankTile = -1,
+    cropNum,
+    lastPlanted,
+    containsFarmer,
+    tileOwner,
+    battleOccurring
+}
+
 public class GameState : MonoBehaviour
 {
     public TileHandler tileHandler;
@@ -17,16 +27,6 @@ public class GameState : MonoBehaviour
     public List<Hex> hexCoords;
 
     private static TileSyncData emptyTileSyncData = new TileSyncData(CropType.blankTile, 0.0f, false, -1, false);
-
-    enum CropTileSyncTypes
-    {
-        blankTile = -1,
-        cropNum,
-        lastPlanted,
-        containsFarmer,
-        tileOwner,
-        battleOccurring
-    }
 
     // Start is called before the first frame update
     void Start()

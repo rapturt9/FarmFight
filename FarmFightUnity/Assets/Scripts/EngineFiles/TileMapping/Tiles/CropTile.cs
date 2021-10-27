@@ -8,14 +8,20 @@ public abstract class TileTemp : TileTempDepr
 {
     public CropType cropType = CropType.blankTile;
     public float timeLastPlanted = 0f;
+    
     public bool containsFarmer
     {
         get { return farmerObj != null; }
     }
     public bool battleOccurring = false;
 
-    // Something changed so TileHandler should sync it
-    public bool dirty = false;
+    public float timeStartedCapturing = -1f;
+    private float maxTimeToCapture = 2f;
+    public bool hostileOccupation
+    {
+        get { return timeStartedCapturing != -1f; }
+    }
+
 
     public override void Start()
     {
@@ -35,8 +41,11 @@ public abstract class TileTemp : TileTempDepr
         if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not add farmers from the client! Wrap your method in a ServerRpc."); }
         
         farmerObj = SpriteRepo.Sprites["Farmer"];
-        farmerObj.GetComponent<Farmer>().Owner.Value = tileOwner;
+        Farmer farmer = farmerObj.GetComponent<Farmer>();
+        farmer.Owner.Value = tileOwner;
         farmerObj.transform.position = (Vector2)TileManager.TM.HexToWorld(hexCoord) + .25f * Vector2.right;
+        farmerObj.GetComponent<NetworkObject>().Spawn();
+        farmer.AddToTile(hexCoord);
         return farmerObj;
     }
 
@@ -58,6 +67,8 @@ public abstract class TileTemp : TileTempDepr
         soldier.owner.Value = owner;
         SortedSoldiers[owner].Add(soldier);
         BattleFunctionality();
+        soldier.GetComponent<NetworkObject>().Spawn();
+        soldier.AddToTile(hexCoord);
         return soldier;
     }
 
@@ -70,6 +81,14 @@ public abstract class TileTemp : TileTempDepr
         soldier.Position = hexCoord;
 
         BattleFunctionality();
+
+        // Check for capturing
+        if (tileOwner != -1 && 
+            soldier.owner.Value != tileOwner && 
+            SortedSoldiers[tileOwner].Count == 0)
+        {
+            StartCapturing();
+        }
         //Debug.Log($"Soldier added to {hexCoord}");
     }
 
@@ -98,9 +117,16 @@ public abstract class TileTemp : TileTempDepr
 
             if (pathPossible)
             {
-                SortedSoldiers[soldier.owner.Value].Remove(soldier);
+                soldier.RemoveFromTile(hexCoord);
+                soldier.FadeIn();
                 // Make trip smooth for clients
                 soldier.StartTripAsClientRpc(BoardHelperFns.HexToArray(hexCoord), BoardHelperFns.HexToArray(end));
+
+                // Stop capturing if there are no occupying soldiers
+                if (soldierCount == 0)
+                {
+                    StopCapturing();
+                }
             }
             else
             {
@@ -203,12 +229,10 @@ public abstract class TileTemp : TileTempDepr
 
     public override void Behavior()
     {
-        if(frameInternal >= tileArts.Count * frameRate){
-            frameInternal = tileArts.Count * frameRate;
-        } 
-        else {
-            frameInternal = (int)((NetworkManager.Singleton.NetworkTime - timeLastPlanted) * frameRate);
-        }
+        // Update frames
+        frameInternal = Mathf.Min(
+            (int)((NetworkManager.Singleton.NetworkTime - timeLastPlanted) * frameRate), 
+            tileArts.Count * frameRate);
 
         frame = (int) (frameInternal / frameRate);
 
@@ -220,6 +244,7 @@ public abstract class TileTemp : TileTempDepr
                 Repository.Central.money += moneyToAdd;
         }
 
+        // Changing tile art
         if (!battleOccurring)
         {
             if (0 <= frame && frame < tileArts.Count)
@@ -236,7 +261,26 @@ public abstract class TileTemp : TileTempDepr
             currentArt = null;
         }
 
+        // Battling
         BattleFunctionality();
+
+        // Capturing
+        if (hostileOccupation && NetworkManager.Singleton.IsServer)
+        {
+            if ((NetworkManager.Singleton.NetworkTime - timeStartedCapturing) >= maxTimeToCapture)
+            {
+                StopCapturing();
+                tileOwner = GetCapturingPlayer();
+                TileSyncer.Syncer.SyncTileUpdate(hexCoord, new[] { CropTileSyncTypes.tileOwner });
+                // Capture farmer as well
+                if (containsFarmer)
+                {
+                    Debug.Log("capturing farmer");
+                    farmerObj.GetComponent<Farmer>().Owner.Value = tileOwner;
+                    TileSyncer.Syncer.SyncTileUpdate(hexCoord, new[] { CropTileSyncTypes.containsFarmer });
+                }
+            }
+        }
     }
 
 
@@ -295,6 +339,7 @@ public abstract class TileTemp : TileTempDepr
                 {
                     battleOccurring = true;
                     StartBattle();
+                    TileSyncer.Syncer.SyncTileUpdate(hexCoord, new[] { CropTileSyncTypes.battleOccurring });
                     SoldierManager.SM.StartBattleClientRpc(BoardHelperFns.HexToArray(hexCoord));
                 }
                 Battle.BattleFunction(SortedSoldiers, soldierCount, tileOwner);
@@ -303,12 +348,9 @@ public abstract class TileTemp : TileTempDepr
             {
                 battleOccurring = false;
                 StopBattle();
+                TileSyncer.Syncer.SyncTileUpdate(hexCoord, new[] { CropTileSyncTypes.battleOccurring });
                 SoldierManager.SM.StopBattleClientRpc(BoardHelperFns.HexToArray(hexCoord));
             }
-        }
-        if (battleOccurring)
-        {
-            FadeOutSoldiers();
         }
     }
 
@@ -328,7 +370,7 @@ public abstract class TileTemp : TileTempDepr
             if (farmerObj != null)
                 removeFarmer();
         }
-        battleOccurring = true;
+        StopCapturing();
         FadeOutSoldiers();
     }
 
@@ -342,18 +384,11 @@ public abstract class TileTemp : TileTempDepr
         PruneSoldiers();
         FadeInSoldiers();
         OwnershipSwitch();
-        battleOccurring = false;
         Debug.Log("Stopping battle");
     }
 
-    private void OwnershipSwitch()
+    private int GetCapturingPlayer()
     {
-        // We don't switch ownership of empty tiles
-        if (tileOwner == -1)
-        {
-            return;
-        }
-
         int newOwner = -1;
         int currentCount = SortedSoldiers[tileOwner].Count;
         // Only switch if all of the previous soldiers are dead
@@ -367,15 +402,23 @@ public abstract class TileTemp : TileTempDepr
                     newOwner = soldiersOfPlayer.Key;
                 }
             }
+        }
+        return newOwner;
+    }
 
-            if (newOwner != -1 && newOwner != tileOwner)
-            {
-                tileOwner = newOwner;
-                if (NetworkManager.Singleton.IsServer)
-                {
-                    dirty = true;
-                }
-            }
+    private void OwnershipSwitch()
+    {
+        // We don't switch ownership of empty tiles
+        if (tileOwner == -1)
+        {
+            return;
+        }
+
+        int newOwner = GetCapturingPlayer();
+
+        if (newOwner != -1 && newOwner != tileOwner && NetworkManager.Singleton.IsServer)
+        {
+            StartCapturing();
         }
     }
 
@@ -408,27 +451,9 @@ public abstract class TileTemp : TileTempDepr
         }
     }
 
-    // Fades out whatever soldier is likely to be visible
+    // Fades in the soldiers
     void FadeInSoldiers()
     {
-        //// No soldiers to fade in
-        //if (soldierCount < 0)
-        //{
-        //    return;
-        //}
-        //// Fade in normally
-        //else if (tileOwner != -1 && SortedSoldiers[tileOwner].Count > 0)
-        //{
-        //    SortedSoldiers[tileOwner][0].FadeIn();
-        //    return;
-        //}
-        //// We are occupied by hostile soldiers, so fade in whichever we find first
-        //else if (soldierCount > 0)
-        //{
-        //    var iter = getSoldierEnumerator().GetEnumerator();
-        //    iter.MoveNext();
-        //    iter.Current.FadeIn();
-        //}
         foreach (var soldier in getSoldierEnumerator())
         {
             soldier.FadeIn();
@@ -472,6 +497,9 @@ public abstract class TileTemp : TileTempDepr
         }
         return false;
     }
+
+    void StartCapturing() { timeStartedCapturing = NetworkManager.Singleton.NetworkTime; }
+    void StopCapturing() { timeStartedCapturing = -1f; }
 }
 
 

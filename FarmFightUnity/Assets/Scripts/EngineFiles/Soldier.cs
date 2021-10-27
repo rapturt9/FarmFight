@@ -52,7 +52,7 @@ public class Soldier: NetworkBehaviour
 
     }
 
-    // Add to all client tiles
+    // Remove from all client tiles
     public void RemoveFromTile(Hex coord)
     {
         if (IsClient)
@@ -140,6 +140,7 @@ public class Soldier: NetworkBehaviour
         Hex start = BoardHelperFns.ArrayToHex(startArray);
         Hex end = BoardHelperFns.ArrayToHex(endArray);
 
+        FadeIn();
         // Starts trip
         SoldierTrip trip;
         if (!TryGetComponent(out trip))

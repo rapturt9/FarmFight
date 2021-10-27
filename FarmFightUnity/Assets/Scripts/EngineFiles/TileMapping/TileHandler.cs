@@ -18,11 +18,19 @@ public class TileHandler : NetworkBehaviour
 
     Tilemap tilemap;
     public GameManager gameManager;
-
+    private TileSyncer syncer;
 
     private void Awake()
     {
         TileDict = new Dictionary<Hex, TileInterFace>();
+    }
+
+    private void Start()
+    {
+        if (TryGetComponent(out syncer))
+        {
+            syncer.Init(this);
+        }
     }
 
     public TileTemp this[Hex hex]
@@ -39,7 +47,7 @@ public class TileHandler : NetworkBehaviour
                 TileDict[hex].Tile = value;
                 // Only sync some tiles (crops) and not others (UI)
                 if (syncsTiles)
-                    SyncTile(hex);
+                    SyncTileOverwrite(hex);
             }
         }
     }
@@ -94,10 +102,6 @@ public class TileHandler : NetworkBehaviour
             tile.Update();
             if(automaticRedraw)
                 tile.Draw(tilemap);
-            if (tile.Tile.dirty)
-            {
-                SyncTile(tile.hexCoord);
-            }
         }
     }
 
@@ -112,64 +116,14 @@ public class TileHandler : NetworkBehaviour
 
     // We have changed a tile somehow, so it gets synced to everyone
     // Only works on TileTemp
-    public void SyncTile(Hex coord)
+    public void SyncTileOverwrite(Hex coord)
     {
-        // Gets tile data and soldier data
-        TileSyncData tileData = GameState.SerializeTile(this[coord]);
-        List<Soldier> soldiersToSync = new List<Soldier>(this[coord].getSoldierEnumerator());
-        GameObject farmerToSync = this[coord].farmerObj;
-        GameObject battlecloudToSync = this[coord].battleCloud;
-
-        if (IsClient)
-        {
-            SyncTileServerRpc(BoardHelperFns.HexToArray(coord), tileData);
-        }
-        else if (IsServer)
-        {
-            SyncTileClientRpc(BoardHelperFns.HexToArray(coord), tileData);
-        }
-
-        // Re-syncs the soldiers to the new tile
-        foreach (var soldier in soldiersToSync)
-        {
-            soldier.AddToTile(coord);
-        }
-        // Re-syncs the farmers to the new tile
-        if (!(farmerToSync is null))
-        {
-            farmerToSync.GetComponent<Farmer>().AddToTile(coord);
-        }
-        // Re-syncs the battle cloud to the new tile
-        if (!(battlecloudToSync == null))
-        {
-            battlecloudToSync.GetComponent<BattleCloud>().AddToTile(coord);
-        }
-
-        // See if a battle would occur
-        //TileDict[coord].Tile.CheckForBattle();
+        syncer.SyncTileOverwrite(coord);
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    void SyncTileServerRpc(int[] coord, TileSyncData tileData)
+    // Only sync some data, don't overwrite whole tile
+    public void SyncTileUpdate(Hex coord, CropTileSyncTypes[] dataToSync)
     {
-        _SyncTile(coord, tileData);
-        SyncTileClientRpc(coord, tileData);
-    }
-
-    [ClientRpc]
-    void SyncTileClientRpc(int[] coord, TileSyncData tileData)
-    {
-        _SyncTile(coord, tileData);
-    }
-
-    // Internal function, actually changes the tile
-    void _SyncTile(int[] coordArray, TileSyncData tileData)
-    {
-        Hex coord = BoardHelperFns.ArrayToHex(coordArray);
-        TileTemp tile = GameState.DeserializeTile(tileData);
-        if (TileDict.ContainsKey(coord))
-        {
-            TileDict[coord].Tile = tile;
-        }
+        syncer.SyncTileUpdate(coord, dataToSync);
     }
 }

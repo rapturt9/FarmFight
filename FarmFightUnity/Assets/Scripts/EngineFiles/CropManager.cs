@@ -37,8 +37,6 @@ public class CropManager : NetworkBehaviour
         // Only harvest if owned by the local player
         if (handler[hex].tileOwner == central.localPlayerId)
         {
-
-            
             CropType crop = handler[hex].cropType;
 
             //if crop there
@@ -46,7 +44,6 @@ public class CropManager : NetworkBehaviour
             if (crop == CropType.potato)
             {
                 hLevel = 1;
-                
             }
             else if (crop == CropType.carrot)
             {
@@ -56,7 +53,6 @@ public class CropManager : NetworkBehaviour
             {
                 hLevel = 2;
             }
-            
             else if (crop == CropType.eggplant)
             {
                 hLevel = 10;
@@ -65,7 +61,7 @@ public class CropManager : NetworkBehaviour
             if (hLevel > 0)
             {
                 double add = handler[hex].reset() * hLevel;
-                handler.SyncTile(hex);
+                handler.SyncTileUpdate(hex, new[] { CropTileSyncTypes.lastPlanted });
 
                 if (central.flyingVegies)
                 {
@@ -87,9 +83,9 @@ public class CropManager : NetworkBehaviour
 
     public bool canPlant(Hex hex)
     {
-
-        // We can't overwrite an opponent's crop
-        if (handler[hex].cropType != CropType.blankTile && handler[hex].tileOwner != central.localPlayerId)
+        if (handler[hex].cropType != CropType.blankTile && 
+            handler[hex].tileOwner != central.localPlayerId && // We can't overwrite an opponent's crop
+            !handler[hex].hostileOccupation)
         {
             return false;
         }
@@ -137,7 +133,7 @@ public class CropManager : NetworkBehaviour
 
         // Set owner
         handler[hex].tileOwner = central.localPlayerId;
-        handler.SyncTile(hex);
+        handler.SyncTileUpdate(hex, new[] { CropTileSyncTypes.cropNum, CropTileSyncTypes.tileOwner });
         CheckForWinServerRpc(central.localPlayerId);
 
         return true;
@@ -151,7 +147,9 @@ public class CropManager : NetworkBehaviour
     // Add farmer
     public bool addFarmer(Hex hex)
     {
-        if (handler[hex].containsFarmer == false && handler[hex].tileOwner == central.localPlayerId)
+        if (handler[hex].containsFarmer == false && 
+            handler[hex].tileOwner == central.localPlayerId && 
+            !handler[hex].hostileOccupation)
         {
             addFarmerServerRpc(BoardHelperFns.HexToArray(hex));
             return true;
@@ -163,10 +161,7 @@ public class CropManager : NetworkBehaviour
     void addFarmerServerRpc(int[] hexArray)
     {
         Hex hex = BoardHelperFns.ArrayToHex(hexArray);
-        GameObject farmer = handler[hex].addFarmer();
-        farmer.GetComponent<NetworkObject>().Spawn();
-        handler.SyncTile(hex);
-        Debug.Log("Has Farmer");
+        handler[hex].addFarmer();
     }
 
     // Remove farmer
@@ -185,51 +180,6 @@ public class CropManager : NetworkBehaviour
     {
         Hex hex = BoardHelperFns.ArrayToHex(hexArray);
         handler[hex].removeFarmer();
-        handler.SyncTile(hex);
-    }
-
-    // Add soldier
-    public bool addSoldier(Hex hex)
-    {
-        int[] hexArray = BoardHelperFns.HexToArray(hex);
-        int owner = central.localPlayerId;
-        if (handler[hex].tileOwner == owner)
-        {
-            addSoldierServerRpc(hexArray, owner);
-            return true;
-        }
-        return false;
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    void addSoldierServerRpc(int[] hexArray, int owner)
-    {
-        Hex hex = BoardHelperFns.ArrayToHex(hexArray);
-        Soldier soldier = handler[hex].addSoldier(owner);
-        soldier.GetComponent<NetworkObject>().Spawn();
-        soldier.AddToTile(hex);
-    }
-
-    // Send soldier
-    [ServerRpc(RequireOwnership = false)]
-    public void sendSoldierServerRpc(int[] startArray, int[] endArray, int localPlayerId)
-    {
-        Hex start = BoardHelperFns.ArrayToHex(startArray);
-        Hex end = BoardHelperFns.ArrayToHex(endArray);
-
-        TileTemp startTile = handler[start];
-        if (startTile.sendSoldier(end, localPlayerId))
-        {
-            handler.SyncTile(start);
-        }
-    }
-
-
-    public void SendSoldier(Hex start, Hex end, int number = 1)
-    {
-        sendSoldierServerRpc(BoardHelperFns.HexToArray(start),
-                BoardHelperFns.HexToArray(end),
-                central.localPlayerId);
     }
 
     [ServerRpc(RequireOwnership = false)]

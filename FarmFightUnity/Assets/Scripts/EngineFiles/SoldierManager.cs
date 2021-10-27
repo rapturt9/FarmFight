@@ -22,6 +22,7 @@ public class SoldierManager : NetworkBehaviour
         }
     }
 
+    // Start/Stop battle
     [ClientRpc]
     public void StartBattleClientRpc(int[] hexArray)
     {
@@ -34,5 +35,45 @@ public class SoldierManager : NetworkBehaviour
     {
         Hex hex = BoardHelperFns.ArrayToHex(hexArray);
         crops[hex].StopBattle();
+    }
+
+
+    // Add soldier
+    public bool addSoldier(Hex hex)
+    {
+        int[] hexArray = BoardHelperFns.HexToArray(hex);
+        int owner = Repository.Central.localPlayerId;
+        if (crops[hex].tileOwner == owner)
+        {
+            addSoldierServerRpc(hexArray, owner);
+            return true;
+        }
+        return false;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void addSoldierServerRpc(int[] hexArray, int owner)
+    {
+        Hex hex = BoardHelperFns.ArrayToHex(hexArray);
+        crops[hex].addSoldier(owner);
+    }
+
+
+    // Send soldier
+    public void SendSoldier(Hex start, Hex end, int number = 1)
+    {
+        sendSoldierServerRpc(BoardHelperFns.HexToArray(start),
+                BoardHelperFns.HexToArray(end),
+                Repository.Central.localPlayerId);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void sendSoldierServerRpc(int[] startArray, int[] endArray, int localPlayerId)
+    {
+        Hex start = BoardHelperFns.ArrayToHex(startArray);
+        Hex end = BoardHelperFns.ArrayToHex(endArray);
+
+        TileTemp startTile = crops[start];
+        startTile.sendSoldier(end, localPlayerId);
     }
 }
