@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,8 @@ using UnityEngine;
 /// </summary>
 public static class Battle
 {
+    static float baseDamage = 10f; // per second
+    static float homeTurfAdvantage = 1.5f;
 
     /// <summary>
     /// Rough approximation of 
@@ -38,13 +41,27 @@ public static class Battle
         //    (total - 1)/ col[5]
         //};
 
+        // Find out how much the players on a team do in total to all the other players
+        float[] damageDealtBy = new float[Repository.maxPlayers];
+        for (int playerId = 0; playerId < Repository.maxPlayers; playerId++)
+        {
+            damageDealtBy[playerId] = baseDamage * SortedSoldiers[playerId].Count / (soldierCount - SortedSoldiers[playerId].Count);
+        }
+        // Home turf advantage makes soldiers deal more damage
+        if (owner != -1)
+        {
+            damageDealtBy[owner] *= homeTurfAdvantage;
+        }
+
+        // Find out how much each individual player on a team takes in damage
+        float totalDamage = damageDealtBy.Sum();
         float[] damages = new float[Repository.maxPlayers];
         for (int playerId = 0; playerId<Repository.maxPlayers; playerId++)
         {
-            damages[playerId] = (soldierCount - SortedSoldiers[playerId].Count) / (float)soldierCount;
+            damages[playerId] = (totalDamage - damageDealtBy[playerId]) * Time.deltaTime;
         }
-        return damages;
 
+        return damages;
     }
 
 

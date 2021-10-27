@@ -58,6 +58,13 @@ public class Market : NetworkBehaviour
         else if (central.GamesMode == PlayState.SoldierSend)
             SoldierSendUpdate();
 
+        // Right click soldiers
+        if (Input.GetMouseButtonDown(1))
+        {
+            Hex endHex = TileManager.TM.getMouseHex();
+            soldierManager.SendSoldier(selectedHex, endHex);
+        }
+
         // Updates money text
         string dollars = "$" + (((int)(central.money * 100)) / 100.0).ToString();
         moneyText.text = dollars;
@@ -131,6 +138,16 @@ public class Market : NetworkBehaviour
         {
             if(crops.handler[selectedHex].tileOwner == Repository.Central.localPlayerId)
                 SendSoldier();
+        }
+
+        // DEBUG
+        else if (Input.GetKeyDown("d"))
+        {
+            var iter = crops.handler[selectedHex].getSoldierEnumerator().GetEnumerator();
+            if (iter.MoveNext())
+            {
+                Debug.Log(iter.Current.Health.Value);
+            }
         }
     }
 

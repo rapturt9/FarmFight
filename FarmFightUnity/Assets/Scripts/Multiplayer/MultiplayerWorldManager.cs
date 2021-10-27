@@ -91,6 +91,7 @@ public class MultiplayerWorldManager : MonoBehaviour
 
     private void ApprovalCheck(byte[] connectionData, ulong clientID, NetworkManager.ConnectionApprovedDelegate callback)
     {
+        Debug.Log("Trying to join");
         bool approve = System.Text.Encoding.ASCII.GetString(connectionData) == "FarmFight";
         callback(true, null, approve, Vector3.zero, Quaternion.identity);
     }
