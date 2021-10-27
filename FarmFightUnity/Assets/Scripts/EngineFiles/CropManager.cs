@@ -219,7 +219,9 @@ public class CropManager : NetworkBehaviour
 
         TileTemp startTile = handler[start];
         if (startTile.sendSoldier(end, localPlayerId))
+        {
             handler.SyncTile(start);
+        }
     }
 
 

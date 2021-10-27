@@ -4,6 +4,7 @@ using System.Collections;
 using MLAPI;
 using MLAPI.NetworkVariable;
 using MLAPI.Messaging;
+using MLAPI.Prototyping;
 
 public class Soldier: NetworkBehaviour
 {
@@ -117,6 +118,43 @@ public class Soldier: NetworkBehaviour
         transform.position = TileManager.TM.HexToWorld(coord) + .25f * Vector3.left;
         handler[coord].BattleFunctionality();
     }
+
+    // Starting trip as a client, for smoothness
+    [ClientRpc]
+    public void StartTripAsClientRpc(int[] startArray, int[] endArray)
+    {
+        if (IsServer)
+        {
+            return;
+        }
+        Hex start = BoardHelperFns.ArrayToHex(startArray);
+        Hex end = BoardHelperFns.ArrayToHex(endArray);
+
+        // Starts trip
+        SoldierTrip trip;
+        if (!TryGetComponent(out trip))
+        {
+            trip = gameObject.AddComponent<SoldierTrip>();
+        }
+        // We don't want the server overriding position ever again
+        GetComponent<NetworkTransform>().enabled = false;
+        trip.init(start, end);
+    }
+
+    // Ending trip as client, for smoothness
+    [ClientRpc]
+    public void EndTripAsClientRpc(int[] endArray)
+    {
+        if (IsServer)
+        {
+            return;
+        }
+        Hex end = BoardHelperFns.ArrayToHex(endArray);
+
+        if (TileManager.TM["Crops"][end].soldierCount != 0)
+            FadeOut();
+    }
+
 
     public void Update()
     {

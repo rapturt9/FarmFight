@@ -27,8 +27,6 @@ public class SoldierTrip : NetworkBehaviour
         if (Path == null)
             return false;
 
-        
-
         StartCoroutine("Mover");
 
         return true;
@@ -37,7 +35,6 @@ public class SoldierTrip : NetworkBehaviour
 
     private IEnumerator Mover()
     {
-
         soldier.FadeIn();
 
         soldier.GetComponent<SpriteRenderer>().enabled = true;
@@ -62,10 +59,12 @@ public class SoldierTrip : NetworkBehaviour
         if (TileManager.TM["Crops"][end].soldierCount != 0)
             soldier.FadeOut();
 
-        soldier.AddToTile(end);
+        if (IsServer)
+        {
+            soldier.AddToTile(end);
+            soldier.EndTripAsClientRpc(BoardHelperFns.HexToArray(end));
+        }
         //TileManager.TM["Crops"][end].addSoldier(soldier);
-
-
     }
 
     public PathFinder finder;

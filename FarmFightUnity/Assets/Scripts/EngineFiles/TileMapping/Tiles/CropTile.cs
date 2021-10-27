@@ -78,35 +78,30 @@ public abstract class TileTemp : TileTempDepr
 
     public bool sendSoldier(Hex end, int localPlayerId)
     {
-
         if (soldierCount != 0 &&
             end != hexCoord &&
             TileManager.TM.isValidHex(end) &&
             SortedSoldiers[localPlayerId].Count != 0)
         {
-            
-
             Soldier soldier = FindFirstSoldierWithID(localPlayerId);
 
             if (soldier == null)
                 return false;
-
 
             SoldierTrip trip;
 
             if (!soldier.TryGetComponent(out trip))
             {
                 trip = soldier.gameObject.AddComponent<SoldierTrip>();
-                
             }
-
 
             bool pathPossible = trip.init(hexCoord,end);
 
             if (pathPossible)
             {
                 SortedSoldiers[soldier.owner.Value].Remove(soldier);
-               
+                // Make trip smooth for clients
+                soldier.StartTripAsClientRpc(BoardHelperFns.HexToArray(hexCoord), BoardHelperFns.HexToArray(end));
             }
             else
             {
@@ -296,19 +291,20 @@ public abstract class TileTemp : TileTempDepr
 
             PruneSoldiers();
 
-            //Control Display
-            if (battleCloud == null)
-            {
-                //battleCloud = SpriteRepo.Sprites["BattleCloud"];
-                //battleCloud.transform.position = TileManager.TM.HexToWorld(hexCoord);
-            }
-
             bool killed = false;
-            // Do battle Stuff
             if (NetworkManager.Singleton.IsServer)
             {
+                //Control Display
+                if (battleCloud == null)
+                {
+                    battleCloud = SpriteRepo.Sprites["Cloud"];
+                    battleCloud.transform.position = TileManager.TM.HexToWorld(hexCoord);
+                    battleCloud.GetComponent<NetworkObject>().Spawn();
+                }
+
                 if (farmerObj != null)
                     removeFarmer();
+
                 killed = Battle.BattleFunction(SortedSoldiers, soldierCount, tileOwner);
             }
             if (killed)
@@ -323,7 +319,7 @@ public abstract class TileTemp : TileTempDepr
         else
         {
             fighting = false;
-            if (battleCloud != null)
+            if (battleCloud != null && NetworkManager.Singleton.IsServer)
             {
                 GameObject.Destroy(battleCloud);
                 battleCloud = null;

@@ -64,42 +64,19 @@ public static class Battle
 
     static bool KillSoldiers(Dictionary<int, List<Soldier>> SortedSoldiers)
     {
-        //for (int playerId = 0; playerId < Repository.maxPlayers; playerId++)
-        //{
-        //    int i = 0;
-        //    while (i < SortedSoldiers[playerId].Count)
-        //    {
-        //        Soldier soldier = SortedSoldiers[playerId][i];
-
-        //        if (SortedSoldiers[playerId][i].Health.Value <= 0)
-        //        {
-        //            SortedSoldiers[playerId].RemoveAt(i);
-        //            soldier.Kill();
-        //        }
-        //        else
-        //        {
-        //            i++;
-        //        }
-        //    }
-        //}
-        var toRemove = new List<Soldier>();
+        bool killed = false;
         // Get all dead soldiers
         for (int playerId = 0; playerId < Repository.maxPlayers; playerId++)
         {
             foreach (var soldier in SortedSoldiers[playerId])
             {
                 if (soldier.Health.Value <= 0)
-                    toRemove.Add(soldier);
+                {
+                    soldier.Kill();
+                    Debug.Log("killed soldier owned by " + soldier.owner.Value.ToString());
+                    killed = true;
+                }
             }
-        }
-
-        bool killed = false;
-        // Kill all dead soldiers
-        foreach (var soldier in toRemove)
-        {
-            soldier.Kill();
-            Debug.Log("killed soldier owned by " + soldier.owner.Value.ToString());
-            killed = true;
         }
         return killed;
     }
