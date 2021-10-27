@@ -1,43 +1,46 @@
 fileFormatVersion: 2
-guid: 083c9969c032a464196265b25bc42742
+guid: 6c5abd2e0910640e8bd8c81b802a20cd
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5063264526325634978
-    second: Golden_0
+      213: 1612824453858362433
+    second: drawnborders_0
   - first:
-      213: -1082613407037681628
-    second: Golden_1
+      213: -5951940387230528013
+    second: drawnborders_1
   - first:
-      213: 1296940682961775170
-    second: Golden_2
+      213: -8321434655983377760
+    second: drawnborders_2
   - first:
-      213: 3447542712187977709
-    second: Golden_3
+      213: 3862598772917363619
+    second: drawnborders_3
   - first:
-      213: -8795430971609869970
-    second: Golden_4
+      213: -5303017336146062621
+    second: drawnborders_4
   - first:
-      213: -9219612605516638191
-    second: Golden_5
+      213: 98083543320269770
+    second: drawnborders_5
   - first:
-      213: -3334065375824053326
-    second: Golden_6
+      213: 8380564888271048527
+    second: drawnborders_6
   - first:
-      213: -4603841206017536698
-    second: Golden_7
+      213: -1683644272464565549
+    second: drawnborders_7
   - first:
-      213: 7950214234270282114
-    second: Golden_8
+      213: 5004077923495434226
+    second: drawnborders_8
   - first:
-      213: 9093642786413269186
-    second: Golden_9
+      213: -1964836840727715969
+    second: drawnborders_9
   - first:
-      213: -1248917237974243955
-    second: Golden_10
+      213: 1973006547251799770
+    second: drawnborders_10
   - first:
-      213: -120908244128218237
-    second: Golden_11
+      213: -1105531057458343628
+    second: drawnborders_11
+  - first:
+      213: -3304489761923575463
+    second: drawnborders_12
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -139,253 +142,274 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Golden_0
+      name: drawnborders_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 1200
-        width: 400
-        height: 400
-      alignment: 9
-      pivot: {x: 0.5, y: 0.25}
+        y: 1999.2
+        width: 499.66666
+        height: 499.8
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2a7d977a244544640800000000000000
-      internalID: 5063264526325634978
+      spriteID: 1448a41bb47e16610800000000000000
+      internalID: 1612824453858362433
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Golden_1
+      name: drawnborders_1
       rect:
         serializedVersion: 2
-        x: 400
-        y: 1200
-        width: 400
-        height: 400
-      alignment: 9
-      pivot: {x: 0.5, y: 0.25}
+        x: 499
+        y: 1999.2
+        width: 499.66666
+        height: 499.8
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 420917c97d8c9f0f0800000000000000
-      internalID: -1082613407037681628
+      spriteID: 3fdc2d6a0c5766da0800000000000000
+      internalID: -5951940387230528013
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Golden_2
+      name: drawnborders_2
       rect:
         serializedVersion: 2
-        x: 800
-        y: 1200
-        width: 400
-        height: 400
-      alignment: 9
-      pivot: {x: 0.5, y: 0.25}
+        x: 998
+        y: 1999.2
+        width: 499.66666
+        height: 499.8
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 24a60befda8aff110800000000000000
-      internalID: 1296940682961775170
+      spriteID: 0a26c7ce443548c80800000000000000
+      internalID: -8321434655983377760
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Golden_3
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 800
-        width: 400
-        height: 400
-      alignment: 9
-      pivot: {x: 0.5, y: 0.25}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: def73f3b4d128df20800000000000000
-      internalID: 3447542712187977709
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Golden_4
-      rect:
-        serializedVersion: 2
-        x: 400
-        y: 800
-        width: 400
-        height: 400
-      alignment: 9
-      pivot: {x: 0.5, y: 0.25}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e6199baa12a50f580800000000000000
-      internalID: -8795430971609869970
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Golden_5
-      rect:
-        serializedVersion: 2
-        x: 800
-        y: 800
-        width: 400
-        height: 400
-      alignment: 9
-      pivot: {x: 0.5, y: 0.25}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1189771de2b5d0080800000000000000
-      internalID: -9219612605516638191
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Golden_6
+      name: drawnborders_3
       rect:
         serializedVersion: 2
         x: 0
-        y: 400
-        width: 400
-        height: 400
-      alignment: 9
-      pivot: {x: 0.5, y: 0.25}
+        y: 1500.2
+        width: 499.66666
+        height: 499.8
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2bbf31094350bb1d0800000000000000
-      internalID: -3334065375824053326
+      spriteID: 3a369997e15ba9530800000000000000
+      internalID: 3862598772917363619
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Golden_7
+      name: drawnborders_4
       rect:
         serializedVersion: 2
-        x: 400
-        y: 400
-        width: 400
-        height: 400
-      alignment: 9
-      pivot: {x: 0.5, y: 0.25}
+        x: 499
+        y: 1500.2
+        width: 499.66666
+        height: 499.8
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 64dc409b0dedb10c0800000000000000
-      internalID: -4603841206017536698
+      spriteID: 3e2964154d5e766b0800000000000000
+      internalID: -5303017336146062621
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Golden_8
+      name: drawnborders_5
       rect:
         serializedVersion: 2
-        x: 800
-        y: 400
-        width: 400
-        height: 400
-      alignment: 9
-      pivot: {x: 0.5, y: 0.25}
+        x: 998
+        y: 1500.2
+        width: 499.66666
+        height: 499.8
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2813fe959b5d45e60800000000000000
-      internalID: 7950214234270282114
+      spriteID: ac39ae586767c5100800000000000000
+      internalID: 98083543320269770
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Golden_9
+      name: drawnborders_6
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 400
-        height: 400
-      alignment: 9
-      pivot: {x: 0.5, y: 0.25}
+        y: 1001.2
+        width: 499.66666
+        height: 499.8
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2c0d47e1feb133e70800000000000000
-      internalID: 9093642786413269186
+      spriteID: f4fc18e1d5fbd4470800000000000000
+      internalID: 8380564888271048527
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Golden_10
+      name: drawnborders_7
       rect:
         serializedVersion: 2
-        x: 400
-        y: 0
-        width: 400
-        height: 400
-      alignment: 9
-      pivot: {x: 0.5, y: 0.25}
+        x: 499
+        y: 1001.2
+        width: 499.66666
+        height: 499.8
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d85eeac9364faaee0800000000000000
-      internalID: -1248917237974243955
+      spriteID: 3dae0ab547e72a8e0800000000000000
+      internalID: -1683644272464565549
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Golden_11
+      name: drawnborders_8
       rect:
         serializedVersion: 2
-        x: 800
-        y: 0
-        width: 400
-        height: 400
-      alignment: 9
-      pivot: {x: 0.5, y: 0.25}
+        x: 998
+        y: 1001.2
+        width: 499.66666
+        height: 499.8
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3834252b792725ef0800000000000000
-      internalID: -120908244128218237
+      spriteID: 2f7d152db5e027540800000000000000
+      internalID: 5004077923495434226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: drawnborders_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 502.2
+        width: 499.66666
+        height: 499.8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f7fd2d2bd4f7bb4e0800000000000000
+      internalID: -1964836840727715969
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: drawnborders_10
+      rect:
+        serializedVersion: 2
+        x: 499
+        y: 502.2
+        width: 499.66666
+        height: 499.8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ad6a6745007816b10800000000000000
+      internalID: 1973006547251799770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: drawnborders_11
+      rect:
+        serializedVersion: 2
+        x: 998
+        y: 502.2
+        width: 499.66666
+        height: 499.8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 43198005c5d58a0f0800000000000000
+      internalID: -1105531057458343628
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: drawnborders_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3.2000122
+        width: 499.66666
+        height: 499.8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 95151a8c1181422d0800000000000000
+      internalID: -3304489761923575463
       vertices: []
       indices: 
       edges: []
@@ -393,7 +417,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: e7d59a5056de1473d9d4860213b73a46
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
