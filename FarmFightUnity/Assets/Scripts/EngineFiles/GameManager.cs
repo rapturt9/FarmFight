@@ -28,7 +28,6 @@ public class GameManager : NetworkBehaviour
         central = Repository.Central;
 
         central.GamesMode = PlayState.NormalGame;
-
     }
 
     public override void NetworkStart()
@@ -42,15 +41,13 @@ public class GameManager : NetworkBehaviour
         addNewPlayerServerRpc(NetworkManager.Singleton.LocalClientId);
 
         // Now, lets things update
-        gameIsRunning = true;
-        central.gameIsRunning = gameIsRunning;
+        central.gameIsRunning = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        if (!gameIsRunning) { return; }
+        if (!central.gameIsRunning) { return; }
 
         Hex hex = TileManager.TM.getMouseHex();
 
@@ -95,7 +92,7 @@ public class GameManager : NetworkBehaviour
 
         Potato startingTile = new Potato();
         startingTile.tileOwner = currMaxLocalPlayerId;
-        BoardChecker.Checker.changeTileOwnershipCountServerRpc(currMaxLocalPlayerId, +1, false);
+        BoardChecker.Checker.ChangeTileOwnershipCountServerRpc(currMaxLocalPlayerId, +1, false);
         int cropTileHandlerIndex = 0;
         TileManager.TM.Handlers[cropTileHandlerIndex][newCorner] = startingTile;
 

@@ -135,7 +135,7 @@ public class CropManager : NetworkBehaviour
         // Set owner
         if (handler[hex].tileOwner != central.localPlayerId)
         {
-            BoardChecker.Checker.changeTileOwnershipCountServerRpc(central.localPlayerId, +1);
+            BoardChecker.Checker.ChangeTileOwnershipCountServerRpc(central.localPlayerId, +1);
         }
         handler[hex].tileOwner = central.localPlayerId;
         handler.SyncTileUpdate(hex, new[] { CropTileSyncTypes.cropNum, CropTileSyncTypes.tileOwner });

@@ -57,3 +57,6 @@ TagManager:
   - name: Crops
     uniqueID: 3620083653
     locked: 0
+  - name: End UI
+    uniqueID: 1343229513
+    locked: 0

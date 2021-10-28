@@ -276,8 +276,8 @@ public abstract class TileTemp : TileTempDepr
         int newTileOwner = GetCapturingPlayer();
 
         // Change tile owned counts
-        BoardChecker.Checker.changeTileOwnershipCountServerRpc(tileOwner, -1);
-        BoardChecker.Checker.changeTileOwnershipCountServerRpc(newTileOwner, +1);
+        BoardChecker.Checker.ChangeTileOwnershipCountServerRpc(tileOwner, -1);
+        BoardChecker.Checker.ChangeTileOwnershipCountServerRpc(newTileOwner, +1);
 
         tileOwner = newTileOwner;
         TileSyncer.Syncer.SyncTileUpdate(hexCoord, new[] { CropTileSyncTypes.tileOwner });

@@ -7,6 +7,8 @@ using MLAPI.Messaging;
 public class BoardChecker : NetworkBehaviour
 {
     public TileHandler cropTiles;
+    public GameManager gameManager;
+    public GameEndDisplay gameEndDisplay;
 
     public static BoardChecker Checker;
 
@@ -69,16 +71,33 @@ public class BoardChecker : NetworkBehaviour
 
     // Keeps track of tiles owned by everybody
     [ServerRpc(RequireOwnership = false)]
-    public void changeTileOwnershipCountServerRpc(int playerId, int count, bool checkForWin = true)
+    public void ChangeTileOwnershipCountServerRpc(int playerId, int count, bool checkForWin = true)
     {
         ownedTileCount[playerId] += count;
 
-        if (checkForWin)
+        if (checkForWin && CheckForWin(playerId))
         {
-            if (CheckForWin(playerId))
-            {
-                Debug.Log("Player " + playerId.ToString() + " has won");
-            }
+            Repository.Central.gameIsRunning = false;
+            EndGameClientRpc(playerId);
         }
+    }
+
+    [ClientRpc]
+    public void EndGameClientRpc(int winningPlayer)
+    {
+        Repository.Central.gameIsRunning = false;
+        bool won = Repository.Central.localPlayerId == winningPlayer;
+        gameEndDisplay.EndDisplay(won);
+
+        if (won)
+        {
+            Debug.Log("You won!");
+        }
+        else
+        {
+            Debug.Log("You lost :(");
+        }
+
+        Debug.Log("Player " + winningPlayer.ToString() + " has won");
     }
 }
