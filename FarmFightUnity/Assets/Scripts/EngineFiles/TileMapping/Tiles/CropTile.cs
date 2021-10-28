@@ -288,6 +288,7 @@ public abstract class TileTemp : TileTempDepr
         //update tileinfo
         if(Repository.Central.selectedHex == hexCoord){
             Dictionary<int, Dictionary<string, int>>  dict = Repository.Central.tileinfo.soldierInfo;
+            Repository.Central.tileinfo.homePlayer = tileOwner;
             for (int playerId = 0; playerId < Repository.maxPlayers; playerId++)
             {
                 dict[playerId]["num"] = SortedSoldiers[playerId].Count;

@@ -52,6 +52,7 @@ public class Repository : MonoBehaviour
 public class TileInfo {
     public Dictionary<int, Dictionary<string, int>> soldierInfo =
      new Dictionary<int, Dictionary<string, int>> ();
+    public int homePlayer = -1;
 
     public TileInfo(){
         for(int i=0;i<Repository.maxPlayers;i++){

@@ -41,7 +41,7 @@ public static class Battle
         float[] damages = new float[Repository.maxPlayers];
         for (int playerId = 0; playerId<Repository.maxPlayers; playerId++)
         {
-            damages[playerId] = (soldierCount - SortedSoldiers[playerId].Count) / (float)soldierCount;
+            damages[playerId] = (soldierCount - SortedSoldiers[playerId].Count) / (float)SortedSoldiers[playerId].Count;
         }
         return damages;
 
@@ -55,7 +55,11 @@ public static class Battle
         {
             foreach(var soldier in player.Value)
             {
-                soldier.Health.Value -= damages[player.Key];
+                float mult = 1;
+                if(player.Key == Repository.Central.tileinfo.homePlayer){
+                    mult = .8f;
+                }
+                soldier.Health.Value -= mult * damages[player.Key];
             }
         }
     }
