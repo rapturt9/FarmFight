@@ -473,8 +473,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 39.943, y: 32.05001}
-  m_SizeDelta: {x: 94.586, y: 161.98}
+  m_AnchoredPosition: {x: 39.3, y: 29.825}
+  m_SizeDelta: {x: 94.586, y: 150.628}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &172428237
 MonoBehaviour:
@@ -2899,6 +2899,7 @@ GameObject:
   - component: {fileID: 1524123755}
   - component: {fileID: 1524123758}
   - component: {fileID: 1524123757}
+  - component: {fileID: 1524123756}
   m_Layer: 5
   m_Name: MarketText
   m_TagString: Market
@@ -2925,6 +2926,26 @@ RectTransform:
   m_AnchoredPosition: {x: -23.5, y: 33.3}
   m_SizeDelta: {x: 160, y: 32.45}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1524123756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1524123754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5160e798a5de3441bb88d2906b863059, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TileInfo: {fileID: 172428238}
+  UIHandler: {fileID: 0}
+  crops: {fileID: 0}
+  soldierManager: {fileID: 0}
+  people: {fileID: 0}
+  moneyText: {fileID: 1524123757}
+  SoldierDestination:
+    coords: {x: 0, y: 0}
 --- !u!114 &1524123757
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8016,6 +8037,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 43f91012ee481432a958f7d3ccfb22a1, type: 2}
   - {fileID: 11400000, guid: 7df2ff78eb9d44d25b3461643378102d, type: 2}
   - {fileID: 11400000, guid: fb3eb404bc31d4d2595a936741fbde19, type: 2}
+  - {fileID: 11400000, guid: 372a9add386424524ad11f90b357e96e, type: 2}
   - {fileID: 11400000, guid: 372a9add386424524ad11f90b357e96e, type: 2}
 --- !u!1 &2120205904
 GameObject:
