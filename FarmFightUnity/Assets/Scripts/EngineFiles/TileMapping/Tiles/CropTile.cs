@@ -390,7 +390,6 @@ public abstract class TileTemp : TileTempDepr
         PruneSoldiers();
         FadeInSoldiers();
         OwnershipSwitch();
-        Debug.Log("Stopping battle");
     }
 
     private int GetCapturingPlayer()
