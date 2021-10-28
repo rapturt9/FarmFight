@@ -16,7 +16,9 @@ public abstract class TileTemp : TileTempDepr
     public bool battleOccurring = false;
 
     public float timeStartedCapturing = -1f;
+
     private float maxTimeToCapture = 2f;
+
     public bool hostileOccupation
     {
         get { return timeStartedCapturing != -1f; }
@@ -24,10 +26,17 @@ public abstract class TileTemp : TileTempDepr
 
     public GameObject CropEffect = null;
 
-    private GameObject effect = SpriteRepo.Sprites["CropEffect"];
-
+    private GameObject effect;
+    
     public override void Start()
     {
+        if (effect == null)
+        {
+
+            effect = SpriteRepo.Sprites["CropEffect"];
+            effect.GetComponent<CropEffect>().init(this);
+        }
+
         SortedSoldiers = new Dictionary<int, List<Soldier>>();
         for (int i = 0; i < Repository.maxPlayers; i++)
             SortedSoldiers[i] = new List<Soldier>();
@@ -38,6 +47,127 @@ public abstract class TileTemp : TileTempDepr
         frameRate = 60;
         frameInternal = 0;
     }
+
+
+    public override void Behavior()
+    {
+        // Update frames
+        frameInternal = Mathf.Min(
+            (int)((NetworkManager.Singleton.NetworkTime - timeLastPlanted) * frameRate),
+            tileArts.Count * frameRate);
+
+        frame = (int)(frameInternal / frameRate);
+
+        double mid = tileArts.Count / 2; //optimal harvest level
+        if (cropType == CropType.eggplant)
+        {
+            mid = 4.5;
+        }
+        else
+        {
+            mid = 5.5;
+        }
+
+        double diff = frameInternal / frameRate - mid; //for sparkle
+        double diff2 = tileArts.Count - frameInternal / frameRate; //for rot
+
+        if (cropType == CropType.blankTile)
+        {
+            GameObject.Destroy(effect);
+        }
+        else if (-.3 < diff && diff < .3)
+        {
+
+            effect.GetComponent<CropEffect>().Sparkle();
+        }
+        else if (diff2 < .3)
+        {
+            effect.GetComponent<CropEffect>().Rotting();
+        }
+        else
+        {
+            effect.GetComponent<CropEffect>().Stop();
+        }
+
+        //farmer autoharvest
+        if (containsFarmer && frameInternal / frameRate >= mid)
+        {
+            int hLevel = 0;
+            if (cropType == CropType.potato)
+            {
+                hLevel = 1;
+
+            }
+            else if (cropType == CropType.carrot)
+            {
+                hLevel = 4;
+            }
+            else if (cropType == CropType.rice)
+            {
+                hLevel = 2;
+            }
+
+            else if (cropType == CropType.eggplant)
+            {
+                hLevel = 10;
+            }
+            double moneyToAdd = reset() * hLevel;
+            if (tileOwner == Repository.Central.localPlayerId)
+                Repository.Central.money += moneyToAdd;
+        }
+
+        // Changing tile art
+        if (!battleOccurring)
+        {
+            if (0 <= frame && frame < tileArts.Count)
+            {
+                currentArt = tileArts[frame];
+            }
+            else
+            {
+                currentArt = tileArts[tileArts.Count - 1];
+            }
+        }
+        else
+        {
+            currentArt = null;
+        }
+
+        //update tileinfo
+        if (Repository.Central.selectedHex == hexCoord)
+        {
+            Dictionary<int, Dictionary<string, int>> dict = Repository.Central.tileinfo.soldierInfo;
+            Repository.Central.tileinfo.homePlayer = tileOwner;
+            for (int playerId = 0; playerId < Repository.maxPlayers; playerId++)
+            {
+                dict[playerId]["num"] = SortedSoldiers[playerId].Count;
+                float totalHealth = 0;
+                foreach (var soldier in SortedSoldiers[playerId])
+                {
+                    totalHealth += soldier.Health.Value;
+                }
+                dict[playerId]["health"] = (int)totalHealth;
+            }
+        }
+
+        // Battling
+        BattleFunctionality();
+
+        // Capturing
+        if (hostileOccupation && NetworkManager.Singleton.IsServer && (NetworkManager.Singleton.NetworkTime - timeStartedCapturing) >= maxTimeToCapture)
+        {
+            CaptureThis();
+        }
+    }
+
+    //destroys all associated gameobjects
+    public override void End()
+    {
+        if(effect != null)
+            GameObject.Destroy(effect);
+    }
+
+
 
     public GameObject addFarmer()
     {
@@ -143,17 +273,7 @@ public abstract class TileTemp : TileTempDepr
         return false;
     }
 
-    //destroys all associated gameobjects
-    public override void End()
-    {
-        // Destroying objects messed up things for me with networking - Eli
-
-        //GameObject.Destroy(farmerObj);
-        //foreach (var soldier in soldiers)
-        //{
-        //    //GameObject.Destroy(soldier.gameObject);
-        //}
-    }
+    
 
 
    
@@ -229,102 +349,7 @@ public abstract class TileTemp : TileTempDepr
 
     private float frameInternal;
 
-    public override void Behavior()
-    {
-        // Update frames
-        frameInternal = Mathf.Min(
-            (int)((NetworkManager.Singleton.NetworkTime - timeLastPlanted) * frameRate), 
-            tileArts.Count * frameRate);
 
-        frame = (int) (frameInternal / frameRate);
-
-        double mid = tileArts.Count / 2; //optimal harvest level
-        if(cropType == CropType.eggplant){
-            mid = 4.5;
-        } else {
-            mid = 5.5;
-        }
-
-        double diff = frameInternal / frameRate - mid; //for sparkle
-        double diff2 = tileArts.Count - frameInternal / frameRate; //for rot
-        if(-.3 < diff && diff < .3){
-            effect.GetComponent<CropEffect>().init(hexCoord, "sparkle");
-        } else if(diff2<.3) {
-            effect.GetComponent<CropEffect>().init(hexCoord, "rot");
-        } else {
-            GameObject.Destroy(effect);
-            effect = SpriteRepo.Sprites["CropEffect"];
-        }
-
-        //farmer autoharvest
-        if(containsFarmer && frameInternal / frameRate >= mid)
-        {
-            int hLevel = 0;
-            if (cropType == CropType.potato)
-            {
-                hLevel = 1;
-                
-            }
-            else if (cropType == CropType.carrot)
-            {
-                hLevel = 4;
-            }
-            else if (cropType == CropType.rice)
-            {
-                hLevel = 2;
-            }
-            
-            else if (cropType == CropType.eggplant)
-            {
-                hLevel = 10;
-            }
-            double moneyToAdd = reset()*hLevel;
-            if (tileOwner == Repository.Central.localPlayerId)
-                Repository.Central.money += moneyToAdd;
-        }
-
-        // Changing tile art
-        if (!battleOccurring)
-        {
-            if (0 <= frame && frame < tileArts.Count)
-            {
-                currentArt = tileArts[frame];
-            }
-            else
-            {
-                currentArt = tileArts[tileArts.Count - 1];
-            }
-        }
-        else
-        {
-            currentArt = null;
-        }
-
-        //update tileinfo
-        if(Repository.Central.selectedHex == hexCoord){
-            Dictionary<int, Dictionary<string, int>>  dict = Repository.Central.tileinfo.soldierInfo;
-            Repository.Central.tileinfo.homePlayer = tileOwner;
-            for (int playerId = 0; playerId < Repository.maxPlayers; playerId++)
-            {
-                dict[playerId]["num"] = SortedSoldiers[playerId].Count;
-                float totalHealth = 0;
-                foreach (var soldier in SortedSoldiers[playerId])
-                {
-                    totalHealth += soldier.Health.Value;
-                }
-                dict[playerId]["health"]=(int)totalHealth;
-            }
-        }
-
-        // Battling
-        BattleFunctionality();
-
-        // Capturing
-        if (hostileOccupation && NetworkManager.Singleton.IsServer && (NetworkManager.Singleton.NetworkTime - timeStartedCapturing) >= maxTimeToCapture)
-        {
-            CaptureThis();
-        }
-    }
 
     void CaptureThis()
     {
