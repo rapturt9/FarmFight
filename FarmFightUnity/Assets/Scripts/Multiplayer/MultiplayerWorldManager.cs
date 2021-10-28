@@ -11,9 +11,6 @@ public class MultiplayerWorldManager : MonoBehaviour
     public bool startAsHost = true;
     private bool hostStarted = false;
 
-    public GameObject UIPanel;
-
-    public string IPAddress = "127.0.0.1";
     PhotonRealtimeTransport transport;
 
     private void Start()
@@ -84,7 +81,6 @@ public class MultiplayerWorldManager : MonoBehaviour
 
     public void Host()
     {
-        UIPanel.SetActive(false);
         NetworkManager.Singleton.ConnectionApprovalCallback += ApprovalCheck;
         NetworkManager.Singleton.StartHost();
     }
@@ -99,14 +95,7 @@ public class MultiplayerWorldManager : MonoBehaviour
     public void Join()
     {
         transport = NetworkManager.Singleton.GetComponent<PhotonRealtimeTransport>();
-        //transport.ConnectAddress = IPAddress;
-        UIPanel.SetActive(false);
         NetworkManager.Singleton.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes("FarmFight");
         NetworkManager.Singleton.StartClient();
-    }
-
-    public void IPAddressChanged(string newAddress)
-    {
-        IPAddress = newAddress;
     }
 }

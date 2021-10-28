@@ -12,10 +12,13 @@ public class CropEffect : MonoBehaviour
 
     public SpriteRenderer spriteRenderer = null;
     public Color flickerColor = Color.white;
+    private bool effectActive = false;
 
     private Color startingColor = Color.clear;
     public void init(Hex start, string type)
     {
+        if (effectActive) { return; }
+
         spriteRenderer = GetComponent<SpriteRenderer>();
         
         transform.parent = SpriteRepo.Sprites.transform;
@@ -26,10 +29,12 @@ public class CropEffect : MonoBehaviour
 
         if (type == "sparkle"){
             spriteRenderer.sprite = effectSprites[0];
+            effectActive = true;
             //StartCoroutine("Sparkle");
         }else if(type=="rot"){
             spriteRenderer.sprite = effectSprites[1];
             StartCoroutine("SpinObject");
+            effectActive = true;
         }
     }
 
@@ -46,7 +51,7 @@ public class CropEffect : MonoBehaviour
  
      float duration = 30f;
      float elapsed = 0f;
-     float spinSpeed = 1f;
+     float spinSpeed = 100f;
      while (elapsed < duration)
      {
          elapsed += Time.deltaTime;
