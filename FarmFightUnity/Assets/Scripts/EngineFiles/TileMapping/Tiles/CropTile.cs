@@ -22,6 +22,9 @@ public abstract class TileTemp : TileTempDepr
         get { return timeStartedCapturing != -1f; }
     }
 
+    public GameObject CropEffect = null;
+
+    private GameObject effect = SpriteRepo.Sprites["CropEffect"];
 
     public override void Start()
     {
@@ -241,6 +244,18 @@ public abstract class TileTemp : TileTempDepr
         } else {
             mid = 5.5;
         }
+
+        double diff = frameInternal / frameRate - mid; //for sparkle
+        double diff2 = tileArts.Count - frameInternal / frameRate; //for rot
+        if(-.3 < diff && diff < .3){
+            effect.GetComponent<CropEffect>().init(hexCoord, "sparkle");
+        } else if(diff2<.3) {
+            effect.GetComponent<CropEffect>().init(hexCoord, "rot");
+        } else {
+            GameObject.Destroy(effect);
+            effect = SpriteRepo.Sprites["CropEffect"];
+        }
+
         //farmer autoharvest
         if(containsFarmer && frameInternal / frameRate >= mid)
         {
