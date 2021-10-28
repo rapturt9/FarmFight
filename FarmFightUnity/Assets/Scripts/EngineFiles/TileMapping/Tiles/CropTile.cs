@@ -235,10 +235,35 @@ public abstract class TileTemp : TileTempDepr
 
         frame = (int) (frameInternal / frameRate);
 
+        double mid = tileArts.Count / 2; //optimal harvest level
+        if(cropType == CropType.eggplant){
+            mid = 4.5;
+        } else {
+            mid = 5.5;
+        }
         //farmer autoharvest
-        if(containsFarmer && frame >= 6)
+        if(containsFarmer && frameInternal / frameRate >= mid)
         {
-            double moneyToAdd = reset();
+            int hLevel = 0;
+            if (cropType == CropType.potato)
+            {
+                hLevel = 1;
+                
+            }
+            else if (cropType == CropType.carrot)
+            {
+                hLevel = 4;
+            }
+            else if (cropType == CropType.rice)
+            {
+                hLevel = 2;
+            }
+            
+            else if (cropType == CropType.eggplant)
+            {
+                hLevel = 10;
+            }
+            double moneyToAdd = reset()*hLevel;
             if (tileOwner == Repository.Central.localPlayerId)
                 Repository.Central.money += moneyToAdd;
         }
@@ -258,6 +283,21 @@ public abstract class TileTemp : TileTempDepr
         else
         {
             currentArt = null;
+        }
+
+        //update tileinfo
+        if(Repository.Central.selectedHex == hexCoord){
+            Dictionary<int, Dictionary<string, int>>  dict = Repository.Central.tileinfo.soldierInfo;
+            for (int playerId = 0; playerId < Repository.maxPlayers; playerId++)
+            {
+                dict[playerId]["num"] = SortedSoldiers[playerId].Count;
+                float totalHealth = 0;
+                foreach (var soldier in SortedSoldiers[playerId])
+                {
+                    totalHealth += soldier.Health.Value;
+                }
+                dict[playerId]["health"]=(int)totalHealth;
+            }
         }
 
         // Battling

@@ -9,6 +9,8 @@ public class Market : NetworkBehaviour
     Repository central;
     Hex selectedHex;
 
+    public Text TileInfo; 
+
 
     public static Market market;
 
@@ -68,6 +70,14 @@ public class Market : NetworkBehaviour
         // Updates money text
         string dollars = "$" + (((int)(central.money * 100)) / 100.0).ToString();
         moneyText.text = dollars;
+
+        if(TileInfo){
+            string total="";
+            for(int i=0;i<6;i++){
+                total+=i+": "+central.tileinfo.soldierInfo[i]["num"]+" | "+central.tileinfo.soldierInfo[i]["health"]+"h\n";
+            }
+            TileInfo.text = total;
+        }
     }
 
     public void MarketUpdateFunctionality()

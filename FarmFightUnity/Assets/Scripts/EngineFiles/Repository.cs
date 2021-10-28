@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Repository : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class Repository : MonoBehaviour
     public int localPlayerId;
     public bool gameIsRunning = false;
     public double money = 100.0;
+
+    public TileInfo tileinfo = new TileInfo();
 
     public const int maxPlayers = 6;
 
@@ -45,6 +48,19 @@ public class Repository : MonoBehaviour
 }
 
 /// modes
+
+public class TileInfo {
+    public Dictionary<int, Dictionary<string, int>> soldierInfo =
+     new Dictionary<int, Dictionary<string, int>> ();
+
+    public TileInfo(){
+        for(int i=0;i<Repository.maxPlayers;i++){
+             soldierInfo[i]=new Dictionary<string, int>();
+             soldierInfo[i]["num"]=0;
+             soldierInfo[i]["health"]=0;
+         }
+    }
+}
 public enum PlayState
 {
     NormalGame,
