@@ -62,3 +62,5 @@ crashlytics-build.properties
 # Edits by Eli-bassoon
 # Parrelsync clones
 /FarmFightUnity_clone_*/
+# Hosted
+!docs/Build/
