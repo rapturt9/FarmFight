@@ -243,12 +243,13 @@ public abstract class TileTemp : TileTempDepr
         float calc;
         double stage = frameInternal / frameRate;      
 
-        calc = (float)(stage - mid);
-        if (calc > 0){
-            calc = 0.80f;
-        }
-        else {
-            calc = Mathf.Pow(0.25f,calc);
+        calc = Mathf.Abs((float)(stage - mid));
+        calc = Mathf.Pow(0.25f,calc);
+        if (stage > mid){
+            calc = 1.1f;
+        }        
+        if (calc < 0.75f){
+            return 0.0f;
         }
         return calc;
     }
