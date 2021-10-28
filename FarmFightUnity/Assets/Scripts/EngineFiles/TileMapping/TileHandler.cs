@@ -17,7 +17,6 @@ public class TileHandler : NetworkBehaviour
     private int size;
 
     Tilemap tilemap;
-    public GameManager gameManager;
     private TileSyncer syncer;
 
     private void Awake()
@@ -95,7 +94,7 @@ public class TileHandler : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!gameManager.gameIsRunning) { return; }
+        if (!Repository.Central.gameIsRunning) { return; }
 
         foreach(var tile in TileDict.Values)
         {

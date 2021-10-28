@@ -154,15 +154,13 @@ public class Soldier: NetworkBehaviour
 
     // Ending trip as client, for smoothness
     [ClientRpc]
-    public void EndTripAsClientRpc(int[] endArray)
+    public void EndTripAsClientRpc(bool fade)
     {
         if (IsServer)
         {
             return;
         }
-        Hex end = BoardHelperFns.ArrayToHex(endArray);
-
-        if (TileManager.TM["Crops"][end].soldierCount != 0)
+        if (fade)
             FadeOut();
     }
 

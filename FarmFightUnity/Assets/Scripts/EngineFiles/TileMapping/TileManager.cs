@@ -4,16 +4,12 @@ using UnityEngine;
 
 public class TileManager : MonoBehaviour
 {
-
-
     public int size;
     public static int hexagonSides = 6;
 
     public TileHandler[] Handlers;
 
-
     private Dictionary<string, TileHandler> handlers;
-
 
     public TileHandler this[string name]
     {
@@ -42,9 +38,6 @@ public class TileManager : MonoBehaviour
         foreach (var TH in Handlers)
         {
             TH.Init(size);
-            
-            
-         
             handlers.Add(TH.Name,TH);
         }
 
@@ -65,8 +58,6 @@ public class TileManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
-        
     }
 
     public string[] TileMapNames 
@@ -118,7 +109,7 @@ public class TileManager : MonoBehaviour
     /// <returns></returns>
     public Hex move(Hex current,int x, int y)
     {
-        return current +  (Hex.right * x) + (Hex.up * y);
+        return current + (Hex.right * x) + (Hex.up * y);
     }
 
 
@@ -196,9 +187,6 @@ public class TileManager : MonoBehaviour
 
         return relatives.ToArray();
     }
-
-
-    
 
     public Vector3 HexToWorld(Hex hex)
     {
