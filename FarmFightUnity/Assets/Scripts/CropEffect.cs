@@ -9,8 +9,14 @@ public class CropEffect : MonoBehaviour
     private GameObject SpriteFolder;
 
     Vector3 startPos;
+
+    public SpriteRenderer spriteRenderer = null;
+    public Color flickerColor = Color.white;
+
+    private Color startingColor = Color.clear;
     public void init(Hex start, string type)
     {
+        spriteRenderer = GetComponent<SpriteRenderer>();
         
         transform.parent = SpriteRepo.Sprites.transform;
 
@@ -18,14 +24,37 @@ public class CropEffect : MonoBehaviour
 
         transform.position = startPos;
 
-        if (type == "sparkle")
-            GetComponent<SpriteRenderer>().sprite = effectSprites[0];
-
-        else if(type=="rot")
-            GetComponent<SpriteRenderer>().sprite = effectSprites[1];
-
-        //StartCoroutine("Mover");
-
+        if (type == "sparkle"){
+            spriteRenderer.sprite = effectSprites[0];
+            //StartCoroutine("Sparkle");
+        }else if(type=="rot"){
+            spriteRenderer.sprite = effectSprites[1];
+            StartCoroutine("SpinObject");
+        }
     }
 
+    private IEnumerator Sparkle()
+    {
+        spriteRenderer.color = flickerColor;
+ 
+        yield return new WaitForSeconds(0.05f);
+ 
+        spriteRenderer.color = startingColor;
+    }
+
+    private IEnumerator SpinObject () {
+ 
+     float duration = 30f;
+     float elapsed = 0f;
+     float spinSpeed = 1f;
+     while (elapsed < duration)
+     {
+         elapsed += Time.deltaTime;
+         transform.Rotate(Vector3.forward*1/2, spinSpeed * Time.deltaTime);
+         yield return new WaitForEndOfFrame();
+     }
+     yield return null;
+ }
+
 }
+
