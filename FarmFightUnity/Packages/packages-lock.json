@@ -1,9 +1,9 @@
 {
   "dependencies": {
     "com.mlapi.contrib.transport.photon-realtime": {
-      "version": "file:C:/Files/Programming/Unity/multiplayer-community-contributions-2583c66903a2e0d68c1fe572554ef33e03be4347/Transports/com.mlapi.contrib.transport.photon-realtime",
+      "version": "file:com.mlapi.contrib.transport.photon-realtime",
       "depth": 0,
-      "source": "local",
+      "source": "embedded",
       "dependencies": {}
     },
     "com.unity.2d.sprite": {

@@ -4,7 +4,7 @@ using UnityEngine;
 using MLAPI;
 using MLAPI.Serialization;
 using MLAPI.Serialization.Pooled;
-using MLAPI.Transports.UNET;
+using MLAPI.Transports.PhotonRealtime;
 
 public class MultiplayerWorldManager : MonoBehaviour
 {
@@ -14,7 +14,7 @@ public class MultiplayerWorldManager : MonoBehaviour
     public GameObject UIPanel;
 
     public string IPAddress = "127.0.0.1";
-    UNetTransport transport;
+    PhotonRealtimeTransport transport;
 
     private void Start()
     {
@@ -98,8 +98,8 @@ public class MultiplayerWorldManager : MonoBehaviour
 
     public void Join()
     {
-        transport = NetworkManager.Singleton.GetComponent<UNetTransport>();
-        transport.ConnectAddress = IPAddress;
+        transport = NetworkManager.Singleton.GetComponent<PhotonRealtimeTransport>();
+        //transport.ConnectAddress = IPAddress;
         UIPanel.SetActive(false);
         NetworkManager.Singleton.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes("FarmFight");
         NetworkManager.Singleton.StartClient();
