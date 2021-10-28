@@ -72,11 +72,7 @@ public static class Battle
         {
             foreach(var soldier in player.Value)
             {
-                float mult = 1;
-                if(player.Key == Repository.Central.tileinfo.homePlayer){
-                    //mult = .8f;
-                }
-                soldier.Health.Value -= mult * damages[player.Key];
+                soldier.Health.Value -= damages[player.Key];
             }
         }
     }

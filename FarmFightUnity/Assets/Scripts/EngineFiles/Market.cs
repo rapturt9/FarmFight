@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,8 +11,7 @@ public class Market : NetworkBehaviour
     Repository central;
     Hex selectedHex;
 
-    public Text TileInfo; 
-
+    public Text TileInfoText;
 
     public static Market market;
 
@@ -55,6 +56,24 @@ public class Market : NetworkBehaviour
         if (!IsClient && !IsServer) { return; }
         if (!central.gameIsRunning) { return; }
 
+        if (TileInfoText != null)
+        {
+            string total = "";
+            //for (int i = 0; i < 6; i++)
+            //{
+            //    total += i + ": " + central.tileinfo.soldierInfo[i]["num"] + " | " + central.tileinfo.soldierInfo[i]["health"] + "h\n";
+            //}
+            for (int i = 0; i < 6; i++)
+            {
+                var soldiers = crops.handler[central.selectedHex].SortedSoldiers[i];
+                int soldierCount = soldiers.Count;
+                float soldierHealth = soldiers.Sum(soldier => soldier.Health.Value);
+                total += i + ": " + soldierCount + " | " + (int)soldierHealth + "h\n";
+            }
+            TileInfoText.text = total;
+            return;
+        }
+
         if (central.GamesMode == PlayState.NormalGame)
             MarketUpdateFunctionality();
         else if (central.GamesMode == PlayState.SoldierSend)
@@ -70,14 +89,6 @@ public class Market : NetworkBehaviour
         // Updates money text
         string dollars = "$" + (((int)(central.money * 100)) / 100.0).ToString();
         moneyText.text = dollars;
-
-        if(TileInfo){
-            string total="";
-            for(int i=0;i<6;i++){
-                total+=i+": "+central.tileinfo.soldierInfo[i]["num"]+" | "+central.tileinfo.soldierInfo[i]["health"]+"h\n";
-            }
-            TileInfo.text = total;
-        }
     }
 
     public void MarketUpdateFunctionality()
