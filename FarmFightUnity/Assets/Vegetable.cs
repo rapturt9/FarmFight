@@ -73,7 +73,7 @@ public class Vegetable : MonoBehaviour
 
             along += 1/InvSpeed;
 
-            yield return null;
+            yield return new WaitForFixedUpdate();
 
         }
 

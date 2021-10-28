@@ -308,7 +308,7 @@ public class PathFinder
 
                      
                 }
-                else if (Random.Range(0, 2) == 1)
+                else //if (Random.Range(0, 2) == 1) // Sorry Courtney, I disabled this for now since it was causing my client and server to not move together
                 {
                     
                         closest = hex;

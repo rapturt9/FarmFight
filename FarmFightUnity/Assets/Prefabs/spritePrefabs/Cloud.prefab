@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2082715349369691834}
   - component: {fileID: 2082715349369691838}
-  - component: {fileID: 2082715349369691833}
+  - component: {fileID: 3889510688742579994}
   - component: {fileID: 2082715349369691832}
   - component: {fileID: 2082715349369691835}
   m_Layer: 0
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 2082715349369691973}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -9.81, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.16433951, y: 0.16433951, z: 0.16433951}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -73,10 +73,10 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 31518797
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  m_Color: {r: 1, g: 0.6179246, b: 0.6179246, a: 1}
+  m_Sprite: {fileID: 21300000, guid: f80e4f0420df30843bffde422673e9a9, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -86,7 +86,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 1
---- !u!114 &2082715349369691833
+--- !u!114 &3889510688742579994
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -95,7 +95,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2082715349369691973}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15823ed7fd6864f54931840a4612b50c, type: 3}
+  m_Script: {fileID: 11500000, guid: 6d1d5493ed268ba4889b31ff7c9ba0c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   handler: {fileID: 0}
@@ -112,8 +112,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NetworkInstanceId: 0
-  PrefabHash: 2932384624007075314
-  PrefabHashGenerator: BattleCloud
+  PrefabHash: 7425128107555841876
+  PrefabHashGenerator: Cloud
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
 --- !u!114 &2082715349369691835

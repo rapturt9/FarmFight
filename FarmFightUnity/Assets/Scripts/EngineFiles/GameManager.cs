@@ -13,7 +13,7 @@ public class GameManager : NetworkBehaviour
     public GameState gameState;
 
     public bool gameIsRunning = false;
-    int localPlayerId = 0;
+    public int currMaxLocalPlayerId = 0;
     private List<Hex> openCorners;
     Repository central;
 
@@ -28,7 +28,6 @@ public class GameManager : NetworkBehaviour
         central = Repository.Central;
 
         central.GamesMode = PlayState.NormalGame;
-
     }
 
     public override void NetworkStart()
@@ -42,15 +41,13 @@ public class GameManager : NetworkBehaviour
         addNewPlayerServerRpc(NetworkManager.Singleton.LocalClientId);
 
         // Now, lets things update
-        gameIsRunning = true;
-        central.gameIsRunning = gameIsRunning;
+        central.gameIsRunning = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        if (!gameIsRunning) { return; }
+        if (!central.gameIsRunning) { return; }
 
         Hex hex = TileManager.TM.getMouseHex();
 
@@ -59,7 +56,6 @@ public class GameManager : NetworkBehaviour
         {
             Repository.Central.selectedHex = hex;
         }
-
     }
 
 
@@ -71,10 +67,6 @@ public class GameManager : NetworkBehaviour
     {
         Market.market.MarketUpdateFunctionality();
     }
-
-
-
-
 
     // Sets up corners for players to start. Only called server-side
     void SetupCorners()
@@ -99,7 +91,8 @@ public class GameManager : NetworkBehaviour
         openCorners.RemoveAt(index);
 
         Potato startingTile = new Potato();
-        startingTile.tileOwner = localPlayerId;
+        startingTile.tileOwner = currMaxLocalPlayerId;
+        BoardChecker.Checker.ChangeTileOwnershipCountServerRpc(currMaxLocalPlayerId, +1, false);
         int cropTileHandlerIndex = 0;
         TileManager.TM.Handlers[cropTileHandlerIndex][newCorner] = startingTile;
 
@@ -114,10 +107,10 @@ public class GameManager : NetworkBehaviour
                 TargetClientIds = new ulong[] { targetClientId }
             }
         };
-        addNewPlayerClientRpc(localPlayerId, allTiles, clientRpcParams);
+        addNewPlayerClientRpc(currMaxLocalPlayerId, allTiles, clientRpcParams);
 
         // Adds player index
-        localPlayerId++;
+        currMaxLocalPlayerId++;
     }
 
     [ClientRpc]

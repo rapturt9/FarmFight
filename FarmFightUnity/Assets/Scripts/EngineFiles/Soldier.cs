@@ -4,10 +4,12 @@ using System.Collections;
 using MLAPI;
 using MLAPI.NetworkVariable;
 using MLAPI.Messaging;
+using MLAPI.Prototyping;
+using System.Collections.Generic;
 
 public class Soldier: NetworkBehaviour
 {
-    public NetworkVariable<int> Health = new NetworkVariable<int>(100);
+    public NetworkVariable<float> Health = new NetworkVariable<float>(100);
     public NetworkVariable<int> owner = new NetworkVariable<int>(-1);
 
     public TileHandler handler;
@@ -50,6 +52,39 @@ public class Soldier: NetworkBehaviour
 
     }
 
+    // Remove from all client tiles
+    public void RemoveFromTile(Hex coord)
+    {
+        if (IsClient)
+        {
+            RemoveFromTileServerRpc(BoardHelperFns.HexToArray(coord));
+        }
+        else if (IsServer)
+        {
+            RemoveFromTileClientRpc(BoardHelperFns.HexToArray(coord));
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void RemoveFromTileServerRpc(int[] coord)
+    {
+        RemoveFromTileClientRpc(coord);
+    }
+
+    [ClientRpc]
+    void RemoveFromTileClientRpc(int[] coord)
+    {
+        _RemoveFromTile(coord);
+    }
+
+    // Internal function, actually changes the tile
+    void _RemoveFromTile(int[] coordArray)
+    {
+        Hex coord = BoardHelperFns.ArrayToHex(coordArray);
+        if (handler[coord].SortedSoldiers[owner.Value].Contains(this))
+            handler[coord].SortedSoldiers[owner.Value].Remove(this);
+    }
+
     // Add to all client tiles
     public void AddToTile(Hex coord)
     {
@@ -79,10 +114,52 @@ public class Soldier: NetworkBehaviour
     void _AddToTile(int[] coordArray)
     {
         Hex coord = BoardHelperFns.ArrayToHex(coordArray);
-        if (!handler[coord].SortedSoldiers[owner.Value].Contains(this))
-            handler[coord].SortedSoldiers[owner.Value].Add(this);
+        List<Soldier> fellowSoldiers = handler[coord].SortedSoldiers[owner.Value];
+
+        // Adds to SortedSoldiers
+        if (!fellowSoldiers.Contains(this))
+        {
+            if (handler[coord].battleOccurring)
+            {
+                FadeOut();
+            }
+            fellowSoldiers.Add(this);
+        }
+        // Changes position
         transform.position = TileManager.TM.HexToWorld(coord) + .25f * Vector3.left;
     }
+
+    // Starting trip as a client, for smoothness
+    [ClientRpc]
+    public void StartTripAsClientRpc(int[] startArray, int[] endArray)
+    {
+        if (IsServer)
+        {
+            return;
+        }
+        Hex start = BoardHelperFns.ArrayToHex(startArray);
+        Hex end = BoardHelperFns.ArrayToHex(endArray);
+
+        FadeIn();
+        // Starts trip
+        SoldierTrip trip;
+        if (!TryGetComponent(out trip))
+        {
+            trip = gameObject.AddComponent<SoldierTrip>();
+        }
+        // We don't want the server overriding position ever again
+        GetComponent<NetworkTransform>().enabled = false;
+        trip.init(start, end);
+    }
+
+    // Ending trip as client, for smoothness
+    [ClientRpc]
+    public void EndTripAsClientRpc(bool fade)
+    {
+        if (fade)
+            FadeOut();
+    }
+
 
     public void Update()
     {
