@@ -13,7 +13,7 @@ public class GameManager : NetworkBehaviour
     public GameState gameState;
 
     public bool gameIsRunning = false;
-    int currMaxLocalPlayerId = 0;
+    public int currMaxLocalPlayerId = 0;
     private List<Hex> openCorners;
     Repository central;
 

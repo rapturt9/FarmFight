@@ -156,10 +156,6 @@ public class Soldier: NetworkBehaviour
     [ClientRpc]
     public void EndTripAsClientRpc(bool fade)
     {
-        if (IsServer)
-        {
-            return;
-        }
         if (fade)
             FadeOut();
     }

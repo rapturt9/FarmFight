@@ -75,7 +75,9 @@ public class BoardChecker : NetworkBehaviour
     {
         ownedTileCount[playerId] += count;
 
-        if (checkForWin && CheckForWin(playerId))
+        if (checkForWin && // Do we want to check
+            gameManager.currMaxLocalPlayerId > 1 && // Is there at least one player to win against
+            CheckForWin(playerId)) // Have we actually one
         {
             Repository.Central.gameIsRunning = false;
             EndGameClientRpc(playerId);

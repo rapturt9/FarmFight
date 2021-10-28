@@ -173,6 +173,7 @@ MonoBehaviour:
   TileHandler: []
   gameState: {fileID: 358149039}
   gameIsRunning: 0
+  currMaxLocalPlayerId: 0
 --- !u!114 &58370722
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -223,7 +224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cropTiles: {fileID: 1228046376}
-  gameManager: {fileID: 0}
+  gameManager: {fileID: 58370721}
   gameEndDisplay: {fileID: 1898468915}
   ownedTileCount: 
   hexCoords: []
@@ -1343,7 +1344,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1343229513
-  m_SortingLayer: 0
+  m_SortingLayer: 6
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: b5fb69b79ad370d4bb2e1353f4c5a52f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1626,7 +1627,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1343229513
-  m_SortingLayer: 0
+  m_SortingLayer: 6
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 549428a9924ef874fb54f404f5220f11, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -2262,7 +2263,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1343229513
-  m_SortingLayer: 0
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 0}

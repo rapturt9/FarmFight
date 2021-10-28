@@ -56,9 +56,6 @@ public class SoldierTrip : NetworkBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        if (TileManager.TM["Crops"][end].soldierCount != 0)
-            soldier.FadeOut();
-
         if (IsServer)
         {
             bool fade = TileManager.TM["Crops"][end].soldierCount != 0; // Fade if tile not empty
