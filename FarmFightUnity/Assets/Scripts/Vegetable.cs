@@ -14,16 +14,24 @@ public class Vegetable : MonoBehaviour
 
     private float value;
 
+
+    public float expScaling, SpeedScaleFactor;
+
     Vector3 startPos;
     Vector3 endPos { get { return basket.transform.position; } }
     
     public void init(Hex start, CropType crop, double cropValue)
     {
+
         
+
         transform.parent = SpriteRepo.Sprites.transform;
 
         startPos = TileManager.TM.HexToWorld(start);
         value = (float) cropValue;
+
+        InvSpeed -= SpeedScaleFactor*Mathf.Exp(-(startPos-endPos).magnitude/expScaling);
+        
 
         if (crop == CropType.potato)
             GetComponent<SpriteRenderer>().sprite = vegietableSprites[0];
