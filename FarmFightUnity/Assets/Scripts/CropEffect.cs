@@ -100,14 +100,21 @@ public class CropEffect : MonoBehaviour
          //float duration = 2000f;
          float elapsed = 0f;
          float spinSpeed = Mathf.PI/20;
+        float Dx = Random.Range(.8f, 1.2f), Dy = Random.Range(.8f, 1.2f);
+        int Direction = -1;
+        if(Random.Range(0,2) == 1)
+        {
+            Direction = 1;
+        }
+        
          
          while (rotting)
          {
             elapsed += 1;
 
             transform.position = startPos
-                    + Vector3.right * .125f * Mathf.Cos(spinSpeed * elapsed)
-                    + Vector3.up * .125f * Mathf.Sin(spinSpeed * elapsed)
+                    + Vector3.right * Dx * .125f * Mathf.Cos(Direction * spinSpeed * elapsed)
+                    + Vector3.up * Dy * .125f * Mathf.Sin(Direction * spinSpeed * elapsed)
                     + Vector3.up * .2f;
              //transform.Rotate(Vector3.forward, spinSpeed * Time.deltaTime);
              yield return null;
