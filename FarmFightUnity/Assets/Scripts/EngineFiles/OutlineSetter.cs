@@ -24,10 +24,19 @@ public class OutlineSetter : MonoBehaviour
 
 
     public Color[] TeamColors;
+    public static OutlineSetter OS;
 
     // Start is called before the first frame update
     private void Awake()
     {
+        if (OS == null)
+        {
+            OS = this;
+        }
+        else if (OS != this)
+        {
+            Destroy(gameObject);
+        }
 
         SortedTiles = new Dictionary<int, OutlineTile>();
 

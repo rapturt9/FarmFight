@@ -7,5 +7,10 @@ public class UIManager : MonoBehaviour
 {
     public TextMeshPro TileInfo, Cash, Domination;
 
-    
+    private void LateUpdate()
+    {
+        //Domination.text = Mathf.RoundToInt(BoardChecker.percentControlled).ToString();
+
+        
+    }
 }

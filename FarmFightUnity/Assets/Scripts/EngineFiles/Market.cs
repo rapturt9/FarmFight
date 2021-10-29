@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,11 +11,13 @@ public class Market : NetworkBehaviour
     Repository central;
     Hex selectedHex;
 
+    public Text TileInfoText;
 
     public static Market market;
 
     public TileHandler UIHandler;
     public CropManager crops;
+    public SoldierManager soldierManager;
     public PeopleManager people;
 
     public Text moneyText;
@@ -31,7 +35,6 @@ public class Market : NetworkBehaviour
     void Start()
     {
         central = Repository.Central;
-        
     }
 
     private void Awake()
@@ -47,27 +50,46 @@ public class Market : NetworkBehaviour
         }
     }
 
-
-    
-
     // Update is called once per frame
     void Update()
     {
         if (!IsClient && !IsServer) { return; }
         if (!central.gameIsRunning) { return; }
 
+        if (TileInfoText != null)
+        {
+            string total = "";
+            //for (int i = 0; i < 6; i++)
+            //{
+            //    total += i + ": " + central.tileinfo.soldierInfo[i]["num"] + " | " + central.tileinfo.soldierInfo[i]["health"] + "h\n";
+            //}
+            for (int i = 0; i < 6; i++)
+            {
+                var soldiers = crops.handler[central.selectedHex].SortedSoldiers[i];
+                int soldierCount = soldiers.Count;
+                float soldierHealth = soldiers.Sum(soldier => soldier.Health.Value);
+                total += i + ": " + soldierCount + " | " + (int)soldierHealth + "h\n";
+            }
+            TileInfoText.text = total;
+            return;
+        }
+
         if (central.GamesMode == PlayState.NormalGame)
             MarketUpdateFunctionality();
         else if (central.GamesMode == PlayState.SoldierSend)
             SoldierSendUpdate();
-       
+
+        // Right click soldiers
+        if (Input.GetMouseButtonDown(1))
+        {
+            Hex endHex = TileManager.TM.getMouseHex();
+            soldierManager.SendSoldier(selectedHex, endHex);
+        }
 
         // Updates money text
         string dollars = "$" + (((int)(central.money * 100)) / 100.0).ToString();
         moneyText.text = dollars;
     }
-
-
 
     public void MarketUpdateFunctionality()
     {
@@ -75,7 +97,6 @@ public class Market : NetworkBehaviour
         TryHarvestCrop();
         TryHotkey();
     }
-
 
     // Change selected hex
     void ChangeSelectedHex()
@@ -85,18 +106,19 @@ public class Market : NetworkBehaviour
             UIHandler[selectedHex] = new BlankTile();
             selectedHex = central.selectedHex;
             UIHandler[selectedHex] = new HighLight();
+
+            //TileTemp tile = crops.handler[selectedHex];
+            //if (tile.soldierCount > 0)
+            //    Debug.Log(tile.SortedSoldiers[tile.tileOwner][0].Health.Value);
         }
     }
-
-
-    
 
     // Sees if we clicked on a crop, then tries to harvest it
     void TryHarvestCrop()
     {
         // Clicking a new tile.
         Hex hex = TileManager.TM.getMouseHex();
-        if (Input.GetMouseButtonDown(0) & TileManager.TM.isValidHex(hex))
+        if (Input.GetMouseButtonDown(0) && TileManager.TM && TileManager.TM.isValidHex(hex) && crops != null && crops.handler != null && crops.handler[hex]!=null && !crops.handler[hex].battleOccurring)
         {
             double add = crops.harvest(selectedHex);
             if (add > 0)
@@ -138,7 +160,16 @@ public class Market : NetworkBehaviour
             if(crops.handler[selectedHex].tileOwner == Repository.Central.localPlayerId)
                 SendSoldier();
         }
-        
+
+        // DEBUG
+        else if (Input.GetKeyDown("d"))
+        {
+            var iter = crops.handler[selectedHex].getSoldierEnumerator().GetEnumerator();
+            if (iter.MoveNext())
+            {
+                Debug.Log(iter.Current.Health.Value);
+            }
+        }
     }
 
     public void SetCrop(int cropInt)
@@ -172,13 +203,9 @@ public class Market : NetworkBehaviour
 
     public void AddSoldier()
     {
-        if (central.money >= soldierCost && crops.addSoldier(selectedHex))
+        if (central.money >= soldierCost && soldierManager.addSoldier(selectedHex))
             central.money -= soldierCost;
     }
-
-
-
-
 
     /// <summary>
     /// wanting to Send Soldiers
@@ -198,11 +225,6 @@ public class Market : NetworkBehaviour
 
             SetSoldierDestination();
         }
-
-
-        
-
-
     }
 
     private void SetSoldierDestination()
@@ -224,12 +246,10 @@ public class Market : NetworkBehaviour
         
         if(SoldierDestination != null && SoldierDestination != selectedHex)
         {
-            crops.SendSoldier(start, end);
+            soldierManager.SendSoldier(start, end);
             SendSoldier();
         }
         
-        
-
         UIHandler[SoldierDestination] = new BlankTile();
 
     }
@@ -246,10 +266,4 @@ public class Market : NetworkBehaviour
             central.GamesMode = PlayState.NormalGame;
         }
     }
-    
-
-    
-
-
-    
 }

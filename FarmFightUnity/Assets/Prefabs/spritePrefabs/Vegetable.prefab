@@ -50,7 +50,9 @@ MonoBehaviour:
   - {fileID: -111606926159100729, guid: 76acd722dcac949c7a562e236047d7e9, type: 3}
   - {fileID: -120908244128218237, guid: 083c9969c032a464196265b25bc42742, type: 3}
   basket: {fileID: 5783981980160337552, guid: d03f807cdd8c343f88fdf1691a167369, type: 3}
-  InvSpeed: 30
+  InvSpeed: 50
+  expScaling: 1.5
+  SpeedScaleFactor: 40
 --- !u!212 &5970728724661181661
 SpriteRenderer:
   m_ObjectHideFlags: 0

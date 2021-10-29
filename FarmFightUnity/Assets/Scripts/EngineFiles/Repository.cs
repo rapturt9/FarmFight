@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Repository : MonoBehaviour
 {
@@ -7,11 +8,12 @@ public class Repository : MonoBehaviour
 
     [SerializeField]
     public Hex selectedHex = Hex.zero;
-    
 
     public int localPlayerId;
     public bool gameIsRunning = false;
-    public double money = 1.0;
+    public double money = 10.0;
+
+    public TileInfo tileinfo = new TileInfo();
 
     public const int maxPlayers = 6;
 
@@ -34,17 +36,11 @@ public class Repository : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
-        
     }
-
-
 
     /// just for ease of access
     ///
     public TileHandler cropHandler;
-
-
 
     public PlayState GamesMode;
 
@@ -52,11 +48,23 @@ public class Repository : MonoBehaviour
 }
 
 /// modes
+
+public class TileInfo {
+    public Dictionary<int, Dictionary<string, int>> soldierInfo =
+     new Dictionary<int, Dictionary<string, int>> ();
+    public int homePlayer = -1;
+
+    public TileInfo(){
+        for(int i=0;i<Repository.maxPlayers;i++){
+             soldierInfo[i]=new Dictionary<string, int>();
+             soldierInfo[i]["num"]=0;
+             soldierInfo[i]["health"]=0;
+         }
+    }
+}
 public enum PlayState
 {
     NormalGame,
     PauseGame,
     SoldierSend
-
-
 }
