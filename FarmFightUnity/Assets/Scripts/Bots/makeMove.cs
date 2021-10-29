@@ -24,14 +24,13 @@ public class makeMove : MonoBehaviour
     
     public List<Hex> updateHexCoords() {
         List<Hex> neighbors = new List<Hex>();
-        print(hexCoords.Count);
         foreach (var coord in hexCoords){
-            print(coord);
             if (gameData.cropTiles[coord].tileOwner == Repository.Central.localPlayerId){
-                print("this one");
-                print(coord);
+                print("found start");
                 neighbors.Add(coord);
             }
+            print(coord);
+            print(gameData.cropTiles[coord].tileOwner);
         }
         
         List<Hex> temp = new List<Hex>();
@@ -58,12 +57,13 @@ public class makeMove : MonoBehaviour
         foreach (var x in updateHexCoords()){
             print(x);
         }*/
+        //gameData.updateGameState();
+        //hexCoords = updateHexCoords();
         while (gameIsRunning){
             yield return new WaitForSeconds(0.5F);
             pickMove(Repository.Central.localPlayerId);
             numActions += 1;
         }
-
     }
 
     void pickMove (int player) {
@@ -149,8 +149,9 @@ public class makeMove : MonoBehaviour
                 bestMove = elem;
             }
         }
-        print(bestMove);
-        print(bestVal);
+        //print(bestMove);
+        //print(bestVal);
+        var (x,y) = bestMove;
         if (bestVal < 0.75){
             return (new Hex (0,0),"None");
         }
@@ -175,7 +176,7 @@ public class makeMove : MonoBehaviour
             moneyGained = -1.0f;
         }
         else if (move == "plantEggplant" || move == "plantEggplantOver"){
-            updatedTile = new TileSyncData(CropType.eggplant, oldTile.timeLastPlanted, oldTile.containsFarmer, player);
+            updatedTile = new TileSyncData(CropType.eggplant, 0.0f, oldTile.containsFarmer, player);
             moneyGained = -10.0f;
         }
         else if (move == "harvest") {
@@ -226,6 +227,7 @@ public class makeMove : MonoBehaviour
         foreach (var coord in hexCoords){
             TileSyncData tile = gameData.cropTiles[coord];
             if (tile.tileOwner == owner) {
+                
                 if (tile.cropType == CropType.potato){
                     if (Repository.Central.money >= 2) {
                         res.Add((coord,"plantRiceOver"));
@@ -251,20 +253,20 @@ public class makeMove : MonoBehaviour
                     }
                 }
                 res.Add((coord,"harvest"));
-
+                
                 foreach (var newLoc in tileManager.getValidNeighbors(coord)){
                     if (hexCoords.Contains(newLoc) && (gameData.cropTiles[newLoc].tileOwner == -1) && (gameData.cropTiles[newLoc].cropType == CropType.blankTile)){
-                        if (!res.Contains((newLoc,"plantRice")) && (gameData.cropTiles[newLoc].cropType != CropType.rice) && Repository.Central.money >= 2){
+                        if (!res.Contains((newLoc,"plantRice")) && Repository.Central.money >= 2){
                             res.Add((newLoc,"plantRice"));
                         }
-                        if (!res.Contains((newLoc,"plantCarrot")) && (gameData.cropTiles[newLoc].cropType != CropType.carrot) && Repository.Central.money >= 2){
+                        if (!res.Contains((newLoc,"plantCarrot")) && Repository.Central.money >= 2){
                             res.Add((newLoc,"plantCarrot"));
                         }
-                        if (!res.Contains((newLoc,"plantPotato")) && (gameData.cropTiles[newLoc].cropType != CropType.potato) && Repository.Central.money >= 1){
+                        if (!res.Contains((newLoc,"plantPotato")) && Repository.Central.money >= 1){
                             res.Add((newLoc,"plantPotato"));
                         }
-                        if (!res.Contains((newLoc,"plantEggplant")) && (gameData.cropTiles[newLoc].cropType != CropType.eggplant) && Repository.Central.money >= 10){
-                            res.Add((coord,"plantEggplant"));
+                        if (!res.Contains((newLoc,"plantEggplant")) && Repository.Central.money >= 10){
+                            res.Add((newLoc,"plantEggplant"));
                         }
                     }
                 }
