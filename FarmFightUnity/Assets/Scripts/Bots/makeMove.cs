@@ -161,26 +161,26 @@ public class makeMove : MonoBehaviour
     (Dictionary<Hex, TileSyncData>,float) getState(Hex loc, string move, int player){
         Dictionary<Hex, TileSyncData> res = new Dictionary<Hex, TileSyncData>(gameData.cropTiles);
         TileSyncData oldTile = res[loc];
-        TileSyncData updatedTile = new TileSyncData(CropType.blankTile, 0.0f, false, -1);
+        TileSyncData updatedTile = new TileSyncData(CropType.blankTile, 0.0f, false, -1, true);
         float moneyGained = 0.0f;
         if (move == "plantRice" || move == "plantRiceOver"){
-            updatedTile = new TileSyncData(CropType.rice, 0.0f, oldTile.containsFarmer, player);
+            updatedTile = new TileSyncData(CropType.rice, 0.0f, oldTile.containsFarmer, player, true);
             moneyGained = -2.0f;
         }
         else if (move == "plantCarrot" || move == "plantCarrotOver"){
-            updatedTile = new TileSyncData(CropType.carrot, 0.0f, oldTile.containsFarmer, player);
+            updatedTile = new TileSyncData(CropType.carrot, 0.0f, oldTile.containsFarmer, player, true);
             moneyGained = -2.0f;
         }
         else if (move == "plantPotato"){
-            updatedTile = new TileSyncData(CropType.potato, 0.0f, oldTile.containsFarmer, player);
+            updatedTile = new TileSyncData(CropType.potato, 0.0f, oldTile.containsFarmer, player, true);
             moneyGained = -1.0f;
         }
         else if (move == "plantEggplant" || move == "plantEggplantOver"){
-            updatedTile = new TileSyncData(CropType.eggplant, 0.0f, oldTile.containsFarmer, player);
+            updatedTile = new TileSyncData(CropType.eggplant, 0.0f, oldTile.containsFarmer, player, true);
             moneyGained = -10.0f;
         }
         else if (move == "harvest") {
-            updatedTile = new TileSyncData(oldTile.cropType, NetworkManager.Singleton.NetworkTime, oldTile.containsFarmer, oldTile.tileOwner);
+            updatedTile = new TileSyncData(oldTile.cropType, NetworkManager.Singleton.NetworkTime, oldTile.containsFarmer, oldTile.tileOwner, true);
             moneyGained = (float)getCropVal(oldTile.cropType, loc);
         }
         else{
