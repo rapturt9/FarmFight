@@ -12,6 +12,7 @@ public class makeMove : MonoBehaviour
     public CropManager cropManager;
     public TileManager tileManager;
     public TileHandler tileHandler;
+    public int actionTimer = 0;
 
     private int numActions = 0;
 
@@ -21,48 +22,16 @@ public class makeMove : MonoBehaviour
         hexCoords = BoardHelperFns.HexList(3);
         StartCoroutine(startGame());
     }
-    
-    public List<Hex> updateHexCoords() {
-        List<Hex> neighbors = new List<Hex>();
-        foreach (var coord in hexCoords){
-            if (gameData.cropTiles[coord].tileOwner == Repository.Central.localPlayerId){
-                print("found start");
-                neighbors.Add(coord);
-            }
-            print(coord);
-            print(gameData.cropTiles[coord].tileOwner);
-        }
-        
-        List<Hex> temp = new List<Hex>();
-        while (neighbors.Count != 0){
-            Hex currentNeighbor = neighbors[0];
-            neighbors.RemoveAt(0);
-            temp.Add(currentNeighbor);
-            foreach (var n in tileManager.getValidNeighbors(currentNeighbor)){
-                if (!neighbors.Contains(n)){
-                    neighbors.Add(n);
-                }
-            }
-        }
-        return temp;
-    }
 
     IEnumerator startGame ()
     {
         yield return new WaitForSeconds(0.1F);
-        //In progress stuff
-        //updateHexCoords();
-        /*print(hexCoords.Count);
-        print(updateHexCoords().Count);
-        foreach (var x in updateHexCoords()){
-            print(x);
-        }*/
-        //gameData.updateGameState();
-        //hexCoords = updateHexCoords();
+        gameData.updateGameState();
         while (gameIsRunning){
             yield return new WaitForSeconds(0.5F);
             pickMove(Repository.Central.localPlayerId);
             numActions += 1;
+            actionTimer = (actionTimer + 1) % 4;
         }
     }
 
@@ -254,19 +223,21 @@ public class makeMove : MonoBehaviour
                 }
                 res.Add((coord,"harvest"));
                 
-                foreach (var newLoc in tileManager.getValidNeighbors(coord)){
-                    if (hexCoords.Contains(newLoc) && (gameData.cropTiles[newLoc].tileOwner == -1) && (gameData.cropTiles[newLoc].cropType == CropType.blankTile)){
-                        if (!res.Contains((newLoc,"plantRice")) && Repository.Central.money >= 2){
-                            res.Add((newLoc,"plantRice"));
-                        }
-                        if (!res.Contains((newLoc,"plantCarrot")) && Repository.Central.money >= 2){
-                            res.Add((newLoc,"plantCarrot"));
-                        }
-                        if (!res.Contains((newLoc,"plantPotato")) && Repository.Central.money >= 1){
-                            res.Add((newLoc,"plantPotato"));
-                        }
-                        if (!res.Contains((newLoc,"plantEggplant")) && Repository.Central.money >= 10){
-                            res.Add((newLoc,"plantEggplant"));
+                if (actionTimer == 0){
+                    foreach (var newLoc in tileManager.getValidNeighbors(coord)){
+                        if (hexCoords.Contains(newLoc) && (gameData.cropTiles[newLoc].tileOwner == -1) && (gameData.cropTiles[newLoc].cropType == CropType.blankTile)){
+                            if (!res.Contains((newLoc,"plantRice")) && Repository.Central.money >= 2){
+                                res.Add((newLoc,"plantRice"));
+                            }
+                            if (!res.Contains((newLoc,"plantCarrot")) && Repository.Central.money >= 2){
+                                res.Add((newLoc,"plantCarrot"));
+                            }
+                            if (!res.Contains((newLoc,"plantPotato")) && Repository.Central.money >= 1){
+                                res.Add((newLoc,"plantPotato"));
+                            }
+                            if (!res.Contains((newLoc,"plantEggplant")) && Repository.Central.money >= 10){
+                                res.Add((newLoc,"plantEggplant"));
+                            }
                         }
                     }
                 }
