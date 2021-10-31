@@ -424,6 +424,7 @@ public abstract class TileTemp : TileTempDepr
                 // Battling for the first time
                 if (!battleOccurring)
                 {
+                    removeFarmer();
                     battleOccurring = true;
                     StartBattle();
                     TileSyncer.Syncer.SyncTileUpdate(hexCoord, new[] { CropTileSyncTypes.battleOccurring });
