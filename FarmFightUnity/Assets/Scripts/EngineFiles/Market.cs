@@ -197,6 +197,7 @@ public class Market : NetworkBehaviour
         // Remove farmer
         else
         {
+            central.money += farmerCost/2;
             crops.removeFarmer(selectedHex);
         }
     }
