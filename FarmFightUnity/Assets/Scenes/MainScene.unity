@@ -626,6 +626,10 @@ MonoBehaviour:
   cropManager: {fileID: 1228046377}
   tileManager: {fileID: 1141926245}
   tileHandler: {fileID: 1228046376}
+  soldierManager: {fileID: 1228046379}
+  actionTimer: 0
+  startingLoc:
+    coords: {x: 0, y: 0}
 --- !u!1 &404389127
 GameObject:
   m_ObjectHideFlags: 0
@@ -2246,7 +2250,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_NickName: FF
-  m_RoomName: 1
+  m_RoomName: 0
   m_MaxPlayers: 6
   m_ChannelIdCodesStartRange: 0
   m_AttachSupportLogger: 0

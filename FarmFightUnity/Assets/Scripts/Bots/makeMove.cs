@@ -12,7 +12,9 @@ public class makeMove : MonoBehaviour
     public CropManager cropManager;
     public TileManager tileManager;
     public TileHandler tileHandler;
+    public SoldierManager soldierManager;
     public int actionTimer = 0;
+    public Hex startingLoc;
 
     private int numActions = 0;
 
@@ -25,13 +27,32 @@ public class makeMove : MonoBehaviour
 
     IEnumerator startGame ()
     {
-        yield return new WaitForSeconds(0.1F);
+        yield return new WaitForSeconds(0.5F);
         gameData.updateGameState();
+        getStartingLoc(true);
         while (gameIsRunning){
-            yield return new WaitForSeconds(0.5F);
+            getStartingLoc(false);
             pickMove(Repository.Central.localPlayerId);
             numActions += 1;
             actionTimer = (actionTimer + 1) % 4;
+            yield return new WaitForSeconds(0.5F);
+        }
+    }
+
+    void getStartingLoc (bool start){
+        if (start) {
+            foreach (var coord in hexCoords){
+                TileSyncData tile = gameData.cropTiles[coord];
+                if (tile.tileOwner == Repository.Central.localPlayerId) {
+                    startingLoc = coord;
+                }
+            }
+        }
+        else {
+            TileSyncData tile = gameData.cropTiles[startingLoc];
+            if (tile.tileOwner != Repository.Central.localPlayerId) {
+                getStartingLoc(true);
+            }
         }
     }
 
@@ -46,6 +67,15 @@ public class makeMove : MonoBehaviour
             {
                 Repository.Central.money += add;
             }
+        }
+        else if (bestMove == "soldier"){
+            soldierManager.addSoldier(startingLoc);
+            soldierManager.SendSoldier(startingLoc,loc);
+            Repository.Central.money -= 10;
+        }
+        else if (bestMove == "farmer"){
+            cropManager.addFarmer(loc);
+            Repository.Central.money -= 5;
         }
         else if (bestMove == "plantRice" || bestMove == "plantRiceOver"){
             cropManager.addCrop(loc,CropType.rice);
@@ -75,6 +105,12 @@ public class makeMove : MonoBehaviour
             if (move == "harvest"){
                 var (newState,moneyGained) = getState(loc,move, player);
                 currentVal = moneyGained;
+            }
+            else if (move == "farmer"){
+                currentVal = 15.2f;
+            }
+            else if (move == "soldier"){
+                currentVal = 15.1f;
             }
             else if (move == "plantPotato") {
                 currentVal = 1.5f;
@@ -113,13 +149,13 @@ public class makeMove : MonoBehaviour
                 currentVal = 14.9f;
             }
 
+            currentVal += 0.01f - 0.001f*BoardHelperFns.distance(startingLoc,loc);
+
             if (currentVal >= bestVal){
                 bestVal = currentVal;
                 bestMove = elem;
             }
         }
-        //print(bestMove);
-        //print(bestVal);
         var (x,y) = bestMove;
         if (bestVal < 0.75){
             return (new Hex (0,0),"None");
@@ -151,6 +187,10 @@ public class makeMove : MonoBehaviour
         else if (move == "harvest") {
             updatedTile = new TileSyncData(oldTile.cropType, NetworkManager.Singleton.NetworkTime, oldTile.containsFarmer, oldTile.tileOwner, true);
             moneyGained = (float)getCropVal(oldTile.cropType, loc);
+        }
+        else if (move == "farmer") {
+            updatedTile = new TileSyncData(oldTile.cropType, NetworkManager.Singleton.NetworkTime, true, oldTile.tileOwner, true);
+            moneyGained = 0.0f;
         }
         else{
             updatedTile = oldTile;
@@ -196,34 +236,42 @@ public class makeMove : MonoBehaviour
         foreach (var coord in hexCoords){
             TileSyncData tile = gameData.cropTiles[coord];
             if (tile.tileOwner == owner) {
+                if (!tileHandler[coord].containsFarmer){
+                    res.Add((coord,"harvest"));
+                }
                 
-                if (tile.cropType == CropType.potato){
-                    if (Repository.Central.money >= 2) {
-                        res.Add((coord,"plantRiceOver"));
-                    }
-                    if (Repository.Central.money >= 2) {
-                        res.Add((coord,"plantCarrotOver"));
-                    }
-                    if (Repository.Central.money >= 10) {
-                        res.Add((coord,"plantEggplantOver"));
-                    }
+                if (tileHandler[coord].containsFarmer == false && 
+                tileHandler[coord].tileOwner == Repository.Central.localPlayerId && 
+                !tileHandler[coord].hostileOccupation && Repository.Central.money >= 5){
+                    res.Add((coord,"farmer"));
                 }
-                else if (tile.cropType == CropType.rice){
-                    if (Repository.Central.money >= 2) {
-                        res.Add((coord,"plantCarrotOver"));
-                    }
-                    if (Repository.Central.money >= 10) {
-                        res.Add((coord,"plantEggplantOver"));
-                    }
-                }
-                else if (tile.cropType == CropType.carrot){
-                    if (Repository.Central.money >= 10) {
-                        res.Add((coord,"plantEggplantOver"));
-                    }
-                }
-                res.Add((coord,"harvest"));
                 
                 if (actionTimer == 0){
+                    if (tile.cropType == CropType.potato){
+                        if (Repository.Central.money >= 2) {
+                            res.Add((coord,"plantRiceOver"));
+                        }
+                        else if (Repository.Central.money >= 2) {
+                            res.Add((coord,"plantCarrotOver"));
+                        }
+                        else if (Repository.Central.money >= 10) {
+                            res.Add((coord,"plantEggplantOver"));
+                        }
+                    }
+                    else if (tile.cropType == CropType.rice){
+                        if (Repository.Central.money >= 2) {
+                            res.Add((coord,"plantCarrotOver"));
+                        }
+                        if (Repository.Central.money >= 10) {
+                            res.Add((coord,"plantEggplantOver"));
+                        }
+                    }
+                    else if (tile.cropType == CropType.carrot){
+                        if (Repository.Central.money >= 10) {
+                            res.Add((coord,"plantEggplantOver"));
+                        }
+                    }
+
                     foreach (var newLoc in tileManager.getValidNeighbors(coord)){
                         if (hexCoords.Contains(newLoc) && (gameData.cropTiles[newLoc].tileOwner == -1) && (gameData.cropTiles[newLoc].cropType == CropType.blankTile)){
                             if (!res.Contains((newLoc,"plantRice")) && Repository.Central.money >= 2){
@@ -241,6 +289,9 @@ public class makeMove : MonoBehaviour
                         }
                     }
                 }
+            }
+            else if (tile.tileOwner != -1 && Repository.Central.money >= 10){
+                res.Add((coord,"soldier"));
             }
         }
         return res;

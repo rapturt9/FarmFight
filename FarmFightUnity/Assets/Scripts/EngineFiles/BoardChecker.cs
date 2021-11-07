@@ -67,6 +67,7 @@ public class BoardChecker : NetworkBehaviour
             }
             return true;
         }
+        //return false;
     }
 
     // Keeps track of tiles owned by everybody
@@ -76,7 +77,7 @@ public class BoardChecker : NetworkBehaviour
         ownedTileCount[playerId] += count;
 
         if (checkForWin && // Do we want to check
-            gameManager.currMaxLocalPlayerId > 1 && // Is there at least one player to win against
+            gameManager.currMaxLocalPlayerId >= 1 && // Is there at least one player to win against
             CheckForWin(playerId)) // Have we actually one
         {
             Repository.Central.gameIsRunning = false;
