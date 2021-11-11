@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class CropEffect : MonoBehaviour
 {
@@ -45,7 +46,7 @@ public class CropEffect : MonoBehaviour
         Stop();
     }
 
-
+    VisualEffect effects { get { return GetComponent<VisualEffect>(); } }
     public void Sparkle()
     {
         if (!sparkling)
@@ -55,6 +56,8 @@ public class CropEffect : MonoBehaviour
             rotting = false;
             StopCoroutine(_SpinObject());
             spriteRenderer.sprite = effectSprites[0];
+
+            effects.SendEvent("Sparkle");
             
         }
 
@@ -70,6 +73,8 @@ public class CropEffect : MonoBehaviour
             transform.position = startPos;
             spriteRenderer.sprite = effectSprites[1];
             StartCoroutine(_SpinObject());
+
+            effects.SendEvent("StartFlies");
         }
         
     }
@@ -81,6 +86,8 @@ public class CropEffect : MonoBehaviour
         sparkling = false;
         rotting = false;
         spriteRenderer.sprite = null;
+
+        effects.SendEvent("StopFlies");
     }
 
     public bool sparkling, rotting;

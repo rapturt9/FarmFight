@@ -331,10 +331,10 @@ TextureImporter:
       name: Golden_9
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 400
-        height: 400
+        x: 232
+        y: 170
+        width: 81
+        height: 80
       alignment: 9
       pivot: {x: 0.50000006, y: 0.5032198}
       border: {x: 0, y: 0, z: 0, w: 0}

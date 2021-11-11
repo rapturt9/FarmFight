@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf2edee5c58d82540a51f03df9d42094, type: 3}
-  m_Name: 2D renderer
+  m_Name: URPASSET
   m_EditorClassIdentifier: 
   k_AssetVersion: 7
   k_AssetPreviousVersion: 7
   m_RendererType: 1
   m_RendererData: {fileID: 0}
   m_RendererDataList:
-  - {fileID: 11400000, guid: 0555360cb6ce543a7b846c725bb61b13, type: 2}
+  - {fileID: 11400000, guid: 7c6893f9f223c4a2d9aa101e722654bc, type: 2}
   m_DefaultRendererIndex: 0
   m_RequireDepthTexture: 0
   m_RequireOpaqueTexture: 0
