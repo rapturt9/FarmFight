@@ -17,6 +17,8 @@ public class Repository : MonoBehaviour
 
     public const int maxPlayers = 6;
 
+    public Color[] TeamColors { get { return OutlineSetter.OS.TeamColors; } }
+
     /// <summary>
     /// the central repository to store necessary game info inside
     /// </summary>

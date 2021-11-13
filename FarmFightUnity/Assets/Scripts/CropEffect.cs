@@ -23,16 +23,18 @@ public class CropEffect : MonoBehaviour
     public void LateUpdate()
     {
         BattleCloud();
+
+        if (tile == null || tile.effect != this)
+        {
+            Destroy(gameObject);
+        }
     }
 
 
     public void init(TileTemp tile)
     {
 
-        if(tile == null)
-        {
-            Destroy(gameObject);
-        }
+        
         
 
         transform.parent = SpriteRepo.Sprites.transform;
@@ -41,7 +43,7 @@ public class CropEffect : MonoBehaviour
 
         transform.position = startPos;
 
-        
+        effects.SetVector4("CloudColor", Color.white);
 
         Stop();
     }
@@ -51,6 +53,7 @@ public class CropEffect : MonoBehaviour
     {
         if (!sparkling)
         {
+
             transform.position = startPos;
             sparkling = true;
             rotting = false;
@@ -98,27 +101,76 @@ public class CropEffect : MonoBehaviour
 
     private void BattleCloud()
     {
-        var size = effects.GetFloat("CloudSize");
+        transform.position = startPos;
 
-        if (CloudActive & size < 1)
+        float size = effects.GetFloat("CloudSize");
+
+        
+
+        if (CloudActive && size < 1)
         {
+            effects.SetVector4("CloudColor", getCloudColor());
             effects.SetFloat("CloudSize", size + CloudSpeed);
         }
-        else if(!CloudActive & size > 0)
+        else if(!CloudActive && size > 0)
         {
+            effects.SetVector4("CloudColor", getCloudColor());
             effects.SetFloat("CloudSize", size - CloudSpeed);
         }
+        else
+        {
+            effects.SetVector4("CloudColor", Color.white);
+        }
+    }
+
+    float[] getSoldierHealthFractions()
+    {
+        float[] soldierHealths = new float[Repository.maxPlayers];
+        float[] soldierHealthFractions = new float[Repository.maxPlayers];
+        float totalHealth = 0;
+
+        // Get combined health for each time
+        foreach (var soldier in tile.getSoldierEnumerator())
+        {
+            soldierHealths[soldier.owner.Value] += soldier.Health.Value;
+            totalHealth += soldier.Health.Value;
+        }
+        // Rescale
+        for (int playerId = 0; playerId < Repository.maxPlayers; playerId++)
+        {
+            soldierHealthFractions[playerId] = soldierHealths[playerId] / totalHealth;
+        }
+        return soldierHealthFractions;
+    }
+
+    Color getCloudColor()
+    {
+        Color newColor = new Color();
+        float[] fractions = getSoldierHealthFractions();
+        for (int playerId = 0; playerId < Repository.maxPlayers; playerId++)
+        {
+            newColor += OutlineSetter.OS.TeamColors[playerId] * fractions[playerId];
+        }
+        // Make it look a bit more pastel
+        newColor += Color.white * 0.2f;
+        return newColor;
     }
 
     public void StartCapture(float time,Color color)
     {
+        transform.position = startPos;
+        effects.SetBool("Capturing", true);
+
+        effects.SendEvent("Capture");
+        
         effects.SetVector4("CaptureColor", color);
         effects.SetFloat("CaptureTime", time);
         effects.SendEvent("Capture");
+        
     }
     public void StopCapture()
     {
-
+        effects.SetBool("Capturing", false);
     }
 
 

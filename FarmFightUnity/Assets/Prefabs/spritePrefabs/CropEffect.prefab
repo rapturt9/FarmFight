@@ -49,10 +49,11 @@ MonoBehaviour:
   effectSprites:
   - {fileID: -1248917237974243955, guid: 083c9969c032a464196265b25bc42742, type: 3}
   - {fileID: 9093642786413269186, guid: 083c9969c032a464196265b25bc42742, type: 3}
-  spriteRenderer: {fileID: 0}
   flickerColor: {r: 1, g: 1, b: 1, a: 1}
   sparkling: 0
   rotting: 0
+  CloudActive: 0
+  CloudSpeed: 0.01
 --- !u!2083052967 &1304362107763797691
 VisualEffect:
   m_ObjectHideFlags: 0
@@ -75,7 +76,13 @@ VisualEffect:
     m_Vector3f:
       m_Array: []
     m_Vector4f:
-      m_Array: []
+      m_Array:
+      - m_Value: {x: 1, y: 0, z: 0, w: 1}
+        m_Name: CaptureColor
+        m_Overridden: 1
+      - m_Value: {x: 5.3403134, y: 5.3403134, z: 5.3403134, w: 0}
+        m_Name: CloudColor
+        m_Overridden: 1
     m_Uint:
       m_Array: []
     m_Int:

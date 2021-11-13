@@ -191,6 +191,7 @@ MonoBehaviour:
   localPlayerId: 1
   gameIsRunning: 0
   money: 100
+  TeamColors: []
   cropHandler: {fileID: 0}
   GamesMode: 0
   flyingVegies: 1
@@ -2395,7 +2396,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_NickName: FF
-  m_RoomName: 0
+  m_RoomName: 20
   m_MaxPlayers: 6
   m_ChannelIdCodesStartRange: 0
   m_AttachSupportLogger: 0
