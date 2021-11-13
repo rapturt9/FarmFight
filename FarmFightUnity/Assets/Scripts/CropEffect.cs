@@ -8,22 +8,22 @@ public class CropEffect : MonoBehaviour
     // Start is called before the first frame update
     public Sprite[] effectSprites;
 
-    
-
     Vector3 startPos { get { return TileManager.TM.HexToWorld(tile.hexCoord); } }
 
-    
-
     public Color flickerColor = Color.white;
-
-
-    private Color startingColor = Color.clear;
-
 
     public Hex Hexcoord { get { return tile.hexCoord; } }
 
 
     public TileTemp tile;
+
+    public bool sparkling, rotting;
+
+
+    public void LateUpdate()
+    {
+        BattleCloud();
+    }
 
 
     public void init(TileTemp tile)
@@ -54,8 +54,8 @@ public class CropEffect : MonoBehaviour
             transform.position = startPos;
             sparkling = true;
             rotting = false;
-            
-            
+
+            effects.SendEvent("StopFlies");
 
             effects.SendEvent("Sparkle");
             
@@ -71,8 +71,8 @@ public class CropEffect : MonoBehaviour
             rotting = true;
             
             transform.position = startPos;
-            
-            
+
+            effects.SetBool("FliesAlive", true);
 
             effects.SendEvent("StartFlies");
         }
@@ -88,11 +88,39 @@ public class CropEffect : MonoBehaviour
         
 
         effects.SendEvent("StopFlies");
+        effects.SetBool("FliesAlive",false);
     }
 
-    public bool sparkling, rotting;
 
-    
+    public bool CloudActive;
+    public Color CloudColor { set { effects.SetVector4("CloudColor", value); } }
+    public float CloudSpeed = 0.01f;
+
+    private void BattleCloud()
+    {
+        var size = effects.GetFloat("CloudSize");
+
+        if (CloudActive & size < 1)
+        {
+            effects.SetFloat("CloudSize", size + CloudSpeed);
+        }
+        else if(!CloudActive & size > 0)
+        {
+            effects.SetFloat("CloudSize", size - CloudSpeed);
+        }
+    }
+
+    public void StartCapture(float time,Color color)
+    {
+        effects.SetVector4("CaptureColor", color);
+        effects.SetFloat("CaptureTime", time);
+        effects.SendEvent("Capture");
+    }
+    public void StopCapture()
+    {
+
+    }
+
 
 }
 
