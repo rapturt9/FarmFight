@@ -151,15 +151,7 @@ public abstract class TileTemp : TileTempDepr
                 Debug.Log(tileDamage);
                 
             }
-        }
-        if(NetworkManager.Singleton.IsServer){
-            Debug.Log(tileDamage % 1 > .9f);
-            Debug.Log(tileDamage);
-            if(tileDamage % 1 > .9f){
-                TileSyncer.Syncer.SyncTileUpdate(hexCoord,new[] {CropTileSyncTypes.tileDamage});
-            }
-        }
-        else
+        } else
         {
             if(!cracksInit){
                 cracks.GetComponent<DamageTile>().FadeIn();
@@ -168,6 +160,14 @@ public abstract class TileTemp : TileTempDepr
             if(tileDamage < 10.0f){
                 tileDamage += 0.1f;
                 Debug.Log(tileDamage);
+            }
+        }
+
+        if(NetworkManager.Singleton.IsServer){
+            Debug.Log(tileDamage % 1 > .9f);
+            Debug.Log(tileDamage);
+            if(tileDamage % 1 > .9f){
+                TileSyncer.Syncer.SyncTileUpdate(hexCoord,new[] {CropTileSyncTypes.tileDamage});
             }
         }
 
