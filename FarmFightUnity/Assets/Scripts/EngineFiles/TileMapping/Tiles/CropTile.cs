@@ -27,7 +27,14 @@ public abstract class TileTemp : TileTempDepr
     public GameObject CropEffect = null;
 
     private GameObject effect;
+
+    public GameObject DamageHex = null;
+
+    private GameObject cracks;
     
+    private bool cracksInit;
+
+    public float tileDamage = 0.0f;
     public override void Start()
     {
         if (effect == null)
@@ -35,6 +42,12 @@ public abstract class TileTemp : TileTempDepr
 
             effect = SpriteRepo.Sprites["CropEffect"];
             effect.GetComponent<CropEffect>().init(this);
+        }
+        if(cracks == null)
+        {
+            cracksInit = false;
+            cracks = SpriteRepo.Sprites["DamageHex"];
+            cracks.GetComponent<DamageTile>().init(this);
         }
 
         SortedSoldiers = new Dictionary<int, List<Soldier>>();
@@ -70,6 +83,8 @@ public abstract class TileTemp : TileTempDepr
 
         double diff = frameInternal / frameRate - mid; //for sparkle
         double diff2 = tileArts.Count - frameInternal / frameRate; //for rot
+
+    
 
         if (cropType == CropType.blankTile)
         {
@@ -127,10 +142,33 @@ public abstract class TileTemp : TileTempDepr
             {
                 currentArt = tileArts[tileArts.Count - 1];
             }
+            if(cracksInit){
+                cracks.GetComponent<DamageTile>().FadeOut();
+                cracksInit = false;
+            }
+            if( tileDamage > 0.0f){
+                tileDamage -= 0.1f;
+                Debug.Log(tileDamage);
+                
+            }
+        }
+        if(NetworkManager.Singleton.IsServer){
+            Debug.Log(tileDamage % 1 > .9f);
+            Debug.Log(tileDamage);
+            if(tileDamage % 1 > .9f){
+                TileSyncer.Syncer.SyncTileUpdate(hexCoord,new[] {CropTileSyncTypes.tileDamage});
+            }
         }
         else
         {
-            currentArt = null;
+            if(!cracksInit){
+                cracks.GetComponent<DamageTile>().FadeIn();
+                cracksInit = true;
+            }
+            if(tileDamage < 10.0f){
+                tileDamage += 0.1f;
+                Debug.Log(tileDamage);
+            }
         }
 
         //update tileinfo
@@ -165,6 +203,8 @@ public abstract class TileTemp : TileTempDepr
     {
         if(effect != null)
             GameObject.Destroy(effect);
+        if(cracks != null)
+            GameObject.Destroy(cracks);
     }
 
 

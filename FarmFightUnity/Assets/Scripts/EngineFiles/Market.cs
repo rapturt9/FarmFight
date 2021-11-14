@@ -135,6 +135,10 @@ public class Market : NetworkBehaviour
         {
             SetCrop((int)CropType.potato);
         }
+        if (Input.GetKeyDown("x"))
+        {
+            central.money += 100;
+        }
         else if (Input.GetKeyDown("2"))
         {
             SetCrop((int)CropType.carrot);
@@ -157,7 +161,7 @@ public class Market : NetworkBehaviour
         }
         else if (Input.GetKeyDown("7"))
         {
-            if(crops.handler[selectedHex].tileOwner == Repository.Central.localPlayerId)
+            //if(crops.handler[selectedHex].tileOwner == Repository.Central.localPlayerId)
                 SendSoldier();
         }
 
@@ -214,16 +218,27 @@ public class Market : NetworkBehaviour
 
     public Hex SoldierDestination;
 
+
     private void SoldierSendUpdate()
     {
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonDown(0))
         {
-            if (TileManager.TM.getMouseHex() == SoldierDestination)
+            /*if (TileManager.TM.getMouseHex() == SoldierDestination)
             {
                 SoldierTrip(selectedHex, SoldierDestination);
             }
 
-            SetSoldierDestination();
+            SetSoldierDestination();*/
+            if (SoldierDestination != null && UIHandler != null && UIHandler[SoldierDestination] != null){
+                SoldierTrip(selectedHex, SoldierDestination);
+            }
+        }
+        if(TileManager.TM.getMouseHex() != selectedHex){
+            if(SoldierDestination != null && SoldierDestination != selectedHex){
+                UIHandler[SoldierDestination] = new BlankTile();
+            }
+            SoldierDestination = TileManager.TM.getMouseHex();
+            UIHandler[TileManager.TM.getMouseHex()] = new SoldierDestination();
         }
     }
 
@@ -231,8 +246,9 @@ public class Market : NetworkBehaviour
     {
         if (SoldierDestination != null && UIHandler != null && UIHandler[SoldierDestination] != null) //&& selectedHex != central.selectedHex)
         {
-            if (selectedHex != SoldierDestination)
+            if (selectedHex != SoldierDestination){
                 UIHandler[SoldierDestination] = new BlankTile();
+            }
             SoldierDestination = central.selectedHex;
 
             if(selectedHex !=  SoldierDestination)
@@ -248,9 +264,9 @@ public class Market : NetworkBehaviour
         {
             soldierManager.SendSoldier(start, end);
             SendSoldier();
+            UIHandler[SoldierDestination] = new BlankTile();
         }
-        
-        UIHandler[SoldierDestination] = new BlankTile();
+
 
     }
 
