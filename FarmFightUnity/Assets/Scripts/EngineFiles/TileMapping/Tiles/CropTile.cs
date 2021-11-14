@@ -30,7 +30,7 @@ public abstract class TileTemp : TileTempDepr
     
     public override void Start()
     {
-        if (effect == null && tileOwner != -1)
+        if (effect == null)
         {
 
             effect = SpriteRepo.Sprites["CropEffect"].GetComponent<CropEffect>();
@@ -399,6 +399,7 @@ public abstract class TileTemp : TileTempDepr
         timeLastPlanted = NetworkManager.Singleton.NetworkTime;
         frameInternal = 0;
         frame = 0;
+        effect.HarvestSound();
         return hr;
     }
 

@@ -14,6 +14,7 @@ public class CropEffect : MonoBehaviour
 
     public Hex Hexcoord { get { return tile.hexCoord; } }
 
+    public AudioSource Harvest, Plant, Capture, Battle, TimeToHarvest, Flies;
 
     public TileTemp tile;
 
@@ -53,7 +54,8 @@ public class CropEffect : MonoBehaviour
     {
         if (!sparkling)
         {
-
+            TimeToHarvest.Play();
+            Flies.Stop();
             transform.position = startPos;
             sparkling = true;
             rotting = false;
@@ -70,6 +72,7 @@ public class CropEffect : MonoBehaviour
     {
         if (!rotting)
         {
+
             sparkling = false;
             rotting = true;
             
@@ -79,7 +82,17 @@ public class CropEffect : MonoBehaviour
 
             effects.SendEvent("StartFlies");
         }
+        if (rotting)
+        {
+            Flies.Play();
+        }
+            
         
+    }
+
+    public void HarvestSound()
+    {
+        Harvest.Play();
     }
 
     public void Stop()
@@ -106,15 +119,18 @@ public class CropEffect : MonoBehaviour
         float size = effects.GetFloat("CloudSize");
 
         
-
+        
         if (CloudActive && size < 1)
         {
+
+            Color color = getCloudColor();
+            
             effects.SetVector4("CloudColor", getCloudColor());
             effects.SetFloat("CloudSize", size + CloudSpeed);
         }
         else if(!CloudActive && size > 0)
         {
-            effects.SetVector4("CloudColor", getCloudColor());
+            //effects.SetVector4("CloudColor", getCloudColor());
             effects.SetFloat("CloudSize", size - CloudSpeed);
         }
         else
@@ -149,6 +165,9 @@ public class CropEffect : MonoBehaviour
         float[] fractions = getSoldierHealthFractions();
         for (int playerId = 0; playerId < Repository.maxPlayers; playerId++)
         {
+            if (fractions[playerId] == float.NaN)
+                return Color.white;
+
             newColor += OutlineSetter.OS.TeamColors[playerId] * fractions[playerId];
         }
         // Make it look a bit more pastel
@@ -171,6 +190,11 @@ public class CropEffect : MonoBehaviour
     public void StopCapture()
     {
         effects.SetBool("Capturing", false);
+    }
+
+    public void Capturing()
+    {
+        Capture.Play();
     }
 
 
