@@ -42,6 +42,7 @@ public class GameManager : NetworkBehaviour
 
         // Now, lets things update
         central.gameIsRunning = true;
+        BoardChecker.Checker.StartChecking();
     }
 
     // Update is called once per frame
