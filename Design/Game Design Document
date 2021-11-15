@@ -7,7 +7,7 @@ Hi Team, this is a Document to lay out the basic ideas for game design and sugge
 | ---------- | ------ | ------ | ----- | ----------- |
 | Price      | 1$     | 2$     | 2$    | 10$         |
 | Harvest    | 1      | 4      | 2     | 10          |
-| Resistance | 0      | 2      | 6     | 10          |
+| Resistance | 1      | 1      | 5     | 10          |
 Price is cost of crop. Harvest stat determines how much money you get when harvesting the crop (some math formula). Resistance stat determines how well the crop will grow in territory that is damaged by soldies (some math formula).
 *Farmers:*
 Typically, to harvest a crop, you try to click it at the exact time it is ripe. However, this is difficult with a large amount of crops, so farmers will do it for you and they cost 1$ each. However, if a soldier attacks that tile, the farmer will disappear.
