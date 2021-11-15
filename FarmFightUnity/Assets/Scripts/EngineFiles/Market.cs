@@ -70,6 +70,7 @@ public class Market : NetworkBehaviour
                 float soldierHealth = soldiers.Sum(soldier => soldier.Health.Value);
                 total += i + ": " + soldierCount + " | " + (int)soldierHealth + "h\n";
             }
+            total+="Dmg: "+(int)(crops.handler[central.selectedHex].tileDamage*10)+"%";
             TileInfoText.text = total;
             return;
         }

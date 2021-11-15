@@ -143,23 +143,21 @@ public abstract class TileTemp : TileTempDepr
                 currentArt = tileArts[tileArts.Count - 1];
             }
             if(cracksInit){
-                cracks.GetComponent<DamageTile>().FadeOut();
+                cracks.GetComponent<DamageTile>().FadeOut(tileDamage / 10.0f);
                 cracksInit = false;
             }
             if( tileDamage > 0.0f){
-                tileDamage -= 0.1f;
-                Debug.Log(tileDamage);
+                tileDamage -= Time.deltaTime / 3;
                 
             }
         } else
         {
             if(!cracksInit){
-                cracks.GetComponent<DamageTile>().FadeIn();
-                cracksInit = true;
+                cracks.GetComponent<DamageTile>().FadeIn(tileDamage / 10.0f);
+                cracksInit = true; 
             }
             if(tileDamage < 10.0f){
-                tileDamage += 0.1f;
-                Debug.Log(tileDamage);
+                tileDamage += Time.deltaTime;
             }
         }
 
@@ -418,6 +416,9 @@ public abstract class TileTemp : TileTempDepr
         } else {
             mid = 5.5;
         }
+        int resistance = 1;
+        if(cropType == CropType.eggplant) resistance = 10;
+        if(cropType == CropType.rice) resistance = 5;
 
         float calc;
         double stage = frameInternal / frameRate;
@@ -427,7 +428,7 @@ public abstract class TileTemp : TileTempDepr
         calc = Mathf.Abs((float)(stage - mid));
         calc = Mathf.Pow(0.25f,calc);
 
-        return calc;
+        return Mathf.Max(0,calc-tileDamage/resistance);
     }
 
     //return crop level and reset crop growth

@@ -34,47 +34,39 @@ public class DamageTile : MonoBehaviour
 
 
 
-    public void FadeIn() {
+    public void FadeIn(float damagePercent) {
         
         if(fading == 0 && spriteRenderer.sprite == null){
             transform.position = startPos;
             spriteRenderer.sprite = sprites[0];
-            Color newColor = new Color(1, 1, 1, 0);
-            transform.GetComponent<Renderer>().material.color = newColor;
+            /*Color newColor = new Color(1, 1, 1, 0);
+            transform.GetComponent<Renderer>().material.color = newColor;*/
             fading = 1;
         }
+        Color newColor = new Color(1, 1, 1, damagePercent);
+        transform.GetComponent<Renderer>().material.color = newColor;
         aValue = 1.0f;
+        aTime = 10.0f;
         StopCoroutine("FadeTo");
         StartCoroutine("FadeTo");
-        /*if(fading == 1){
-            StartCoroutine("FadeTo");
-            fading = 2;
-        } else {
-            StopCoroutine("FadeTo");
-            StartCoroutine("FadeTo");
-        }*/
     }
 
 
-    public void FadeOut() {
+    public void FadeOut(float damagePercent) {
     
         if(fading == 0 && spriteRenderer.sprite == null){
             transform.position = startPos;
             spriteRenderer.sprite = sprites[0];
-            Color newColor = new Color(1, 1, 1, 0);
-            transform.GetComponent<Renderer>().material.color = newColor;
+            /*Color newColor = new Color(1, 1, 1, 0);
+            transform.GetComponent<Renderer>().material.color = newColor;*/
             fading = 1;
         }
+        Color newColor = new Color(1, 1, 1, damagePercent);
+        transform.GetComponent<Renderer>().material.color = newColor;
         aValue = 0.0f;
+        aTime = 30.0f;
         StopCoroutine("FadeTo");
         StartCoroutine("FadeTo");
-        /*if(fading == 1){
-            StartCoroutine("FadeTo");
-            fading = 2;
-        } else {
-            StopCoroutine("FadeTo");
-            StartCoroutine("FadeTo");
-        }*/
     }
 
 
