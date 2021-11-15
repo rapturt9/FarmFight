@@ -1,8 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using MLAPI;
+using MLAPI.NetworkVariable;
+using MLAPI.NetworkVariable.Collections;
+using MLAPI.Messaging;
 
-public class Repository : MonoBehaviour
+public class Repository : NetworkBehaviour
 {
     ///Place Variables here
 
@@ -11,7 +15,18 @@ public class Repository : MonoBehaviour
 
     public int localPlayerId;
     public bool gameIsRunning = false;
-    public double money = 10.0;
+
+    public MLAPINetworkDictionary<int, double> allMoney = new MLAPINetworkDictionary<int, double>();
+    public double startingMoney = 10.0;
+    [HideInInspector] public double money
+    {
+        get => allMoney[localPlayerId];
+
+        set
+        {
+            UpdateMoneyServerRpc(localPlayerId, value);
+        }
+    }
 
     public TileInfo tileinfo = new TileInfo();
 
@@ -36,6 +51,32 @@ public class Repository : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public override void NetworkStart()
+    {
+        if (IsServer)
+        {
+            for (int playerId = 0; playerId < maxPlayers; playerId++)
+            {
+                allMoney[playerId] = startingMoney;
+            }
+        }
+        //else
+        //{
+        //    allMoney = new NetworkDictionary<int, double>();
+        //}
+    }
+
+    private void Update()
+    {
+        Debug.Log(allMoney.Values.Count);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void UpdateMoneyServerRpc(int playerId, double newMoney)
+    {
+        allMoney[playerId] = newMoney;
     }
 
     /// just for ease of access

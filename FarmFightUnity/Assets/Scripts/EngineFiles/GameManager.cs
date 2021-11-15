@@ -93,7 +93,6 @@ public class GameManager : NetworkBehaviour
 
         Potato startingTile = new Potato();
         startingTile.tileOwner = currMaxLocalPlayerId;
-        BoardChecker.Checker.ChangeTileOwnershipCountServerRpc(currMaxLocalPlayerId, +1, false);
         int cropTileHandlerIndex = 0;
         TileManager.TM.Handlers[cropTileHandlerIndex][newCorner] = startingTile;
 
