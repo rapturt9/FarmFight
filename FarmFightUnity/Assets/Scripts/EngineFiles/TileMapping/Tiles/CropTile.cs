@@ -27,7 +27,14 @@ public abstract class TileTemp : TileTempDepr
     public GameObject CropEffect = null;
 
     private GameObject effect;
+
+    public GameObject DamageHex = null;
+
+    private GameObject cracks;
     
+    private bool cracksInit;
+
+    public float tileDamage = 0.0f;
     public override void Start()
     {
         if (effect == null)
@@ -35,6 +42,12 @@ public abstract class TileTemp : TileTempDepr
 
             effect = SpriteRepo.Sprites["CropEffect"];
             effect.GetComponent<CropEffect>().init(this);
+        }
+        if(cracks == null)
+        {
+            cracksInit = false;
+            cracks = SpriteRepo.Sprites["DamageHex"];
+            cracks.GetComponent<DamageTile>().init(this);
         }
 
         SortedSoldiers = new Dictionary<int, List<Soldier>>();
@@ -70,6 +83,8 @@ public abstract class TileTemp : TileTempDepr
 
         double diff = frameInternal / frameRate - mid; //for sparkle
         double diff2 = tileArts.Count - frameInternal / frameRate; //for rot
+
+    
 
         if (cropType == CropType.blankTile)
         {
@@ -127,10 +142,29 @@ public abstract class TileTemp : TileTempDepr
             {
                 currentArt = tileArts[tileArts.Count - 1];
             }
-        }
-        else
+            if(cracksInit){
+                cracks.GetComponent<DamageTile>().FadeOut(tileDamage / 10.0f);
+                cracksInit = false;
+            }
+            if( tileDamage > 0.0f){
+                tileDamage -= Time.deltaTime / 3;
+                
+            }
+        } else
         {
-            currentArt = null;
+            if(!cracksInit){
+                cracks.GetComponent<DamageTile>().FadeIn(tileDamage / 10.0f);
+                cracksInit = true; 
+            }
+            if(tileDamage < 10.0f){
+                tileDamage += Time.deltaTime;
+            }
+        }
+
+        if(NetworkManager.Singleton.IsServer){
+            if(tileDamage % 1 > .9f){
+                TileSyncer.Syncer.SyncTileUpdate(hexCoord,new[] {CropTileSyncTypes.tileDamage});
+            }
         }
 
         //update tileinfo
@@ -165,6 +199,8 @@ public abstract class TileTemp : TileTempDepr
     {
         if(effect != null)
             GameObject.Destroy(effect);
+        if(cracks != null)
+            GameObject.Destroy(cracks);
     }
 
 
@@ -378,6 +414,9 @@ public abstract class TileTemp : TileTempDepr
         } else {
             mid = 5.5;
         }
+        int resistance = 1;
+        if(cropType == CropType.eggplant) resistance = 10;
+        if(cropType == CropType.rice) resistance = 5;
 
         float calc;
         double stage = frameInternal / frameRate;
@@ -387,7 +426,7 @@ public abstract class TileTemp : TileTempDepr
         calc = Mathf.Abs((float)(stage - mid));
         calc = Mathf.Pow(0.25f,calc);
 
-        return calc;
+        return Mathf.Max(0,calc-tileDamage/resistance);
     }
 
     //return crop level and reset crop growth

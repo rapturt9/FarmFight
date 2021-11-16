@@ -90,6 +90,12 @@ public class TileSyncer : NetworkBehaviour
         {
             _SyncTileUpdateBattle(tileData, ref oldTile);
         }
+
+        // tileDamage
+        if (Array.Exists(dataToSync, element => element == CropTileSyncTypes.tileDamage))
+        {
+            _SyncTileUpdateTileDamage(tileData, ref oldTile);
+        }
     }
 
     // We have changed a tile somehow, so it gets synced to everyone
@@ -169,6 +175,7 @@ public class TileSyncer : NetworkBehaviour
         newTile.tileOwner = oldTile.tileOwner;
         newTile.SortedSoldiers = oldTile.SortedSoldiers;
         newTile.timeStartedCapturing = oldTile.timeStartedCapturing;
+        newTile.tileDamage = oldTile.tileDamage;
 
         oldTile = newTile;
         handler.TileDict[coord].Tile = newTile;
@@ -200,5 +207,10 @@ public class TileSyncer : NetworkBehaviour
         {
             oldTile.battleCloud = null;
         }
+    }
+
+    void _SyncTileUpdateTileDamage(TileSyncData tileData, ref TileTemp oldTile)
+    {
+        oldTile.tileDamage = tileData.tileDamage;
     }
 }
