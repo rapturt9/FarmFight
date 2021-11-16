@@ -162,8 +162,6 @@ public abstract class TileTemp : TileTempDepr
         }
 
         if(NetworkManager.Singleton.IsServer){
-            Debug.Log(tileDamage % 1 > .9f);
-            Debug.Log(tileDamage);
             if(tileDamage % 1 > .9f){
                 TileSyncer.Syncer.SyncTileUpdate(hexCoord,new[] {CropTileSyncTypes.tileDamage});
             }
