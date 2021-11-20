@@ -153,7 +153,13 @@ public class makeMove : MonoBehaviour
 
             currentVal += 0.01f - 0.001f*BoardHelperFns.distance(startingLoc,loc);
 
-            if (currentVal >= bestVal){
+            if (currentVal == bestVal){
+                if (Random.Range(0,2) == 1){
+                    bestVal = currentVal;
+                    bestMove = elem;
+                }
+            }
+            else if (currentVal > bestVal){
                 bestVal = currentVal;
                 bestMove = elem;
             }
@@ -293,7 +299,11 @@ public class makeMove : MonoBehaviour
                 }
             }
             else if (tile.tileOwner != -1 && Repository.Central.money >= 10){
-                res.Add((coord,"soldier"));
+                foreach (var newLoc in tileManager.getValidNeighbors(coord)){
+                    if (tileHandler[coord].tileOwner == Repository.Central.localPlayerId){
+                        res.Add((coord,"soldier"));
+                    }
+                }
             }
         }
         return res;
