@@ -30,12 +30,14 @@ public class makeMove : MonoBehaviour
         yield return new WaitForSeconds(0.5F);
         gameData.updateGameState();
         getStartingLoc(true);
-        while (gameIsRunning){
-            getStartingLoc(false);
-            pickMove(Repository.Central.localPlayerId);
-            numActions += 1;
-            actionTimer = (actionTimer + 1) % 4;
-            yield return new WaitForSeconds(0.5F);
+        if (Repository.Central.isBot){
+            while (gameIsRunning){
+                getStartingLoc(false);
+                pickMove(Repository.Central.localPlayerId);
+                numActions += 1;
+                actionTimer = (actionTimer + 1) % 4;
+                yield return new WaitForSeconds(0.5F);
+            }
         }
     }
 
@@ -166,30 +168,30 @@ public class makeMove : MonoBehaviour
     (Dictionary<Hex, TileSyncData>,float) getState(Hex loc, string move, int player){
         Dictionary<Hex, TileSyncData> res = new Dictionary<Hex, TileSyncData>(gameData.cropTiles);
         TileSyncData oldTile = res[loc];
-        TileSyncData updatedTile = new TileSyncData(CropType.blankTile, 0.0f, false, -1, true);
+        TileSyncData updatedTile = new TileSyncData(CropType.blankTile, 0.0f, false, -1, true, oldTile.tileDamage);
         float moneyGained = 0.0f;
         if (move == "plantRice" || move == "plantRiceOver"){
-            updatedTile = new TileSyncData(CropType.rice, 0.0f, oldTile.containsFarmer, player, true);
+            updatedTile = new TileSyncData(CropType.rice, 0.0f, oldTile.containsFarmer, player, true, 0.0f);
             moneyGained = -2.0f;
         }
         else if (move == "plantCarrot" || move == "plantCarrotOver"){
-            updatedTile = new TileSyncData(CropType.carrot, 0.0f, oldTile.containsFarmer, player, true);
+            updatedTile = new TileSyncData(CropType.carrot, 0.0f, oldTile.containsFarmer, player, true, 0.0f);
             moneyGained = -2.0f;
         }
         else if (move == "plantPotato"){
-            updatedTile = new TileSyncData(CropType.potato, 0.0f, oldTile.containsFarmer, player, true);
+            updatedTile = new TileSyncData(CropType.potato, 0.0f, oldTile.containsFarmer, player, true, 0.0f);
             moneyGained = -1.0f;
         }
         else if (move == "plantEggplant" || move == "plantEggplantOver"){
-            updatedTile = new TileSyncData(CropType.eggplant, 0.0f, oldTile.containsFarmer, player, true);
+            updatedTile = new TileSyncData(CropType.eggplant, 0.0f, oldTile.containsFarmer, player, true, 0.0f);
             moneyGained = -10.0f;
         }
         else if (move == "harvest") {
-            updatedTile = new TileSyncData(oldTile.cropType, NetworkManager.Singleton.NetworkTime, oldTile.containsFarmer, oldTile.tileOwner, true);
+            updatedTile = new TileSyncData(oldTile.cropType, NetworkManager.Singleton.NetworkTime, oldTile.containsFarmer, oldTile.tileOwner, true, oldTile.tileDamage);
             moneyGained = (float)getCropVal(oldTile.cropType, loc);
         }
         else if (move == "farmer") {
-            updatedTile = new TileSyncData(oldTile.cropType, NetworkManager.Singleton.NetworkTime, true, oldTile.tileOwner, true);
+            updatedTile = new TileSyncData(oldTile.cropType, NetworkManager.Singleton.NetworkTime, true, oldTile.tileOwner, true, oldTile.tileDamage);
             moneyGained = 0.0f;
         }
         else{

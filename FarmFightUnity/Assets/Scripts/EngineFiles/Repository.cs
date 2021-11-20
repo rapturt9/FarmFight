@@ -12,6 +12,7 @@ public class Repository : MonoBehaviour
     public int localPlayerId;
     public bool gameIsRunning = false;
     public double money = 10.0;
+    public bool isBot = true;
 
     public TileInfo tileinfo = new TileInfo();
 

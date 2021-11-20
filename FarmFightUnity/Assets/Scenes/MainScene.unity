@@ -191,6 +191,7 @@ MonoBehaviour:
   localPlayerId: 1
   gameIsRunning: 0
   money: 10
+  isBot: 1
   cropHandler: {fileID: 0}
   GamesMode: 0
   flyingVegies: 1
@@ -704,6 +705,14 @@ MonoBehaviour:
   gameIsRunning: 1
   gameData: {fileID: 358149039}
   hexCoords: []
+  cropManager: {fileID: 1228046377}
+  tileManager: {fileID: 1141926245}
+  tileHandler: {fileID: 1228046376}
+  soldierManager: {fileID: 1228046379}
+  actionTimer: 0
+  startingLoc:
+    coords: {x: 0, y: 0}
+  isBotInstance: 1
 --- !u!1 &390460906
 GameObject:
   m_ObjectHideFlags: 0
