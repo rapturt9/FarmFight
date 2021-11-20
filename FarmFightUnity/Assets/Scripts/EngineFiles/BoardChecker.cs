@@ -40,11 +40,28 @@ public class BoardChecker : NetworkBehaviour
         ownedTileCount = new int[Repository.maxPlayers];
     }
 
+    public void StartChecking()
+    {
+        StartCoroutine("CheckBoard");
+    }
+
     public IEnumerator CheckBoard()
     {
-        while (true)
+        while (Repository.Central.gameIsRunning)
         {
-            
+            UpdateTileCounts();
+            for (int playerId = 0; playerId < gameManager.currMaxLocalPlayerId; playerId++)
+            {
+                if (gameManager.currMaxLocalPlayerId > 1 && // Is there at least one player to win against
+                    CheckForWin(playerId)) // Have we actually won
+                {
+                    Repository.Central.gameIsRunning = false;
+                    EndGameClientRpc(playerId);
+                    yield return null;
+                }
+            }
+
+            yield return new WaitForSeconds(1f);
         }
     }
 
@@ -74,6 +91,7 @@ public class BoardChecker : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void ChangeTileOwnershipCountServerRpc(int playerId, int count, bool checkForWin = true)
     {
+        return;
         ownedTileCount[playerId] += count;
 
         if (checkForWin && // Do we want to check
@@ -102,5 +120,18 @@ public class BoardChecker : NetworkBehaviour
         }
 
         Debug.Log("Player " + winningPlayer.ToString() + " has won");
+    }
+
+    void UpdateTileCounts()
+    {
+        ownedTileCount = new int[Repository.maxPlayers];
+        foreach (var coord in hexCoords)
+        {
+            TileTemp tile = cropTiles[coord];
+            if (tile.tileOwner != -1)
+            {
+                ownedTileCount[tile.tileOwner]++;
+            }
+        }
     }
 }

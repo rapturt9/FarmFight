@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 6545641266421928007}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -47,6 +47,10 @@ MonoBehaviour:
   effectSprites:
   - {fileID: -1248917237974243955, guid: 083c9969c032a464196265b25bc42742, type: 3}
   - {fileID: 9093642786413269186, guid: 083c9969c032a464196265b25bc42742, type: 3}
+  spriteRenderer: {fileID: 0}
+  flickerColor: {r: 1, g: 1, b: 1, a: 1}
+  sparkling: 0
+  rotting: 0
 --- !u!212 &-6727078852578784472
 SpriteRenderer:
   m_ObjectHideFlags: 0
