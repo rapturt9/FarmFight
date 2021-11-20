@@ -413,6 +413,9 @@ public abstract class TileTemp : TileTempDepr
         } else {
             mid = 5.5;
         }
+        int resistance = 1;
+        if(cropType == CropType.eggplant) resistance = 10;
+        if(cropType == CropType.rice) resistance = 5;
 
         float calc;
         double stage = frameInternal / frameRate;      
@@ -425,7 +428,7 @@ public abstract class TileTemp : TileTempDepr
         if (calc < 0.75f){
             return 0.0f;
         }
-        return calc;
+        return Mathf.Max(0,calc-tileDamage/resistance);
     }
 
     public double hReset () {
