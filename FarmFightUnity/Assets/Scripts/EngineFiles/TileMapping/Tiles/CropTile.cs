@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using MLAPI;
@@ -51,6 +51,8 @@ public abstract class TileTemp : TileTempDepr
 
     public override void Behavior()
     {
+
+
         // Update frames
         if (effect == null && tileOwner != -1)
         {
@@ -58,6 +60,9 @@ public abstract class TileTemp : TileTempDepr
             effect = SpriteRepo.Sprites["CropEffect"].GetComponent<CropEffect>();
             effect.GetComponent<CropEffect>().init(this);
         }
+
+
+        
 
         frameInternal = Mathf.Min(
             (int)((NetworkManager.Singleton.NetworkTime - timeLastPlanted) * frameRate),
@@ -606,6 +611,9 @@ public abstract class TileTemp : TileTempDepr
         timeStartedCapturing = -1f;
         effect.StopCapture();
     }
+
+
+    
 }
 
 

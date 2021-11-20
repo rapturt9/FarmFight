@@ -20,15 +20,23 @@ public class CropEffect : MonoBehaviour
 
     public bool sparkling, rotting;
 
+    public float crackAmount;
 
-    public void LateUpdate()
+    public SpriteRenderer crackRender;
+
+
+    public void fixedUpdate()
     {
         BattleCloud();
 
-        if (tile == null || tile.effect != this)
+        if (tile == null || tile.effect != this || Repository.Central.cropHandler[tile.hexCoord] != tile)
         {
             Destroy(gameObject);
         }
+
+        transform.position = startPos;
+
+        crackRender.material.SetFloat("CrackAmt", crackAmount);
     }
 
 
