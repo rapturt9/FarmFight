@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using MLAPI;
-using MLAPI.NetworkVariable;
 using MLAPI.Messaging;
 
 public class GameManager : NetworkBehaviour
@@ -29,8 +28,13 @@ public class GameManager : NetworkBehaviour
 
         central.GamesMode = PlayState.NormalGame;
     }
-
+    
     public override void NetworkStart()
+    {
+        GameStart();
+    }
+
+    void GameStart()
     {
         TileArtRepository.Art.Init();
         TileManager.TM.Init();
