@@ -11,7 +11,6 @@ public class GameManager : NetworkBehaviour
     public TileHandler[] TileHandler;
     public GameState gameState;
 
-    public bool gameIsRunning = false;
     public int currMaxLocalPlayerId = 0;
     private List<Hex> openCorners;
     Repository central;
@@ -30,6 +29,12 @@ public class GameManager : NetworkBehaviour
     }
     
     public override void NetworkStart()
+    {
+        //GameStart();
+    }
+
+    [ClientRpc]
+    public void GameStartClientRpc()
     {
         GameStart();
     }

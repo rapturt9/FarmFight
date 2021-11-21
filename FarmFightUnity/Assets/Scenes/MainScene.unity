@@ -172,7 +172,6 @@ MonoBehaviour:
   tileManager: {fileID: 0}
   TileHandler: []
   gameState: {fileID: 358149039}
-  gameIsRunning: 0
   currMaxLocalPlayerId: 0
 --- !u!114 &58370722
 MonoBehaviour:
@@ -1648,6 +1647,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startAsHost: 0
+  gameManager: {fileID: 58370721}
 --- !u!4 &1041828389
 Transform:
   m_ObjectHideFlags: 0

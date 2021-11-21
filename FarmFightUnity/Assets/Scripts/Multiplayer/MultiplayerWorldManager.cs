@@ -13,6 +13,8 @@ public class MultiplayerWorldManager : MonoBehaviour
 
     PhotonRealtimeTransport transport;
 
+    public GameManager gameManager;
+
     private void Start()
     {
         // Makes Hex serializable on the network
@@ -30,6 +32,16 @@ public class MultiplayerWorldManager : MonoBehaviour
                 return new Hex(newCoord[0], newCoord[1]);
             }
         });
+
+        // Are we hosting
+        if (SceneVariables.isHosting)
+        {
+            Host();
+        }
+        else
+        {
+            Join();
+        }
     }
     void OnGUI()
     {
@@ -61,7 +73,7 @@ public class MultiplayerWorldManager : MonoBehaviour
         if (GUILayout.Button("Server")) NetworkManager.Singleton.StartServer();
     }
 
-    static void StatusLabels()
+    void StatusLabels()
     {
         var mode = NetworkManager.Singleton.IsHost ?
             "Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
@@ -70,11 +82,12 @@ public class MultiplayerWorldManager : MonoBehaviour
             NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
         GUILayout.Label("Mode: " + mode);
 
-        if (NetworkManager.Singleton.IsHost)
+        if (NetworkManager.Singleton.IsHost && !Repository.Central.gameIsRunning)
         {
             if (GUILayout.Button("Start Game"))
             {
-                print("This doesn't do anything yet!");
+                print("Starting game");
+                gameManager.GameStartClientRpc();
             }
         }
     }
@@ -83,6 +96,7 @@ public class MultiplayerWorldManager : MonoBehaviour
     {
         NetworkManager.Singleton.ConnectionApprovalCallback += ApprovalCheck;
         NetworkManager.Singleton.StartHost();
+        print("Joining as Host");
     }
 
     private void ApprovalCheck(byte[] connectionData, ulong clientID, NetworkManager.ConnectionApprovedDelegate callback)
@@ -97,5 +111,6 @@ public class MultiplayerWorldManager : MonoBehaviour
         transport = NetworkManager.Singleton.GetComponent<PhotonRealtimeTransport>();
         NetworkManager.Singleton.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes("FarmFight");
         NetworkManager.Singleton.StartClient();
+        print("Joining as Client");
     }
 }
