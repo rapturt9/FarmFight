@@ -24,13 +24,11 @@ public abstract class TileTemp : TileTempDepr
         get { return timeStartedCapturing != -1f; }
     }
 
-    public GameObject CropEffect = null;
+    
 
-    private GameObject effect;
+    public CropEffect effect;
 
-    public GameObject DamageHex = null;
-
-    private GameObject cracks;
+   
     
     private bool cracksInit;
 
@@ -40,15 +38,10 @@ public abstract class TileTemp : TileTempDepr
         if (effect == null)
         {
 
-            effect = SpriteRepo.Sprites["CropEffect"];
+            effect = SpriteRepo.Sprites["CropEffect"].GetComponent<CropEffect>();
             effect.GetComponent<CropEffect>().init(this);
         }
-        if(cracks == null)
-        {
-            cracksInit = false;
-            cracks = SpriteRepo.Sprites["DamageHex"];
-            cracks.GetComponent<DamageTile>().init(this);
-        }
+        
 
         SortedSoldiers = new Dictionary<int, List<Soldier>>();
         for (int i = 0; i < Repository.maxPlayers; i++)
@@ -137,9 +130,12 @@ public abstract class TileTemp : TileTempDepr
             }
         }
 
+
+        
         // Changing tile art
         if (!battleOccurring)
         {
+            effect.crackAmount = tileDamage / 10.0f;
             if (0 <= frame && frame < tileArts.Count)
             {
                 currentArt = tileArts[frame];
@@ -148,20 +144,16 @@ public abstract class TileTemp : TileTempDepr
             {
                 currentArt = tileArts[tileArts.Count - 1];
             }
-            if(cracksInit){
-                cracks.GetComponent<DamageTile>().FadeOut(tileDamage / 10.0f);
-                cracksInit = false;
-            }
+            
             if( tileDamage > 0.0f){
                 tileDamage -= Time.deltaTime / 3;
                 
             }
         } else
         {
-            if(!cracksInit){
-                cracks.GetComponent<DamageTile>().FadeIn(tileDamage / 10.0f);
-                cracksInit = true; 
-            }
+            
+            effect.crackAmount = (tileDamage / 10.0f);
+              
             if(tileDamage < 10.0f){
                 tileDamage += Time.deltaTime;
             }
@@ -204,9 +196,8 @@ public abstract class TileTemp : TileTempDepr
     public override void End()
     {
         if(effect != null)
-            GameObject.Destroy(effect);
-        if(cracks != null)
-            GameObject.Destroy(cracks);
+            GameObject.Destroy(effect.gameObject);
+        
     }
 
 

@@ -8,6 +8,8 @@ public class SpriteSwitch : MonoBehaviour
 
     public int owner = -1;
 
+    private Material material;
+    public float fadespeed;
     private void Awake()
     {
         owner = -1;
@@ -15,6 +17,8 @@ public class SpriteSwitch : MonoBehaviour
         GetComponent<SpriteRenderer>().enabled = false;
 
         StartCoroutine("change");
+
+        material = GetComponent<SpriteRenderer>().material;
     }
 
     private bool OwnerIsSet()
@@ -53,10 +57,42 @@ public class SpriteSwitch : MonoBehaviour
 
         GetComponent<SpriteRenderer>().enabled = true;
 
-        //Destroy(this);
+        StartCoroutine(_fadeIn());
 
     }
 
+
+    private IEnumerator _fadeIn()
+    {
+        material.SetFloat("fadeAmount", .3f);
+        while (material.GetFloat("fadeAmount") < 1)
+        {
+            material.SetFloat("fadeAmount", material.GetFloat("fadeAmount") + fadespeed);
+            yield return null;
+        }
+    }
+
+    private IEnumerator _fadeOut()
+    {
+        material.SetFloat("fadeAmount", .3f);
+        while (material.GetFloat("fadeAmount") < 1)
+        {
+            material.SetFloat("fadeAmount", material.GetFloat("fadeAmount") + fadespeed);
+            yield return null;
+        }
+    }
+
+    public void FadeIn()
+    {
+        StopCoroutine(_fadeOut());
+        StopCoroutine(_fadeIn());
+    }
+
+    public void FadeOut()
+    {
+        StopCoroutine(_fadeIn());
+        StopCoroutine(_fadeOut());
+    }
 }
 
 

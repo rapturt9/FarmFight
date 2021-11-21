@@ -6,9 +6,13 @@ public class TileInfoArrangement : MonoBehaviour
 {
     public Transform top, bottom;
 
+    public GameObject panel;
+
     public Vector3[] positions;
 
     public panelmover[] panels;
+
+    
 
     Coroutine valuechecker;
 
@@ -17,15 +21,19 @@ public class TileInfoArrangement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
-        
+
+        panels = new panelmover[6];
         positions = new Vector3[6];
         var topPos = top.GetComponent<RectTransform>().anchoredPosition;
         var botPos = bottom.GetComponent<RectTransform>().anchoredPosition;
 
         for (int i = 0; i < 6; i++)
         {
+            
             positions[i] = new Vector3(topPos.x,  topPos.y - (topPos.y - botPos.y) * i / 5, 0);
+            panels[i] = GameObject.Instantiate(panel).GetComponent<panelmover>();
+            panels[i].GetComponent<RectTransform>().anchoredPosition = positions[i];
+            panels[i].Init(i);
         }
 
         tileValues = new Dictionary<int, (float, float, float)>();
