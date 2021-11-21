@@ -172,9 +172,8 @@ MonoBehaviour:
   tileManager: {fileID: 0}
   TileHandler: []
   gameState: {fileID: 358149039}
-  interstitial: {fileID: 805581830}
+  gameIsRunning: 0
   currMaxLocalPlayerId: 0
-  startOnNetworkStart: 0
 --- !u!114 &58370722
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192,8 +191,6 @@ MonoBehaviour:
   localPlayerId: 1
   gameIsRunning: 0
   money: 10
-  isBot: 1
-  cropHandler: {fileID: 0}
   GamesMode: 0
   flyingVegies: 1
 --- !u!114 &58370723
@@ -595,7 +592,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 346193512}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -670,11 +667,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9fbf21ee9aed4941b2f1073f606d799, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 58370721}
   tileHandler: {fileID: 1228046376}
-  tileManager: {fileID: 1141926245}
-  cropManager: {fileID: 1228046377}
-  soldierManager: {fileID: 1228046379}
   hexCoords: []
 --- !u!114 &358149040
 MonoBehaviour:
@@ -2633,9 +2626,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a1add2ae3604ae4793247b72ea82b31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 58370721}
-  interstitial: {fileID: 805581830}
-  startGameButton: {fileID: 1912054079}
+  startAsHost: 1
 --- !u!4 &1041828389
 Transform:
   m_ObjectHideFlags: 0
@@ -4114,7 +4105,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 35a18cca3629148fb99c11a7a8ab5640, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2981f5616fceb4e76b50a2d41d730a82, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8888,11 +8879,6 @@ MonoBehaviour:
   endingMessages:
   - {fileID: 859769855}
   - {fileID: 626018050}
---- !u!1 &1912054079 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8089935416490882806, guid: a3d32b2bb9aa88e468fed442bf570f2c, type: 3}
-  m_PrefabInstance: {fileID: 1834300649}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &1912054083 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8089935416490882807, guid: a3d32b2bb9aa88e468fed442bf570f2c, type: 3}
