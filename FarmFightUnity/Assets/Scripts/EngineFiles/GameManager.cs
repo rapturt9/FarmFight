@@ -37,7 +37,7 @@ public class GameManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void GameStartClientRpc()//(ClientRpcParams clientRpcParams = default)
+    public void GameStartClientRpc()
     {
         GameStart();
     }
