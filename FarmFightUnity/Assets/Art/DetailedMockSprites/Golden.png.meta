@@ -82,7 +82,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 500
+  spritePixelsToUnits: 700
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -331,10 +331,10 @@ TextureImporter:
       name: Golden_9
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 400
-        height: 400
+        x: 232
+        y: 170
+        width: 81
+        height: 80
       alignment: 9
       pivot: {x: 0.50000006, y: 0.5032198}
       border: {x: 0, y: 0, z: 0, w: 0}

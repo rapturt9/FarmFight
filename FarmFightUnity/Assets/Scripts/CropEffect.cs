@@ -1,38 +1,50 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class CropEffect : MonoBehaviour
 {
     // Start is called before the first frame update
     public Sprite[] effectSprites;
 
-    
-
     Vector3 startPos { get { return TileManager.TM.HexToWorld(tile.hexCoord); } }
-
-    public SpriteRenderer spriteRenderer = null;
 
     public Color flickerColor = Color.white;
 
-
-    private Color startingColor = Color.clear;
-
-
     public Hex Hexcoord { get { return tile.hexCoord; } }
 
+    public AudioSource Harvest, Plant, Capture, Battle, TimeToHarvest, Flies;
 
     public TileTemp tile;
+
+    public bool sparkling, rotting;
+
+    public float crackAmount;
+
+    public SpriteRenderer crackRender;
+
+
+    public void LateUpdate()
+    {
+        BattleCloud();
+
+        if (tile == null || tile.effect != this || Repository.Central.cropHandler[tile.hexCoord] != tile)
+        {
+            Destroy(gameObject);
+        }
+
+        transform.position = startPos;
+
+        crackRender.material.SetFloat("CrackAmt", crackAmount);
+    }
 
 
     public void init(TileTemp tile)
     {
 
-        if(tile == null)
-        {
-            Destroy(gameObject);
-        }
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        
+        
 
         transform.parent = SpriteRepo.Sprites.transform;
 
@@ -40,21 +52,25 @@ public class CropEffect : MonoBehaviour
 
         transform.position = startPos;
 
-        
+        effects.SetVector4("CloudColor", Color.white);
 
         Stop();
     }
 
-
+    VisualEffect effects { get { return GetComponent<VisualEffect>(); } }
     public void Sparkle()
     {
         if (!sparkling)
         {
+            TimeToHarvest.Play();
+            Flies.Stop();
             transform.position = startPos;
             sparkling = true;
             rotting = false;
-            StopCoroutine(_SpinObject());
-            spriteRenderer.sprite = effectSprites[0];
+
+            effects.SendEvent("StopFlies");
+
+            effects.SendEvent("Sparkle");
             
         }
 
@@ -64,67 +80,135 @@ public class CropEffect : MonoBehaviour
     {
         if (!rotting)
         {
+
             sparkling = false;
             rotting = true;
-            StopCoroutine(_Sparkle());
+            
             transform.position = startPos;
-            spriteRenderer.sprite = effectSprites[1];
-            StartCoroutine(_SpinObject());
+
+            effects.SetBool("FliesAlive", true);
+
+            effects.SendEvent("StartFlies");
+            
         }
+        if (rotting)
+        {
+            //Flies.Play();
+        }
+            
         
+    }
+
+    public void HarvestSound()
+    {
+        Harvest.Play();
     }
 
     public void Stop()
     {
         
-        StopCoroutine(_SpinObject());
+        
         sparkling = false;
         rotting = false;
-        spriteRenderer.sprite = null;
-    }
-
-    public bool sparkling, rotting;
-
-    private IEnumerator _Sparkle()
-    {
-        spriteRenderer.color = Color.white;
- 
-        yield return new WaitForSeconds(0.05f);
- 
-        spriteRenderer.color = startingColor;
-    }
-
-    private IEnumerator _SpinObject ()
-    {
- 
-         //float duration = 2000f;
-         float elapsed = 0f;
-         float spinSpeed = Mathf.PI/20;
-        float Dx = Random.Range(.8f, 1.2f), Dy = Random.Range(.8f, 1.2f);
-        int Direction = -1;
-        if(Random.Range(0,2) == 1)
-        {
-            Direction = 1;
-        }
         
-         
-         while (rotting)
-         {
-            elapsed += 1;
 
-            transform.position = startPos
-                    + Vector3.right * Dx * .125f * Mathf.Cos(Direction * spinSpeed * elapsed)
-                    + Vector3.up * Dy * .125f * Mathf.Sin(Direction * spinSpeed * elapsed)
-                    + Vector3.up * .2f;
-             //transform.Rotate(Vector3.forward, spinSpeed * Time.deltaTime);
-             yield return null;
-         }
+        effects.SendEvent("StopFlies");
+        effects.SetBool("FliesAlive",false);
+    }
 
 
+    public bool CloudActive;
+    public Color CloudColor { set { effects.SetVector4("CloudColor", value); } }
+    public float CloudSpeed = 0.01f;
+    public float cloudsize;
+    private void BattleCloud()
+    {
         transform.position = startPos;
 
+        float size = effects.GetFloat("CloudSize");
 
+        //CloudActive = tile.battleOccurring;
+
+        
+
+        if (CloudActive && size < 1)
+        {
+
+            Color color = getCloudColor();
+            
+            effects.SetVector4("CloudColor", getCloudColor());
+
+            effects.SetFloat("CloudSize", size + CloudSpeed);
+        }
+        else if(!CloudActive && size > 0)
+        {
+            effects.SetVector4("CloudColor", getCloudColor());
+            effects.SetFloat("CloudSize", size - CloudSpeed);
+        }
+        else
+        {
+            //effects.SetVector4("CloudColor", Color.white);
+        }
     }
+
+    float[] getSoldierHealthFractions()
+    {
+        float[] soldierHealths = new float[Repository.maxPlayers];
+        float[] soldierHealthFractions = new float[Repository.maxPlayers];
+        float totalHealth = 0;
+
+        // Get combined health for each time
+        foreach (var soldier in tile.getSoldierEnumerator())
+        {
+            soldierHealths[soldier.owner.Value] += soldier.Health.Value;
+            totalHealth += soldier.Health.Value;
+        }
+        // Rescale
+        for (int playerId = 0; playerId < Repository.maxPlayers; playerId++)
+        {
+            soldierHealthFractions[playerId] = soldierHealths[playerId] / totalHealth;
+        }
+        return soldierHealthFractions;
+    }
+
+    Color getCloudColor()
+    {
+        Color newColor = new Color();
+        float[] fractions = getSoldierHealthFractions();
+        for (int playerId = 0; playerId < Repository.maxPlayers; playerId++)
+        {
+            if (fractions[playerId] == float.NaN)
+                return Color.white;
+
+            newColor += OutlineSetter.OS.TeamColors[playerId] * fractions[playerId];
+        }
+        // Make it look a bit more pastel
+        newColor += Color.white * 0.2f;
+        return newColor;
+    }
+
+    public void StartCapture(float time,Color color)
+    {
+        transform.position = startPos;
+        effects.SetBool("Capturing", true);
+
+        effects.SendEvent("Capture");
+        
+        effects.SetVector4("CaptureColor", color);
+        effects.SetFloat("CaptureTime", time);
+        effects.SendEvent("Capture");
+        
+    }
+    public void StopCapture()
+    {
+        effects.SetBool("Capturing", false);
+    }
+
+    public void Capturing()
+    {
+        Capture.Play();
+    }
+
 
 }
 
