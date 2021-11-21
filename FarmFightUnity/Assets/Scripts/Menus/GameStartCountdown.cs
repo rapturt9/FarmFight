@@ -12,7 +12,7 @@ public class GameStartCountdown : NetworkBehaviour
     TextMeshProUGUI text;
 
     NetworkVariable<float> startTime;
-    float timeLeft;
+    float timeLeft = 1;
     [SerializeField] float startTimeLeft = 31;
 
     // Start is called before the first frame update
@@ -21,7 +21,7 @@ public class GameStartCountdown : NetworkBehaviour
         text = GetComponent<TextMeshProUGUI>();
     }
 
-    void OnEnable()
+    public override void NetworkStart()
     {
         if (IsServer)
         {
@@ -32,6 +32,7 @@ public class GameStartCountdown : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        // When the client is initially connected it isn't synced with startTime
         try
         {
             timeLeft = startTimeLeft - (NetworkManager.Singleton.NetworkTime - startTime.Value);
