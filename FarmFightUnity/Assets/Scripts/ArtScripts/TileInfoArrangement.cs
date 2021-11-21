@@ -22,7 +22,7 @@ public class TileInfoArrangement : MonoBehaviour
     void Start()
     {
 
-        panels = new panelmover[6];
+        
         positions = new Vector3[6];
         var topPos = top.GetComponent<RectTransform>().anchoredPosition;
         var botPos = bottom.GetComponent<RectTransform>().anchoredPosition;
@@ -31,9 +31,8 @@ public class TileInfoArrangement : MonoBehaviour
         {
             
             positions[i] = new Vector3(topPos.x,  topPos.y - (topPos.y - botPos.y) * i / 5, 0);
-            panels[i] = GameObject.Instantiate(panel).GetComponent<panelmover>();
+
             panels[i].GetComponent<RectTransform>().anchoredPosition = positions[i];
-            panels[i].Init(i);
         }
 
         tileValues = new Dictionary<int, (float, float, float)>();
