@@ -133,7 +133,7 @@ public abstract class TileTemp : TileTempDepr
             // Is a bot
             else
             {
-                GameManager.GM.gameState.AddBotMoney(tileOwner, moneyToAdd);
+                GameManager.GM.gameState.TryAddBotMoney(tileOwner, moneyToAdd);
             }
         }
 

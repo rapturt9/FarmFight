@@ -28,7 +28,8 @@ public class GameState : MonoBehaviour
 
     // Hex coord, (crop#, time planted/time last clicked, farmer or not)
     public Dictionary<Hex, TileSyncData> cropTiles = new Dictionary<Hex, TileSyncData>();
-    public Dictionary<int, makeMove> bots = new Dictionary<int, makeMove>();
+    private Dictionary<int, makeMove> bots = new Dictionary<int, makeMove>();
+    private List<int> botIds = new List<int>();
 
     public List<Hex> hexCoords;
 
@@ -54,11 +55,13 @@ public class GameState : MonoBehaviour
             bot.Init(playerId, this, cropManager, tileManager, tileHandler, soldierManager);
             bots.Add(playerId, bot);
         }
+        botIds = new List<int>(bots.Keys);
     }
 
-    public void AddBotMoney(int playerId, double moneyToAdd)
+    public void TryAddBotMoney(int playerId, double moneyToAdd)
     {
-        bots[playerId].money += moneyToAdd;
+        if (botIds.Contains(playerId))
+            bots[playerId].money += moneyToAdd;
     }
 
     IEnumerator collectGameData()

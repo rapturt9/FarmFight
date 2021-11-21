@@ -16,6 +16,8 @@ public class MultiplayerWorldManager : MonoBehaviour
 
     private void Start()
     {
+        transport = NetworkManager.Singleton.GetComponent<PhotonRealtimeTransport>();
+
         // Makes Hex serializable on the network
         SerializationManager.RegisterSerializationHandlers<Hex>((Stream stream, Hex coord) =>
         {
@@ -35,6 +37,7 @@ public class MultiplayerWorldManager : MonoBehaviour
         // If we started directly from MainScene, we don't want to immediately host/client
         if (SceneVariables.cameThroughMenu)
         {
+            transport.RoomName = SceneVariables.lobbyId;
             // Are we hosting
             if (SceneVariables.isHosting)
             {
@@ -101,7 +104,6 @@ public class MultiplayerWorldManager : MonoBehaviour
 
     public void Join()
     {
-        transport = NetworkManager.Singleton.GetComponent<PhotonRealtimeTransport>();
         NetworkManager.Singleton.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes("FarmFight");
         NetworkManager.Singleton.StartClient();
 

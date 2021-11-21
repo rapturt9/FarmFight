@@ -9,4 +9,10 @@ public static class SceneVariables
 
     // Do we host our game?
     public static bool isHosting = false;
+
+    // Maximum number of bots
+    public static int maxBots = 0;
+
+    // Lobby ID
+    public static string lobbyId = "1";
 }

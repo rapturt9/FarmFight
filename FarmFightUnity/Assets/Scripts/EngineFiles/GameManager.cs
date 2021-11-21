@@ -60,9 +60,16 @@ public class GameManager : NetworkBehaviour
         TileManager.TM.Init();
         SetupCorners();
 
+        // Add bots
         if (IsServer)
         {
-            gameState.Init(2, NetworkManager.Singleton.ConnectedClientsList.Count);
+            int numPlayers = NetworkManager.Singleton.ConnectedClientsList.Count;
+            int botsToAdd = SceneVariables.maxBots;
+            if (botsToAdd + numPlayers > Repository.maxPlayers)
+            {
+                botsToAdd = Repository.maxPlayers - numPlayers;
+            }
+            gameState.Init(botsToAdd, numPlayers);
         }
 
         // Adds a new player and gets their ID
