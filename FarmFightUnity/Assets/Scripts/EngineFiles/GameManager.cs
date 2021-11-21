@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using MLAPI;
-using MLAPI.NetworkVariable;
 using MLAPI.Messaging;
 
 public class GameManager : NetworkBehaviour
@@ -11,16 +10,28 @@ public class GameManager : NetworkBehaviour
     public TileManager tileManager;
     public TileHandler[] TileHandler;
     public GameState gameState;
+    public GameObject interstitial;
 
-    public bool gameIsRunning = false;
     public int currMaxLocalPlayerId = 0;
     private List<Hex> openCorners;
     Repository central;
+    public bool startOnNetworkStart = false; // DEBUG
+
+    public static GameManager GM;
 
     // Start is called before the first frame update
     private void Awake()
     {
         Application.targetFrameRate = 30;
+
+        if (GM == null)
+        {
+            GM = this;
+        }
+        else if (GM != this)
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void Start()
@@ -32,10 +43,34 @@ public class GameManager : NetworkBehaviour
 
     public override void NetworkStart()
     {
+        if (startOnNetworkStart)
+            StartFromMainSceneServerRpc(NetworkManager.Singleton.LocalClientId);
+    }
+
+    [ClientRpc]
+    public void GameStartClientRpc()
+    {
+        GameStart();
+    }
+
+    public void GameStart()
+    {
+        interstitial.SetActive(false);
         TileArtRepository.Art.Init();
         TileManager.TM.Init();
-        gameState.Init();
         SetupCorners();
+
+        // Add bots
+        if (IsServer)
+        {
+            int numPlayers = NetworkManager.Singleton.ConnectedClientsList.Count;
+            int botsToAdd = SceneVariables.maxBots;
+            if (botsToAdd + numPlayers > Repository.maxPlayers)
+            {
+                botsToAdd = Repository.maxPlayers - numPlayers;
+            }
+            gameState.Init(botsToAdd, numPlayers);
+        }
 
         // Adds a new player and gets their ID
         addNewPlayerServerRpc(NetworkManager.Singleton.LocalClientId);
@@ -86,16 +121,7 @@ public class GameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     void addNewPlayerServerRpc(ulong targetClientId)
     {
-        // Sets the player in a random corner
-        int index = Random.Range(0, openCorners.Count - 1);
-        Hex newCorner = openCorners[index];
-        openCorners.RemoveAt(index);
-
-        Potato startingTile = new Potato();
-        startingTile.tileOwner = currMaxLocalPlayerId;
-        BoardChecker.Checker.ChangeTileOwnershipCountServerRpc(currMaxLocalPlayerId, +1, false);
-        int cropTileHandlerIndex = 0;
-        TileManager.TM.Handlers[cropTileHandlerIndex][newCorner] = startingTile;
+        addNewPlayer(currMaxLocalPlayerId);
 
         // Serializes entire board
         TileSyncData[] allTiles = gameState.SerializeBoard();
@@ -119,5 +145,40 @@ public class GameManager : NetworkBehaviour
     {
         central.localPlayerId = localPlayerId;
         gameState.DeserializeBoard(allTiles);
+    }
+
+    // Actually adds player at corner, can be used for bots
+    public void addNewPlayer(int playerId)
+    {
+        // Sets the player in a random corner
+        int index = Random.Range(0, openCorners.Count - 1);
+        Hex newCorner = openCorners[index];
+        openCorners.RemoveAt(index);
+
+        Potato startingTile = new Potato();
+        startingTile.tileOwner = playerId;
+        int cropTileHandlerIndex = 0;
+        TileManager.TM.Handlers[cropTileHandlerIndex][newCorner] = startingTile;
+    }
+
+
+    // Starting directly from the main scene
+    [ServerRpc(RequireOwnership = false)]
+    public void StartFromMainSceneServerRpc(ulong targetClientId)
+    {
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { targetClientId }
+            }
+        };
+        StartFromMainSceneClientRpc(clientRpcParams);
+    }
+
+    [ClientRpc]
+    public void StartFromMainSceneClientRpc(ClientRpcParams clientRpcParams = default)
+    {
+        GameStart();
     }
 }

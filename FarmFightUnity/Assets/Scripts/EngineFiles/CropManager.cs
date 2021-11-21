@@ -33,10 +33,13 @@ public class CropManager : NetworkBehaviour
     public GameObject Vegetable;
     
 
-    public double harvest(Hex hex)
+    public double harvest(Hex hex, int owner = -1)
     {
+        if (owner == -1)
+            owner = central.localPlayerId;
+
         // Only harvest if owned by the local player
-        if (handler[hex].tileOwner == central.localPlayerId)
+        if (handler[hex].tileOwner == owner)
         {
             CropType crop = handler[hex].cropType;
 
@@ -64,7 +67,7 @@ public class CropManager : NetworkBehaviour
                 double add = handler[hex].reset() * hLevel;
                 handler.SyncTileUpdate(hex, new[] { CropTileSyncTypes.lastPlanted });
 
-                if (central.flyingVegies)
+                if (central.flyingVegies && owner == central.localPlayerId)
                 {
                     var vegie = GameObject.Instantiate(Vegetable);
                     vegie.GetComponent<Vegetable>().init(hex, crop, add);
@@ -82,10 +85,13 @@ public class CropManager : NetworkBehaviour
 
     
 
-    public bool canPlant(Hex hex)
+    public bool canPlant(Hex hex, int owner = -1)
     {
+        if (owner == -1)
+            owner = central.localPlayerId;
+
         if (handler[hex].cropType != CropType.blankTile && 
-            handler[hex].tileOwner != central.localPlayerId && // We can't overwrite an opponent's crop
+            handler[hex].tileOwner != owner && // We can't overwrite an opponent's crop
             !handler[hex].hostileOccupation)
         {
             return false;
@@ -93,7 +99,7 @@ public class CropManager : NetworkBehaviour
 
         foreach (var adj in TileManager.TM.getValidNeighbors(hex))
         {
-            if (hasCrop(adj) && (handler[adj].tileOwner == central.localPlayerId))
+            if (hasCrop(adj) && (handler[adj].tileOwner == owner))
             {
                 return true;
             }
@@ -108,9 +114,12 @@ public class CropManager : NetworkBehaviour
     }
 
 
-    public bool addCrop(Hex hex, CropType cropType)
+    public bool addCrop(Hex hex, CropType cropType, int owner = -1)
     {
-        if (!canPlant(hex))
+        if (owner == -1)
+            owner = central.localPlayerId;
+
+        if (!canPlant(hex, owner))
         {
             return false;
         }
@@ -133,11 +142,7 @@ public class CropManager : NetworkBehaviour
         }
 
         // Set owner
-        if (handler[hex].tileOwner != central.localPlayerId)
-        {
-            BoardChecker.Checker.ChangeTileOwnershipCountServerRpc(central.localPlayerId, +1);
-        }
-        handler[hex].tileOwner = central.localPlayerId;
+        handler[hex].tileOwner = owner;
         handler.SyncTileUpdate(hex, new[] { CropTileSyncTypes.cropNum, CropTileSyncTypes.tileOwner });
 
         return true;
@@ -149,10 +154,13 @@ public class CropManager : NetworkBehaviour
     }
 
     // Add farmer
-    public bool addFarmer(Hex hex)
+    public bool addFarmer(Hex hex, int owner = -1)
     {
+        if (owner == -1)
+            owner = central.localPlayerId;
+
         if (handler[hex].containsFarmer == false && 
-            handler[hex].tileOwner == central.localPlayerId && 
+            handler[hex].tileOwner == owner && 
             !handler[hex].hostileOccupation)
         {
             addFarmerServerRpc(BoardHelperFns.HexToArray(hex));
@@ -184,11 +192,5 @@ public class CropManager : NetworkBehaviour
     {
         Hex hex = BoardHelperFns.ArrayToHex(hexArray);
         handler[hex].removeFarmer();
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    void CheckForWinServerRpc(int playerId)
-    {
-        BoardChecker.Checker.CheckForWin(playerId);
     }
 }

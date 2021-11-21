@@ -20,10 +20,16 @@ public enum CropTileSyncTypes
 
 public class GameState : MonoBehaviour
 {
+    public GameManager gameManager;
     public TileHandler tileHandler;
+    public TileManager tileManager;
+    public CropManager cropManager;
+    public SoldierManager soldierManager;
 
     // Hex coord, (crop#, time planted/time last clicked, farmer or not)
     public Dictionary<Hex, TileSyncData> cropTiles = new Dictionary<Hex, TileSyncData>();
+    private Dictionary<int, makeMove> bots = new Dictionary<int, makeMove>();
+    private List<int> botIds = new List<int>();
 
     public List<Hex> hexCoords;
 
@@ -33,15 +39,29 @@ public class GameState : MonoBehaviour
     void Start()
     {
         hexCoords = BoardHelperFns.HexList(3);
-        updateGameStateFirstTime();
     }
 
-    public void Init()
+    public void Init(int numBots, int currMaxLocalPlayerId)
     {
-        // Calling this in init wasn't working for me, idk why
-        // So i called it in start
-        //updateGameStateFirstTime();
+        updateGameStateFirstTime();
         StartCoroutine(collectGameData());
+        
+        for (int playerId = currMaxLocalPlayerId; playerId < numBots + currMaxLocalPlayerId; playerId++)
+        {
+            gameManager.addNewPlayer(playerId);
+            var botObj = new GameObject("Bot"+playerId.ToString());
+            botObj.transform.parent = transform;
+            makeMove bot = botObj.AddComponent<makeMove>();
+            bot.Init(playerId, this, cropManager, tileManager, tileHandler, soldierManager);
+            bots.Add(playerId, bot);
+        }
+        botIds = new List<int>(bots.Keys);
+    }
+
+    public void TryAddBotMoney(int playerId, double moneyToAdd)
+    {
+        if (botIds.Contains(playerId))
+            bots[playerId].money += moneyToAdd;
     }
 
     IEnumerator collectGameData()
@@ -59,7 +79,13 @@ public class GameState : MonoBehaviour
     {
         foreach (var coord in hexCoords)
         {
-            cropTiles[coord] = emptyTileSyncData;
+            /*if (coord == new Hex(0,0)){
+                cropTiles[coord] = new TileSyncData(CropType.carrot, 0.0f, false, 0);
+                tileHandler[coord] = DeserializeTile(cropTiles[coord]);
+                tileHandler[coord].tileOwner = 0;
+                tileHandler.SyncTile(coord);
+            }*/
+            cropTiles[coord] = emptyTileSyncData;  
         }
     }
 
@@ -67,7 +93,6 @@ public class GameState : MonoBehaviour
     {
         foreach (var coord in hexCoords)
         {
-            //tileHandler[coord] not working
             var tileData = SerializeTile(tileHandler[coord]);
             //Only updates our game state if something has changed
             if (tileData != cropTiles[coord])

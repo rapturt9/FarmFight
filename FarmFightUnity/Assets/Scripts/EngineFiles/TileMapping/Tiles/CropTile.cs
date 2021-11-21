@@ -127,8 +127,14 @@ public abstract class TileTemp : TileTempDepr
                 hLevel = 10;
             }
             double moneyToAdd = reset() * hLevel;
+            // Is the player
             if (tileOwner == Repository.Central.localPlayerId)
                 Repository.Central.money += moneyToAdd;
+            // Is a bot
+            else
+            {
+                GameManager.GM.gameState.TryAddBotMoney(tileOwner, moneyToAdd);
+            }
         }
 
         // Changing tile art
@@ -262,14 +268,14 @@ public abstract class TileTemp : TileTempDepr
 
     
 
-    public bool sendSoldier(Hex end, int localPlayerId)
+    public bool sendSoldier(Hex end, int owner)
     {
         if (soldierCount != 0 &&
             end != hexCoord &&
             TileManager.TM.isValidHex(end) &&
-            SortedSoldiers[localPlayerId].Count != 0)
+            SortedSoldiers[owner].Count != 0)
         {
-            Soldier soldier = FindFirstSoldierWithID(localPlayerId);
+            Soldier soldier = FindFirstSoldierWithID(owner);
 
             if (soldier == null)
                 return false;
@@ -392,10 +398,6 @@ public abstract class TileTemp : TileTempDepr
         StopCapturing();
         int newTileOwner = GetCapturingPlayer();
 
-        // Change tile owned counts
-        BoardChecker.Checker.ChangeTileOwnershipCountServerRpc(tileOwner, -1);
-        BoardChecker.Checker.ChangeTileOwnershipCountServerRpc(newTileOwner, +1);
-
         tileOwner = newTileOwner;
         TileSyncer.Syncer.SyncTileUpdate(hexCoord, new[] { CropTileSyncTypes.tileOwner });
         // Capture farmer as well
@@ -406,6 +408,30 @@ public abstract class TileTemp : TileTempDepr
         }
     }
 
+    public double botReset () {
+        double mid = tileArts.Count / 2; //optimal harvest level
+        if(cropType == CropType.eggplant){
+            mid = 4.5;
+        } else {
+            mid = 5.5;
+        }
+        int resistance = 1;
+        if(cropType == CropType.eggplant) resistance = 10;
+        if(cropType == CropType.rice) resistance = 5;
+
+        float calc;
+        double stage = frameInternal / frameRate;      
+
+        calc = Mathf.Abs((float)(stage - mid));
+        calc = Mathf.Pow(0.25f,calc);
+        if (stage > mid){
+            calc = 1.1f;
+        }        
+        if (calc < 0.75f){
+            return 0.0f;
+        }
+        return Mathf.Max(0,calc-tileDamage/resistance);
+    }
 
     public double hReset () {
         double mid = tileArts.Count / 2; //optimal harvest level
@@ -419,7 +445,7 @@ public abstract class TileTemp : TileTempDepr
         if(cropType == CropType.rice) resistance = 5;
 
         float calc;
-        double stage = frameInternal / frameRate;
+        double stage = frameInternal / frameRate;      
 
         //Debug.Log(stage);
 

@@ -39,10 +39,12 @@ public class SoldierManager : NetworkBehaviour
 
 
     // Add soldier
-    public bool addSoldier(Hex hex)
+    public bool addSoldier(Hex hex, int owner = -1)
     {
+        if (owner == -1)
+            owner = Repository.Central.localPlayerId;
+
         int[] hexArray = BoardHelperFns.HexToArray(hex);
-        int owner = Repository.Central.localPlayerId;
         if (crops[hex].tileOwner == owner)
         {
             addSoldierServerRpc(hexArray, owner);
@@ -60,20 +62,23 @@ public class SoldierManager : NetworkBehaviour
 
 
     // Send soldier
-    public void SendSoldier(Hex start, Hex end, int number = 1)
+    public void SendSoldier(Hex start, Hex end, int number = 1, int owner = -1)
     {
+        if (owner == -1)
+            owner = Repository.Central.localPlayerId;
+
         sendSoldierServerRpc(BoardHelperFns.HexToArray(start),
                 BoardHelperFns.HexToArray(end),
-                Repository.Central.localPlayerId);
+                owner);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void sendSoldierServerRpc(int[] startArray, int[] endArray, int localPlayerId)
+    public void sendSoldierServerRpc(int[] startArray, int[] endArray, int owner)
     {
         Hex start = BoardHelperFns.ArrayToHex(startArray);
         Hex end = BoardHelperFns.ArrayToHex(endArray);
 
         TileTemp startTile = crops[start];
-        startTile.sendSoldier(end, localPlayerId);
+        startTile.sendSoldier(end, owner);
     }
 }
