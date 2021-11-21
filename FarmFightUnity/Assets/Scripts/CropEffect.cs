@@ -25,7 +25,7 @@ public class CropEffect : MonoBehaviour
     public SpriteRenderer crackRender;
 
 
-    public void fixedUpdate()
+    public void LateUpdate()
     {
         BattleCloud();
 
@@ -89,10 +89,11 @@ public class CropEffect : MonoBehaviour
             effects.SetBool("FliesAlive", true);
 
             effects.SendEvent("StartFlies");
+            
         }
         if (rotting)
         {
-            Flies.Play();
+            //Flies.Play();
         }
             
         
@@ -119,31 +120,34 @@ public class CropEffect : MonoBehaviour
     public bool CloudActive;
     public Color CloudColor { set { effects.SetVector4("CloudColor", value); } }
     public float CloudSpeed = 0.01f;
-
+    public float cloudsize;
     private void BattleCloud()
     {
         transform.position = startPos;
 
         float size = effects.GetFloat("CloudSize");
 
-        CloudActive = tile.battleOccurring;
+        //CloudActive = tile.battleOccurring;
+
         
+
         if (CloudActive && size < 1)
         {
 
             Color color = getCloudColor();
             
             effects.SetVector4("CloudColor", getCloudColor());
+
             effects.SetFloat("CloudSize", size + CloudSpeed);
         }
         else if(!CloudActive && size > 0)
         {
-            //effects.SetVector4("CloudColor", getCloudColor());
+            effects.SetVector4("CloudColor", getCloudColor());
             effects.SetFloat("CloudSize", size - CloudSpeed);
         }
         else
         {
-            effects.SetVector4("CloudColor", Color.white);
+            //effects.SetVector4("CloudColor", Color.white);
         }
     }
 

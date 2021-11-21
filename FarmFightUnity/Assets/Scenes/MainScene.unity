@@ -2624,6 +2624,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1067818265 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3727017812087899030, guid: ac5b08689e16a4d4e96792f6e4f1e737, type: 3}
+  m_PrefabInstance: {fileID: 1934340398}
+  m_PrefabAsset: {fileID: 0}
+--- !u!210 &1067818268
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1067818265}
+  m_Enabled: 0
+  m_SortingLayerID: 1333491749
+  m_SortingLayer: 2
+  m_SortingOrder: 0
 --- !u!1 &1078330103
 GameObject:
   m_ObjectHideFlags: 0
@@ -4677,10 +4693,10 @@ MonoBehaviour:
   TeamColors:
   - {r: 1, g: 0, b: 0, a: 1}
   - {r: 1, g: 0, b: 0.95224714, a: 1}
-  - {r: 0.9629046, g: 1, b: 0, a: 1}
-  - {r: 0, g: 0.33599806, b: 1, a: 1}
+  - {r: 0.6740551, g: 0.6981132, b: 0.016464932, a: 1}
   - {r: 1, g: 0.53792745, b: 0, a: 1}
   - {r: 0.021381378, g: 1, b: 0, a: 1}
+  - {r: 0, g: 0.33599806, b: 1, a: 1}
   tilemap: {fileID: 1785283980}
 --- !u!114 &1785283978
 MonoBehaviour:
@@ -8771,7 +8787,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2051351948772167670, guid: ac5b08689e16a4d4e96792f6e4f1e737, type: 3}
   m_PrefabInstance: {fileID: 1934340398}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1067818265}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 73be48536ee3647c8869f2abf81429d7, type: 3}

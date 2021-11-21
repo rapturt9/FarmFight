@@ -57,12 +57,12 @@ public class SpriteSwitch : MonoBehaviour
 
         GetComponent<SpriteRenderer>().enabled = true;
 
-        StartCoroutine(fadeIn());
+        StartCoroutine(_fadeIn());
 
     }
 
 
-    private IEnumerator fadeIn()
+    private IEnumerator _fadeIn()
     {
         material.SetFloat("fadeAmount", .3f);
         while (material.GetFloat("fadeAmount") < 1)
@@ -72,6 +72,27 @@ public class SpriteSwitch : MonoBehaviour
         }
     }
 
+    private IEnumerator _fadeOut()
+    {
+        material.SetFloat("fadeAmount", .3f);
+        while (material.GetFloat("fadeAmount") < 1)
+        {
+            material.SetFloat("fadeAmount", material.GetFloat("fadeAmount") + fadespeed);
+            yield return null;
+        }
+    }
+
+    public void FadeIn()
+    {
+        StopCoroutine(_fadeOut());
+        StopCoroutine(_fadeIn());
+    }
+
+    public void FadeOut()
+    {
+        StopCoroutine(_fadeIn());
+        StopCoroutine(_fadeOut());
+    }
 }
 
 

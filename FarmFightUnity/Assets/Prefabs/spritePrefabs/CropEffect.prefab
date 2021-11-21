@@ -150,7 +150,8 @@ MonoBehaviour:
   crackAmount: 0
   crackRender: {fileID: 507197289190471244}
   CloudActive: 0
-  CloudSpeed: 0.01
+  CloudSpeed: 0.03
+  cloudsize: 0
 --- !u!73398921 &5216390347897466010
 VFXRenderer:
   m_ObjectHideFlags: 0
