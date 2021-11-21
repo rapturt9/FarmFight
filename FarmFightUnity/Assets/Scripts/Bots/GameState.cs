@@ -20,13 +20,15 @@ public enum CropTileSyncTypes
 
 public class GameState : MonoBehaviour
 {
+    public GameManager gameManager;
     public TileHandler tileHandler;
-    public makeMove botControl;
-    /*Repository.Central.localPlayerID
-    Repository.Central.money*/
+    public TileManager tileManager;
+    public CropManager cropManager;
+    public SoldierManager soldierManager;
 
     // Hex coord, (crop#, time planted/time last clicked, farmer or not)
     public Dictionary<Hex, TileSyncData> cropTiles = new Dictionary<Hex, TileSyncData>();
+    public Dictionary<int, makeMove> bots = new Dictionary<int, makeMove>();
 
     public List<Hex> hexCoords;
 
@@ -38,11 +40,25 @@ public class GameState : MonoBehaviour
         hexCoords = BoardHelperFns.HexList(3);
     }
 
-    public void Init()
+    public void Init(int numBots, int currMaxLocalPlayerId)
     {
         updateGameStateFirstTime();
         StartCoroutine(collectGameData());
-        botControl.Init();
+        
+        for (int playerId = currMaxLocalPlayerId; playerId < numBots + currMaxLocalPlayerId; playerId++)
+        {
+            gameManager.addNewPlayer(playerId);
+            var botObj = new GameObject("Bot"+playerId.ToString());
+            botObj.transform.parent = transform;
+            makeMove bot = botObj.AddComponent<makeMove>();
+            bot.Init(playerId, this, cropManager, tileManager, tileHandler, soldierManager);
+            bots.Add(playerId, bot);
+        }
+    }
+
+    public void AddBotMoney(int playerId, double moneyToAdd)
+    {
+        bots[playerId].money += moneyToAdd;
     }
 
     IEnumerator collectGameData()

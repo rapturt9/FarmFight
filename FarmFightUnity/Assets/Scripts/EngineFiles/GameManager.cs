@@ -17,10 +17,21 @@ public class GameManager : NetworkBehaviour
     Repository central;
     public bool startOnNetworkStart = false; // DEBUG
 
+    public static GameManager GM;
+
     // Start is called before the first frame update
     private void Awake()
     {
         Application.targetFrameRate = 30;
+
+        if (GM == null)
+        {
+            GM = this;
+        }
+        else if (GM != this)
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void Start()
@@ -47,8 +58,12 @@ public class GameManager : NetworkBehaviour
         interstitial.SetActive(false);
         TileArtRepository.Art.Init();
         TileManager.TM.Init();
-        gameState.Init();
         SetupCorners();
+
+        if (IsServer)
+        {
+            gameState.Init(2, NetworkManager.Singleton.ConnectedClientsList.Count);
+        }
 
         // Adds a new player and gets their ID
         addNewPlayerServerRpc(NetworkManager.Singleton.LocalClientId);
@@ -99,15 +114,7 @@ public class GameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     void addNewPlayerServerRpc(ulong targetClientId)
     {
-        // Sets the player in a random corner
-        int index = Random.Range(0, openCorners.Count - 1);
-        Hex newCorner = openCorners[index];
-        openCorners.RemoveAt(index);
-
-        Potato startingTile = new Potato();
-        startingTile.tileOwner = currMaxLocalPlayerId;
-        int cropTileHandlerIndex = 0;
-        TileManager.TM.Handlers[cropTileHandlerIndex][newCorner] = startingTile;
+        addNewPlayer(currMaxLocalPlayerId);
 
         // Serializes entire board
         TileSyncData[] allTiles = gameState.SerializeBoard();
@@ -131,6 +138,20 @@ public class GameManager : NetworkBehaviour
     {
         central.localPlayerId = localPlayerId;
         gameState.DeserializeBoard(allTiles);
+    }
+
+    // Actually adds player at corner, can be used for bots
+    public void addNewPlayer(int playerId)
+    {
+        // Sets the player in a random corner
+        int index = Random.Range(0, openCorners.Count - 1);
+        Hex newCorner = openCorners[index];
+        openCorners.RemoveAt(index);
+
+        Potato startingTile = new Potato();
+        startingTile.tileOwner = playerId;
+        int cropTileHandlerIndex = 0;
+        TileManager.TM.Handlers[cropTileHandlerIndex][newCorner] = startingTile;
     }
 
 

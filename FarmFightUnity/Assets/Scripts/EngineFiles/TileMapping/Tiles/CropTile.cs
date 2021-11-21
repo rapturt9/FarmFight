@@ -127,8 +127,14 @@ public abstract class TileTemp : TileTempDepr
                 hLevel = 10;
             }
             double moneyToAdd = reset() * hLevel;
+            // Is the player
             if (tileOwner == Repository.Central.localPlayerId)
                 Repository.Central.money += moneyToAdd;
+            // Is a bot
+            else
+            {
+                GameManager.GM.gameState.AddBotMoney(tileOwner, moneyToAdd);
+            }
         }
 
         // Changing tile art
@@ -262,14 +268,14 @@ public abstract class TileTemp : TileTempDepr
 
     
 
-    public bool sendSoldier(Hex end, int localPlayerId)
+    public bool sendSoldier(Hex end, int owner)
     {
         if (soldierCount != 0 &&
             end != hexCoord &&
             TileManager.TM.isValidHex(end) &&
-            SortedSoldiers[localPlayerId].Count != 0)
+            SortedSoldiers[owner].Count != 0)
         {
-            Soldier soldier = FindFirstSoldierWithID(localPlayerId);
+            Soldier soldier = FindFirstSoldierWithID(owner);
 
             if (soldier == null)
                 return false;

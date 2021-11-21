@@ -16,11 +16,21 @@ public class makeMove : MonoBehaviour
     public int actionTimer = 0;
     public Hex startingLoc;
 
+    public double money;
+    private int botPlayerId;
+
     private int numActions = 0;
 
     // Start is called before the first frame update
-    public void Init()
+    public void Init(int botPlayerId, GameState gameData, CropManager cropManager, TileManager tileManager, TileHandler tileHandler, SoldierManager soldierManager)
     {
+        this.botPlayerId = botPlayerId;
+        this.gameData = gameData;
+        this.cropManager = cropManager;
+        this.tileManager = tileManager;
+        this.tileHandler = tileHandler;
+        this.soldierManager = soldierManager;
+        money = Repository.Central.money;
         hexCoords = BoardHelperFns.HexList(3);
         StartCoroutine(startGame());
     }
@@ -30,14 +40,12 @@ public class makeMove : MonoBehaviour
         yield return new WaitForSeconds(0.5F);
         gameData.updateGameState();
         getStartingLoc(true);
-        if (Repository.Central.isBot){
-            while (gameIsRunning){
-                getStartingLoc(false);
-                pickMove(Repository.Central.localPlayerId);
-                numActions += 1;
-                actionTimer = (actionTimer + 1) % 4;
-                yield return new WaitForSeconds(0.5F);
-            }
+        while (gameIsRunning){
+            getStartingLoc(false);
+            pickMove(botPlayerId);
+            numActions += 1;
+            actionTimer = (actionTimer + 1) % 4;
+            yield return new WaitForSeconds(0.5F);
         }
     }
 
@@ -45,14 +53,14 @@ public class makeMove : MonoBehaviour
         if (start) {
             foreach (var coord in hexCoords){
                 TileSyncData tile = gameData.cropTiles[coord];
-                if (tile.tileOwner == Repository.Central.localPlayerId) {
+                if (tile.tileOwner == botPlayerId) {
                     startingLoc = coord;
                 }
             }
         }
         else {
             TileSyncData tile = gameData.cropTiles[startingLoc];
-            if (tile.tileOwner != Repository.Central.localPlayerId) {
+            if (tile.tileOwner != botPlayerId) {
                 getStartingLoc(true);
             }
         }
@@ -62,38 +70,39 @@ public class makeMove : MonoBehaviour
         gameData.updateGameState();
         List<(Hex,string)> possibleMoves = getMoves(player);
         var (loc, bestMove) = evaluateStates(possibleMoves, player);
+        print(bestMove);
 
         if (bestMove == "harvest"){
-            double add = cropManager.harvest(loc);
+            double add = cropManager.harvest(loc, player);
             if (add > 0)
             {
-                Repository.Central.money += add;
+                money += add;
             }
         }
         else if (bestMove == "soldier"){
-            soldierManager.addSoldier(startingLoc);
-            soldierManager.SendSoldier(startingLoc,loc);
-            Repository.Central.money -= 10;
+            soldierManager.addSoldier(startingLoc, player);
+            soldierManager.SendSoldier(startingLoc, loc, player);
+            money -= 10;
         }
         else if (bestMove == "farmer"){
-            cropManager.addFarmer(loc);
-            Repository.Central.money -= 5;
+            cropManager.addFarmer(loc, player);
+            money -= 5;
         }
         else if (bestMove == "plantRice" || bestMove == "plantRiceOver"){
-            cropManager.addCrop(loc,CropType.rice);
-            Repository.Central.money -= 2.0;
+            cropManager.addCrop(loc,CropType.rice, player);
+            money -= 2.0;
         }
         else if (bestMove == "plantCarrot" || bestMove == "plantCarrotOver"){
-            cropManager.addCrop(loc,CropType.carrot);
-            Repository.Central.money -= 2.0;
+            cropManager.addCrop(loc,CropType.carrot, player);
+            money -= 2.0;
         }
         else if (bestMove == "plantPotato"){
-            cropManager.addCrop(loc,CropType.potato);
-            Repository.Central.money -= 1.0;
+            cropManager.addCrop(loc,CropType.potato, player);
+            money -= 1.0;
         }
         else if (bestMove == "plantEggplant" || bestMove == "plantEggplantOver"){
-            cropManager.addCrop(loc,CropType.eggplant);
-            Repository.Central.money -= 10;
+            cropManager.addCrop(loc,CropType.eggplant, player);
+            money -= 10;
         }
     }
 
@@ -249,58 +258,58 @@ public class makeMove : MonoBehaviour
                 }
                 
                 if (tileHandler[coord].containsFarmer == false && 
-                tileHandler[coord].tileOwner == Repository.Central.localPlayerId && 
-                !tileHandler[coord].hostileOccupation && Repository.Central.money >= 5){
+                tileHandler[coord].tileOwner == botPlayerId && 
+                !tileHandler[coord].hostileOccupation && money >= 5){
                     res.Add((coord,"farmer"));
                 }
                 
                 if (actionTimer == 0){
                     if (tile.cropType == CropType.potato){
-                        if (Repository.Central.money >= 2) {
+                        if (money >= 2) {
                             res.Add((coord,"plantRiceOver"));
                         }
-                        else if (Repository.Central.money >= 2) {
+                        else if (money >= 2) {
                             res.Add((coord,"plantCarrotOver"));
                         }
-                        else if (Repository.Central.money >= 10) {
+                        else if (money >= 10) {
                             res.Add((coord,"plantEggplantOver"));
                         }
                     }
                     else if (tile.cropType == CropType.rice){
-                        if (Repository.Central.money >= 2) {
+                        if (money >= 2) {
                             res.Add((coord,"plantCarrotOver"));
                         }
-                        if (Repository.Central.money >= 10) {
+                        if (money >= 10) {
                             res.Add((coord,"plantEggplantOver"));
                         }
                     }
                     else if (tile.cropType == CropType.carrot){
-                        if (Repository.Central.money >= 10) {
+                        if (money >= 10) {
                             res.Add((coord,"plantEggplantOver"));
                         }
                     }
 
                     foreach (var newLoc in tileManager.getValidNeighbors(coord)){
                         if (hexCoords.Contains(newLoc) && (gameData.cropTiles[newLoc].tileOwner == -1) && (gameData.cropTiles[newLoc].cropType == CropType.blankTile)){
-                            if (!res.Contains((newLoc,"plantRice")) && Repository.Central.money >= 2){
+                            if (!res.Contains((newLoc,"plantRice")) && money >= 2){
                                 res.Add((newLoc,"plantRice"));
                             }
-                            if (!res.Contains((newLoc,"plantCarrot")) && Repository.Central.money >= 2){
+                            if (!res.Contains((newLoc,"plantCarrot")) && money >= 2){
                                 res.Add((newLoc,"plantCarrot"));
                             }
-                            if (!res.Contains((newLoc,"plantPotato")) && Repository.Central.money >= 1){
+                            if (!res.Contains((newLoc,"plantPotato")) && money >= 1){
                                 res.Add((newLoc,"plantPotato"));
                             }
-                            if (!res.Contains((newLoc,"plantEggplant")) && Repository.Central.money >= 10){
+                            if (!res.Contains((newLoc,"plantEggplant")) && money >= 10){
                                 res.Add((newLoc,"plantEggplant"));
                             }
                         }
                     }
                 }
             }
-            else if (tile.tileOwner != -1 && Repository.Central.money >= 10){
+            else if (tile.tileOwner != -1 && money >= 10){
                 foreach (var newLoc in tileManager.getValidNeighbors(coord)){
-                    if (tileHandler[coord].tileOwner == Repository.Central.localPlayerId){
+                    if (tileHandler[coord].tileOwner == botPlayerId){
                         res.Add((coord,"soldier"));
                     }
                 }
