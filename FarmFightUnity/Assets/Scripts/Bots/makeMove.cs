@@ -81,7 +81,7 @@ public class makeMove : MonoBehaviour
         }
         else if (bestMove == "soldier"){
             soldierManager.addSoldier(startingLoc, player);
-            soldierManager.SendSoldier(startingLoc, loc, player);
+            soldierManager.SendSoldier(startingLoc, loc, 1, player);
             money -= 10;
         }
         else if (bestMove == "farmer"){
@@ -304,13 +304,13 @@ public class makeMove : MonoBehaviour
                                 res.Add((newLoc,"plantEggplant"));
                             }
                         }
-                    }
-                }
-            }
-            else if (tile.tileOwner != -1 && money >= 10){
-                foreach (var newLoc in tileManager.getValidNeighbors(coord)){
-                    if (tileHandler[coord].tileOwner == botPlayerId){
-                        res.Add((coord,"soldier"));
+                        else if (hexCoords.Contains(newLoc) 
+                        && (gameData.cropTiles[newLoc].tileOwner != -1) 
+                        && (gameData.cropTiles[newLoc].tileOwner != botPlayerId)){
+                            if (money >= 10){
+                                res.Add((newLoc,"soldier"));
+                            }
+                        }
                     }
                 }
             }
