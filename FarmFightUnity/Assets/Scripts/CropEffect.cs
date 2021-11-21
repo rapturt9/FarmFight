@@ -126,7 +126,7 @@ public class CropEffect : MonoBehaviour
 
         float size = effects.GetFloat("CloudSize");
 
-        
+        CloudActive = tile.battleOccurring;
         
         if (CloudActive && size < 1)
         {

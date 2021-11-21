@@ -42,7 +42,13 @@ public class Repository : MonoBehaviour
 
     /// just for ease of access
     ///
-    public TileHandler cropHandler;
+    public TileHandler cropHandler
+    {
+        get
+        {
+            return TileManager.TM["Crops"];
+        }
+    }
 
     public PlayState GamesMode;
 

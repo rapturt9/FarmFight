@@ -86,9 +86,7 @@ public class Market : NetworkBehaviour
             soldierManager.SendSoldier(selectedHex, endHex);
         }
 
-        // Updates money text
-        string dollars = "$" + (((int)(central.money * 100)) / 100.0).ToString();
-        moneyText.text = dollars;
+        
     }
 
     public void MarketUpdateFunctionality()

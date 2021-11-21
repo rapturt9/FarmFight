@@ -44,7 +44,7 @@ public class TileManager : MonoBehaviour
         validHexes = new HashSet<Hex>(BoardHelperFns.HexList(size)) ;
     }
 
-    HashSet<Hex> validHexes;
+    public HashSet<Hex> validHexes;
 
     public static TileManager TM;
 
