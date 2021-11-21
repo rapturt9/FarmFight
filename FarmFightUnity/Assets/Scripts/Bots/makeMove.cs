@@ -15,7 +15,7 @@ public class makeMove : MonoBehaviour
     public SoldierManager soldierManager;
     public int actionTimer = 0;
     public Hex startingLoc;
-
+    
     public double money;
     private int botPlayerId;
 

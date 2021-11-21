@@ -1791,11 +1791,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9fbf21ee9aed4941b2f1073f606d799, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
+  gameManager: {fileID: 58370721}
   tileHandler: {fileID: 1228046376}
-  tileManager: {fileID: 0}
-  cropManager: {fileID: 0}
-  soldierManager: {fileID: 0}
+  tileManager: {fileID: 1141926245}
+  cropManager: {fileID: 1228046377}
+  soldierManager: {fileID: 1228046379}
   hexCoords: []
 --- !u!114 &358149040
 MonoBehaviour:
