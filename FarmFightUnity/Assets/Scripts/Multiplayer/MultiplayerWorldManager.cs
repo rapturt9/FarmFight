@@ -8,12 +8,11 @@ using MLAPI.Transports.PhotonRealtime;
 
 public class MultiplayerWorldManager : MonoBehaviour
 {
-    public bool startAsHost = true;
-    private bool hostStarted = false;
-
     PhotonRealtimeTransport transport;
 
     public GameManager gameManager;
+    public GameObject interstitial;
+    public GameObject startGameButton;
 
     private void Start()
     {
@@ -33,37 +32,33 @@ public class MultiplayerWorldManager : MonoBehaviour
             }
         });
 
-        // Are we hosting
-        if (SceneVariables.isHosting)
+        // If we started directly from MainScene, we don't want to immediately host/client
+        if (SceneVariables.cameThroughMenu)
         {
-            Host();
-        }
-        else
-        {
-            Join();
+            // Are we hosting
+            if (SceneVariables.isHosting)
+            {
+                Host();
+            }
+            else
+            {
+                Join();
+            }
         }
     }
     void OnGUI()
     {
-        if (!startAsHost)
+        GUILayout.BeginArea(new Rect(10, 10, 300, 300));
+        if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
         {
-            GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-            if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
-            {
-                StartButtons();
-            }
-            else
-            {
-                StatusLabels();
-            }
+            StartButtons();
+        }
+        else
+        {
+            StatusLabels();
+        }
 
-            GUILayout.EndArea();
-        }
-        else if (!hostStarted)
-        {
-            NetworkManager.Singleton.StartHost();
-            hostStarted = true;
-        }
+        GUILayout.EndArea();
     }
 
     void StartButtons()
@@ -81,21 +76,19 @@ public class MultiplayerWorldManager : MonoBehaviour
         GUILayout.Label("Transport: " +
             NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
         GUILayout.Label("Mode: " + mode);
-
-        if (NetworkManager.Singleton.IsHost && !Repository.Central.gameIsRunning)
-        {
-            if (GUILayout.Button("Start Game"))
-            {
-                print("Starting game");
-                gameManager.GameStartClientRpc();
-            }
-        }
     }
 
     public void Host()
     {
         NetworkManager.Singleton.ConnectionApprovalCallback += ApprovalCheck;
         NetworkManager.Singleton.StartHost();
+
+        // Do different stuff if we started from menu or directly from scene
+        if (SceneVariables.cameThroughMenu)
+            startGameButton.SetActive(true);
+        else
+            gameManager.GameStart();
+
         print("Joining as Host");
     }
 
@@ -111,6 +104,10 @@ public class MultiplayerWorldManager : MonoBehaviour
         transport = NetworkManager.Singleton.GetComponent<PhotonRealtimeTransport>();
         NetworkManager.Singleton.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes("FarmFight");
         NetworkManager.Singleton.StartClient();
+
+        if (!SceneVariables.cameThroughMenu)
+            gameManager.startOnNetworkStart = true;
+
         print("Joining as Client");
     }
 }

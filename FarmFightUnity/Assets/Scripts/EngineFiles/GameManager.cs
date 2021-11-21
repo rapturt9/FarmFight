@@ -10,10 +10,12 @@ public class GameManager : NetworkBehaviour
     public TileManager tileManager;
     public TileHandler[] TileHandler;
     public GameState gameState;
+    public GameObject interstitial;
 
     public int currMaxLocalPlayerId = 0;
     private List<Hex> openCorners;
     Repository central;
+    public bool startOnNetworkStart = false; // DEBUG
 
     // Start is called before the first frame update
     private void Awake()
@@ -27,20 +29,22 @@ public class GameManager : NetworkBehaviour
 
         central.GamesMode = PlayState.NormalGame;
     }
-    
+
     public override void NetworkStart()
     {
-        //GameStart();
+        if (startOnNetworkStart)
+            StartFromMainSceneServerRpc(NetworkManager.Singleton.LocalClientId);
     }
 
     [ClientRpc]
-    public void GameStartClientRpc()
+    public void GameStartClientRpc()//(ClientRpcParams clientRpcParams = default)
     {
         GameStart();
     }
 
-    void GameStart()
+    public void GameStart()
     {
+        interstitial.SetActive(false);
         TileArtRepository.Art.Init();
         TileManager.TM.Init();
         gameState.Init();
@@ -127,5 +131,26 @@ public class GameManager : NetworkBehaviour
     {
         central.localPlayerId = localPlayerId;
         gameState.DeserializeBoard(allTiles);
+    }
+
+
+    // Starting directly from the main scene
+    [ServerRpc(RequireOwnership = false)]
+    public void StartFromMainSceneServerRpc(ulong targetClientId)
+    {
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { targetClientId }
+            }
+        };
+        StartFromMainSceneClientRpc(clientRpcParams);
+    }
+
+    [ClientRpc]
+    public void StartFromMainSceneClientRpc(ClientRpcParams clientRpcParams = default)
+    {
+        GameStart();
     }
 }

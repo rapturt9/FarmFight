@@ -9,5 +9,6 @@ public class LobbyMenu : MonoBehaviour
     {
         SceneManager.LoadScene("MainScene");
         SceneVariables.isHosting = isHosting;
+        SceneVariables.cameThroughMenu = true;
     }
 }
