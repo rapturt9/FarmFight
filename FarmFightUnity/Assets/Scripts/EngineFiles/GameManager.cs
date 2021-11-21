@@ -13,6 +13,7 @@ public class GameManager : NetworkBehaviour
     public GameObject interstitial;
 
     public int currMaxLocalPlayerId = 0;
+    public int totalPlayersAndBots = 0;
     private List<Hex> openCorners;
     Repository central;
     public bool startOnNetworkStart = false; // DEBUG
@@ -70,6 +71,7 @@ public class GameManager : NetworkBehaviour
                 botsToAdd = Repository.maxPlayers - numPlayers;
             }
             gameState.Init(botsToAdd, numPlayers);
+            totalPlayersAndBots += botsToAdd;
         }
 
         // Adds a new player and gets their ID
@@ -138,6 +140,7 @@ public class GameManager : NetworkBehaviour
 
         // Adds player index
         currMaxLocalPlayerId++;
+        totalPlayersAndBots++;
     }
 
     [ClientRpc]

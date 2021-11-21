@@ -51,7 +51,7 @@ public class BoardChecker : NetworkBehaviour
         while (Repository.Central.gameIsRunning)
         {
             UpdateTileCounts();
-            if (gameManager.currMaxLocalPlayerId > 1) // Is there at least one player to win against
+            if (gameManager.totalPlayersAndBots > 1) // Is there at least one player to win against
             {
                 int winningPlayer = CheckForAnyWin();
                 if (winningPlayer != -1)
@@ -79,7 +79,7 @@ public class BoardChecker : NetworkBehaviour
 
     public int CheckForAnyWin()
     {
-        for (int playerId = 0; playerId < gameManager.currMaxLocalPlayerId; playerId++)
+        for (int playerId = 0; playerId < gameManager.totalPlayersAndBots; playerId++)
         {
             if (CheckForWin(playerId)) // Have we actually won
             {
@@ -105,7 +105,8 @@ public class BoardChecker : NetworkBehaviour
             Debug.Log("You lost :(");
         }
 
-        Debug.Log("Player " + winningPlayer.ToString() + " has won");
+        if (winningPlayer != -1)
+            Debug.Log("Player " + winningPlayer.ToString() + " has won");
     }
 
     void UpdateTileCounts()
