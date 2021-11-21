@@ -29,7 +29,7 @@ public abstract class TileTemp : TileTempDepr
     public CropEffect effect;
 
 
-    public GameObject DamageHex = null;
+    
 
     
     
@@ -44,12 +44,7 @@ public abstract class TileTemp : TileTempDepr
             effect = SpriteRepo.Sprites["CropEffect"].GetComponent<CropEffect>();
             effect.GetComponent<CropEffect>().init(this);
         }
-        if(cracks == null)
-        {
-            cracksInit = false;
-            cracks = SpriteRepo.Sprites["DamageHex"];
-            cracks.GetComponent<DamageTile>().init(this);
-        }
+        
 
         SortedSoldiers = new Dictionary<int, List<Soldier>>();
         for (int i = 0; i < Repository.maxPlayers; i++)
@@ -140,6 +135,8 @@ public abstract class TileTemp : TileTempDepr
                 Repository.Central.money += moneyToAdd;
         }
 
+        effect.crackAmount = tileDamage / 10f;
+
         // Changing tile art
         if (!battleOccurring)
         {
@@ -151,20 +148,14 @@ public abstract class TileTemp : TileTempDepr
             {
                 currentArt = tileArts[tileArts.Count - 1];
             }
-            if(cracksInit){
-                cracks.GetComponent<DamageTile>().FadeOut(tileDamage / 10.0f);
-                cracksInit = false;
-            }
+            
             if( tileDamage > 0.0f){
                 tileDamage -= Time.deltaTime / 3;
                 
             }
         } else
         {
-            if(!cracksInit){
-                cracks.GetComponent<DamageTile>().FadeIn(tileDamage / 10.0f);
-                cracksInit = true; 
-            }
+            
             if(tileDamage < 10.0f){
                 tileDamage += Time.deltaTime;
             }
