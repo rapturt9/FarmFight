@@ -15,7 +15,6 @@ public class BoardChecker : NetworkBehaviour
     public int[] ownedTileCount;
 
     public List<Hex> hexCoords;
-    int totalTiles;
 
     void Awake()
     {
@@ -36,13 +35,15 @@ public class BoardChecker : NetworkBehaviour
     void Start()
     {
         hexCoords = BoardHelperFns.HexList(TileManager.TM.size);
-        totalTiles = hexCoords.Count;
         ownedTileCount = new int[Repository.maxPlayers];
     }
 
     public void StartChecking()
     {
-        StartCoroutine("CheckBoard");
+        if (IsServer)
+        {
+            StartCoroutine("CheckBoard");
+        }
     }
 
     public IEnumerator CheckBoard()
@@ -50,57 +51,42 @@ public class BoardChecker : NetworkBehaviour
         while (Repository.Central.gameIsRunning)
         {
             UpdateTileCounts();
-            for (int playerId = 0; playerId < gameManager.currMaxLocalPlayerId; playerId++)
+            if (gameManager.currMaxLocalPlayerId > 1) // Is there at least one player to win against
             {
-                if (gameManager.currMaxLocalPlayerId > 1 && // Is there at least one player to win against
-                    CheckForWin(playerId)) // Have we actually won
+                int winningPlayer = CheckForAnyWin();
+                if (winningPlayer != -1)
                 {
                     Repository.Central.gameIsRunning = false;
-                    EndGameClientRpc(playerId);
+                    EndGameClientRpc(winningPlayer);
                     yield return null;
                 }
             }
-
             yield return new WaitForSeconds(1f);
         }
     }
 
-    public bool CheckForWin(int playerId)
+    bool CheckForWin(int playerId)
     {
-        // Total domination of all tiles
-        if (ownedTileCount[playerId] == totalTiles)
+        for (int id = 0; id<Repository.maxPlayers; id++)
         {
-            return true;
-        }
-        // Nobody else has anything
-        else
-        {
-            for (int id = 0; id<Repository.maxPlayers; id++)
+            if (id != playerId && ownedTileCount[id] != 0)
             {
-                if (id != playerId && ownedTileCount[id] != 0)
-                {
-                    return false;
-                }
+                return false;
             }
-            return true;
         }
-        //return false;
+        return true;
     }
 
-    // Keeps track of tiles owned by everybody
-    [ServerRpc(RequireOwnership = false)]
-    public void ChangeTileOwnershipCountServerRpc(int playerId, int count, bool checkForWin = true)
+    public int CheckForAnyWin()
     {
-        return;
-        ownedTileCount[playerId] += count;
-
-        if (checkForWin && // Do we want to check
-            gameManager.currMaxLocalPlayerId >= 1 && // Is there at least one player to win against
-            CheckForWin(playerId)) // Have we actually one
+        for (int playerId = 0; playerId < gameManager.currMaxLocalPlayerId; playerId++)
         {
-            Repository.Central.gameIsRunning = false;
-            EndGameClientRpc(playerId);
+            if (CheckForWin(playerId)) // Have we actually won
+            {
+                return playerId;
+            }
         }
+        return -1;
     }
 
     [ClientRpc]

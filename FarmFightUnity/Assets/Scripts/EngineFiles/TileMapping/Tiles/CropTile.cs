@@ -392,10 +392,6 @@ public abstract class TileTemp : TileTempDepr
         StopCapturing();
         int newTileOwner = GetCapturingPlayer();
 
-        // Change tile owned counts
-        BoardChecker.Checker.ChangeTileOwnershipCountServerRpc(tileOwner, -1);
-        BoardChecker.Checker.ChangeTileOwnershipCountServerRpc(newTileOwner, +1);
-
         tileOwner = newTileOwner;
         TileSyncer.Syncer.SyncTileUpdate(hexCoord, new[] { CropTileSyncTypes.tileOwner });
         // Capture farmer as well

@@ -133,10 +133,6 @@ public class CropManager : NetworkBehaviour
         }
 
         // Set owner
-        if (handler[hex].tileOwner != central.localPlayerId)
-        {
-            BoardChecker.Checker.ChangeTileOwnershipCountServerRpc(central.localPlayerId, +1);
-        }
         handler[hex].tileOwner = central.localPlayerId;
         handler.SyncTileUpdate(hex, new[] { CropTileSyncTypes.cropNum, CropTileSyncTypes.tileOwner });
 
@@ -184,11 +180,5 @@ public class CropManager : NetworkBehaviour
     {
         Hex hex = BoardHelperFns.ArrayToHex(hexArray);
         handler[hex].removeFarmer();
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    void CheckForWinServerRpc(int playerId)
-    {
-        BoardChecker.Checker.CheckForWin(playerId);
     }
 }
