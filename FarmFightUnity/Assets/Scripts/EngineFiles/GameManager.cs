@@ -42,6 +42,7 @@ public class GameManager : NetworkBehaviour
 
         // Now, lets things update
         central.gameIsRunning = true;
+        BoardChecker.Checker.StartChecking();
     }
 
     // Update is called once per frame
@@ -87,7 +88,10 @@ public class GameManager : NetworkBehaviour
     {
         // Sets the player in a random corner
         int index = Random.Range(0, openCorners.Count - 1);
+        
         Hex newCorner = openCorners[index];
+        central.selectedHex = newCorner;
+
         openCorners.RemoveAt(index);
 
         Potato startingTile = new Potato();

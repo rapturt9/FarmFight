@@ -17,6 +17,8 @@ public class Repository : MonoBehaviour
 
     public const int maxPlayers = 6;
 
+    public Color[] TeamColors { get { return OutlineSetter.OS.TeamColors; } }
+
     /// <summary>
     /// the central repository to store necessary game info inside
     /// </summary>
@@ -40,7 +42,13 @@ public class Repository : MonoBehaviour
 
     /// just for ease of access
     ///
-    public TileHandler cropHandler;
+    public TileHandler cropHandler
+    {
+        get
+        {
+            return TileManager.TM["Crops"];
+        }
+    }
 
     public PlayState GamesMode;
 

@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using MLAPI;
@@ -17,24 +17,38 @@ public abstract class TileTemp : TileTempDepr
 
     public float timeStartedCapturing = -1f;
 
-    private float maxTimeToCapture = 2f;
+    private float maxTimeToCapture = 3f;
 
     public bool hostileOccupation
     {
         get { return timeStartedCapturing != -1f; }
     }
 
-    public GameObject CropEffect = null;
-
-    private GameObject effect;
     
+
+    public CropEffect effect;
+
+
+    public GameObject DamageHex = null;
+
+    
+    
+    private bool cracksInit;
+
+    public float tileDamage = 0.0f;
     public override void Start()
     {
         if (effect == null)
         {
 
-            effect = SpriteRepo.Sprites["CropEffect"];
+            effect = SpriteRepo.Sprites["CropEffect"].GetComponent<CropEffect>();
             effect.GetComponent<CropEffect>().init(this);
+        }
+        if(cracks == null)
+        {
+            cracksInit = false;
+            cracks = SpriteRepo.Sprites["DamageHex"];
+            cracks.GetComponent<DamageTile>().init(this);
         }
 
         SortedSoldiers = new Dictionary<int, List<Soldier>>();
@@ -51,7 +65,19 @@ public abstract class TileTemp : TileTempDepr
 
     public override void Behavior()
     {
+
+
         // Update frames
+        if (effect == null && tileOwner != -1)
+        {
+
+            effect = SpriteRepo.Sprites["CropEffect"].GetComponent<CropEffect>();
+            effect.GetComponent<CropEffect>().init(this);
+        }
+
+
+        
+
         frameInternal = Mathf.Min(
             (int)((NetworkManager.Singleton.NetworkTime - timeLastPlanted) * frameRate),
             tileArts.Count * frameRate);
@@ -71,11 +97,9 @@ public abstract class TileTemp : TileTempDepr
         double diff = frameInternal / frameRate - mid; //for sparkle
         double diff2 = tileArts.Count - frameInternal / frameRate; //for rot
 
-        if (cropType == CropType.blankTile)
-        {
-            GameObject.Destroy(effect);
-        }
-        else if (-.3 < diff && diff < .3)
+
+        if (-.3 < diff && diff < .3)
+
         {
 
             effect.GetComponent<CropEffect>().Sparkle();
@@ -127,10 +151,29 @@ public abstract class TileTemp : TileTempDepr
             {
                 currentArt = tileArts[tileArts.Count - 1];
             }
-        }
-        else
+            if(cracksInit){
+                cracks.GetComponent<DamageTile>().FadeOut(tileDamage / 10.0f);
+                cracksInit = false;
+            }
+            if( tileDamage > 0.0f){
+                tileDamage -= Time.deltaTime / 3;
+                
+            }
+        } else
         {
-            currentArt = null;
+            if(!cracksInit){
+                cracks.GetComponent<DamageTile>().FadeIn(tileDamage / 10.0f);
+                cracksInit = true; 
+            }
+            if(tileDamage < 10.0f){
+                tileDamage += Time.deltaTime;
+            }
+        }
+
+        if(NetworkManager.Singleton.IsServer){
+            if(tileDamage % 1 > .9f){
+                TileSyncer.Syncer.SyncTileUpdate(hexCoord,new[] {CropTileSyncTypes.tileDamage});
+            }
         }
 
         //update tileinfo
@@ -163,8 +206,10 @@ public abstract class TileTemp : TileTempDepr
     //destroys all associated gameobjects
     public override void End()
     {
+
         if(effect != null)
             GameObject.Destroy(effect);
+
     }
 
 
@@ -220,7 +265,7 @@ public abstract class TileTemp : TileTempDepr
             soldier.owner.Value != tileOwner && 
             SortedSoldiers[tileOwner].Count == 0)
         {
-            StartCapturing();
+            StartCapturing(soldier.owner.Value);
         }
     }
 
@@ -378,6 +423,9 @@ public abstract class TileTemp : TileTempDepr
         } else {
             mid = 5.5;
         }
+        int resistance = 1;
+        if(cropType == CropType.eggplant) resistance = 10;
+        if(cropType == CropType.rice) resistance = 5;
 
         float calc;
         double stage = frameInternal / frameRate;
@@ -387,7 +435,7 @@ public abstract class TileTemp : TileTempDepr
         calc = Mathf.Abs((float)(stage - mid));
         calc = Mathf.Pow(0.25f,calc);
 
-        return calc;
+        return Mathf.Max(0,calc-tileDamage/resistance);
     }
 
     //return crop level and reset crop growth
@@ -396,6 +444,7 @@ public abstract class TileTemp : TileTempDepr
         timeLastPlanted = NetworkManager.Singleton.NetworkTime;
         frameInternal = 0;
         frame = 0;
+        effect.HarvestSound();
         return hr;
     }
 
@@ -447,7 +496,9 @@ public abstract class TileTemp : TileTempDepr
         if (NetworkManager.Singleton.IsServer)
         {
             //Control Display
-            if (battleCloud == null)
+            effect.CloudActive = true;
+
+            if (battleCloud == null && false)
             {
                 battleCloud = SpriteRepo.Sprites["Cloud"];
                 battleCloud.transform.position = TileManager.TM.HexToWorld(hexCoord);
@@ -464,7 +515,9 @@ public abstract class TileTemp : TileTempDepr
 
     public void StopBattle()
     {
-        if (battleCloud != null && NetworkManager.Singleton.IsServer)
+        effect.CloudActive = false;
+
+        if (battleCloud != null && NetworkManager.Singleton.IsServer && false)
         {
             GameObject.Destroy(battleCloud);
             battleCloud = null;
@@ -505,7 +558,8 @@ public abstract class TileTemp : TileTempDepr
 
         if (newOwner != -1 && newOwner != tileOwner && NetworkManager.Singleton.IsServer)
         {
-            StartCapturing();
+
+            StartCapturing(newOwner);
         }
     }
 
@@ -585,8 +639,21 @@ public abstract class TileTemp : TileTempDepr
         return false;
     }
 
-    void StartCapturing() { timeStartedCapturing = NetworkManager.Singleton.NetworkTime; }
-    void StopCapturing() { timeStartedCapturing = -1f; }
+    void StartCapturing(int newOwner)
+    {
+
+        timeStartedCapturing = NetworkManager.Singleton.NetworkTime;
+        if(newOwner != -1)
+            effect.StartCapture(maxTimeToCapture, Repository.Central.TeamColors[newOwner]);
+    }
+    void StopCapturing()
+    {
+        timeStartedCapturing = -1f;
+        effect.StopCapture();
+    }
+
+
+    
 }
 
 
@@ -607,6 +674,7 @@ public class BlankTile: TileTemp
     {
         base.Start();
         cropType = CropType.blankTile;
+        
 
     }
     public override void LoadArt()

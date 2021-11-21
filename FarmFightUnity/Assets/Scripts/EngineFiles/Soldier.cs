@@ -26,13 +26,13 @@ public class Soldier: NetworkBehaviour
         handler = TileManager.TM["Crops"];
     }
     
-    public IEnumerator FadeInCoroutine()
+    private IEnumerator FadeInCoroutine()
     {
         GetComponent<SpriteRenderer>().enabled = true;
 
         while (GetComponent<SpriteRenderer>().color.a < 1)
         {
-            GetComponent<SpriteRenderer>().color += (Color.black * fadesSpeed);
+            GetComponent<SpriteSwitch>().FadeIn();
             
             yield return null;
         }
@@ -168,14 +168,12 @@ public class Soldier: NetworkBehaviour
 
     public void FadeIn()
     {
-        StopCoroutine("FadeOutCoroutine");
-        StartCoroutine("FadeInCoroutine");
+        GetComponent<SpriteSwitch>().FadeIn();
     }
 
     public void FadeOut()
     {
-        StopCoroutine("FadeInCoroutine");
-        StartCoroutine("FadeOutCoroutine");
+        GetComponent<SpriteSwitch>().FadeOut();
     }
 
     public void Kill()
