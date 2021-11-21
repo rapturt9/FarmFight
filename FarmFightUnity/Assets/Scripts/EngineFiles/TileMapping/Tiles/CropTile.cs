@@ -104,7 +104,6 @@ public abstract class TileTemp : TileTempDepr
             if (cropType == CropType.potato)
             {
                 hLevel = 1;
-
             }
             else if (cropType == CropType.carrot)
             {

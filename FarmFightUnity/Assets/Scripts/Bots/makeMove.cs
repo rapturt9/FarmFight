@@ -20,6 +20,7 @@ public class makeMove : MonoBehaviour
     private int botPlayerId;
 
     private int numActions = 0;
+    private bool goSuperSaiyan = false;
 
     // Start is called before the first frame update
     public void Init(int botPlayerId, GameState gameData, CropManager cropManager, TileManager tileManager, TileHandler tileHandler, SoldierManager soldierManager)
@@ -44,8 +45,14 @@ public class makeMove : MonoBehaviour
             getStartingLoc(false);
             pickMove(botPlayerId);
             numActions += 1;
-            actionTimer = (actionTimer + 1) % 4;
-            yield return new WaitForSeconds(0.5F);
+            if (goSuperSaiyan){
+                yield return new WaitForSeconds(0.05F);
+                actionTimer = (actionTimer + 1) % 1;
+            }
+            else{
+                yield return new WaitForSeconds(0.5F);
+                actionTimer = (actionTimer + 1) % 4;
+            }   
         }
     }
 
@@ -70,7 +77,6 @@ public class makeMove : MonoBehaviour
         gameData.updateGameState();
         List<(Hex,string)> possibleMoves = getMoves(player);
         var (loc, bestMove) = evaluateStates(possibleMoves, player);
-        print(bestMove);
 
         if (bestMove == "harvest"){
             double add = cropManager.harvest(loc, player);
@@ -118,31 +124,47 @@ public class makeMove : MonoBehaviour
                 currentVal = moneyGained;
             }
             else if (move == "farmer"){
-                currentVal = 15.2f;
+                if (!goSuperSaiyan){
+                    currentVal = 15.2f;
+                    currentVal -= 0.01f - 0.001f*BoardHelperFns.distance(startingLoc,loc);
+                }
             }
             else if (move == "soldier"){
                 currentVal = 15.1f;
+                currentVal -= 0.01f - 0.001f*BoardHelperFns.distance(startingLoc,loc);
             }
             else if (move == "plantPotato") {
                 currentVal = 1.5f;
+                if (goSuperSaiyan){
+                    currentVal += 15.0f;
+                }
                 if (numActions > 40){
                     currentVal = 0.0f;
                 }
             }
             else if (move == "plantRice") {
                 currentVal = 3.0f;
+                if (goSuperSaiyan){
+                    currentVal += 15.0f;
+                }
                 if (numActions > 60){
                     currentVal = 0.0f;
                 }
             }
             else if (move == "plantCarrot") {
                 currentVal = 6.0f;
+                if (goSuperSaiyan){
+                    currentVal += 15.0f;
+                }
                 if (numActions > 90){
                     currentVal = 0.0f;
                 }
             }
             else if (move == "plantEggplant") {
                 currentVal = 15.0f;
+                if (goSuperSaiyan){
+                    currentVal += 15.0f;
+                }
             }
             else if (move == "plantRiceOver") {
                 currentVal = 2.9f;
@@ -171,6 +193,12 @@ public class makeMove : MonoBehaviour
             else if (currentVal > bestVal){
                 bestVal = currentVal;
                 bestMove = elem;
+            }
+            else{
+                if (Random.Range(0,1001) >= 950){
+                    bestVal = currentVal;
+                    bestMove = elem;
+                }
             }
         }
         var (x,y) = bestMove;
