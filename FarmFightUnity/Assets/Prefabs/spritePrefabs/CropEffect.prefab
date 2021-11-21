@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7013266266257900004}
   - component: {fileID: 507197289190471244}
+  - component: {fileID: 3437263902714134524}
   m_Layer: 0
   m_Name: Cracks
   m_TagString: Untagged
@@ -26,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 2531579016892176662}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5832, y: 1.5832, z: 1.5832}
   m_Children: []
   m_Father: {fileID: 1659039718557502268}
   m_RootOrder: 0
@@ -83,6 +84,17 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 1
+--- !u!210 &3437263902714134524
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2531579016892176662}
+  m_Enabled: 1
+  m_SortingLayerID: 1506824093
+  m_SortingLayer: 1
+  m_SortingOrder: 0
 --- !u!1 &6545641266421928007
 GameObject:
   m_ObjectHideFlags: 0
