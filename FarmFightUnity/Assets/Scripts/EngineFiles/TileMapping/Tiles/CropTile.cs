@@ -30,7 +30,7 @@ public abstract class TileTemp : TileTempDepr
 
    
     
-    private bool cracksInit;
+    
 
     public float tileDamage = 0.0f;
     public override void Start()
@@ -252,7 +252,7 @@ public abstract class TileTemp : TileTempDepr
             soldier.owner.Value != tileOwner && 
             SortedSoldiers[tileOwner].Count == 0)
         {
-            StartCapturing();
+            StartCapturing(soldier.owner.Value);
         }
     }
 
@@ -560,7 +560,7 @@ public abstract class TileTemp : TileTempDepr
 
         if (newOwner != -1 && newOwner != tileOwner && NetworkManager.Singleton.IsServer)
         {
-            StartCapturing();
+            StartCapturing(newOwner);
         }
     }
 
@@ -640,7 +640,11 @@ public abstract class TileTemp : TileTempDepr
         return false;
     }
 
-    void StartCapturing() { timeStartedCapturing = NetworkManager.Singleton.NetworkTime; }
+    void StartCapturing(int newowner)
+    {
+        timeStartedCapturing = NetworkManager.Singleton.NetworkTime;
+        effect.StartCapture(maxTimeToCapture,Repository.Central.TeamColors[newowner]);
+    }
     void StopCapturing() { timeStartedCapturing = -1f; }
 }
 
