@@ -29,8 +29,21 @@ public class Market : NetworkBehaviour
         {CropType.rice, 2},
         {CropType.eggplant, 10},
     };
-    int soldierCost = 10;
-    int farmerCost = 5;
+    float BaseSoldierCost = 5;
+    float farmerCost = 5;
+
+    public float weightedSoldierCost {
+        get
+        {
+            if ( TileManager.TM.handlers == null || Repository.Central.cropHandler == null)
+                return 10;
+
+
+            float soldierCount = Repository.Central.cropHandler[selectedHex].
+                        SortedSoldiers[Repository.Central.localPlayerId].Count;
+
+            return BaseSoldierCost * (1+ (soldierCount * soldierCount / 16));
+        } }
 
     void Start()
     {
@@ -87,9 +100,9 @@ public class Market : NetworkBehaviour
             soldierManager.SendSoldier(selectedHex, endHex);
         }
 
-        // Updates money text
-        string dollars = "$" + (((int)(central.money * 100)) / 100.0).ToString();
-        moneyText.text = dollars;
+       
+        
+
     }
 
     public void MarketUpdateFunctionality()
@@ -136,7 +149,7 @@ public class Market : NetworkBehaviour
         {
             SetCrop((int)CropType.potato);
         }
-        if (Input.GetKeyDown("x"))
+        if (Input.GetKeyDown("x") && Input.GetKey(KeyCode.LeftShift))
         {
             central.money += 100;
         }
@@ -209,8 +222,9 @@ public class Market : NetworkBehaviour
 
     public void AddSoldier()
     {
-        if (central.money >= soldierCost && soldierManager.addSoldier(selectedHex))
-            central.money -= soldierCost;
+        float SoldierCost = weightedSoldierCost;
+        if (central.money >= SoldierCost && soldierManager.addSoldier(selectedHex))
+            central.money -= SoldierCost;
     }
 
     /// <summary>

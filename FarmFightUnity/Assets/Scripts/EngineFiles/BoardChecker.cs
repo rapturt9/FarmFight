@@ -14,6 +14,16 @@ public class BoardChecker : NetworkBehaviour
 
     public int[] ownedTileCount;
 
+    public int totalOwned { get
+        {
+            var total = 0;
+            for (int i = 0; i < ownedTileCount.Length; i++)
+            {
+                total += ownedTileCount[i];
+            }
+            return total;
+        }
+    }
     public List<Hex> hexCoords;
 
     void Awake()

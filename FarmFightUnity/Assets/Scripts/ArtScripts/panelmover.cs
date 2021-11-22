@@ -39,7 +39,9 @@ public class panelmover : MonoBehaviour
 
             Count.text = values.Item1.ToString();
             health.text = Mathf.Round(values.Item2).ToString();
-            percent.text = Mathf.Round(values.Item3).ToString();
+            float owned = BoardChecker.Checker.ownedTileCount[Player]
+                        * 100 / BoardChecker.Checker.totalOwned;
+            percent.text = Mathf.Round(owned).ToString() + "%";
 
             Vector2 position = GetComponent<RectTransform>().anchoredPosition;
             

@@ -9,6 +9,8 @@ public class Farmer : NetworkBehaviour
 {
     public TileHandler handler;
 
+    public Hex hex;
+
     public void Awake()
     {
         Owner = new NetworkVariable<int>(-1);
@@ -50,6 +52,17 @@ public class Farmer : NetworkBehaviour
     void _AddToTile(int[] coordArray)
     {
         Hex coord = BoardHelperFns.ArrayToHex(coordArray);
-        handler[coord].farmerObj = gameObject;
+        handler[coord].farmerObj = this;
+    }
+
+    private void Update()
+    {
+        
+        
+    }
+
+    public void kill()
+    {
+        Destroy(gameObject);
     }
 }

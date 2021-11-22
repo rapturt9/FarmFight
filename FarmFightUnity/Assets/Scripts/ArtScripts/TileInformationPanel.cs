@@ -9,7 +9,7 @@ public class TileInformationPanel : MonoBehaviour
     public int SoldierCount;
     public float health;
 
-    public TextMeshPro healthText, countText;
+    public TextMeshPro healthText, countText, percentText;
 
     public float movementSpeed;
 
@@ -26,6 +26,7 @@ public class TileInformationPanel : MonoBehaviour
     {
         healthText.text = health.ToString();
         countText.text = SoldierCount.ToString();
+        
     }
 
     private IEnumerator Mover()

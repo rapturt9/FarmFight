@@ -79,11 +79,11 @@ public abstract class TileTemp : TileTempDepr
 
     
 
-        if (cropType == CropType.blankTile)
+        /*if (cropType == CropType.blankTile)
         {
             GameObject.Destroy(effect);
         }
-        else if (-.3 < diff && diff < .3)
+        else */if (-.3 < diff && diff < .3)
         {
 
             effect.GetComponent<CropEffect>().Sparkle();
@@ -118,10 +118,13 @@ public abstract class TileTemp : TileTempDepr
             {
                 hLevel = 10;
             }
+
             double moneyToAdd = reset() * hLevel;
+
             // Is the player
             if (tileOwner == Repository.Central.localPlayerId)
                 Repository.Central.money += moneyToAdd;
+
             // Is a bot
             else
             {
@@ -201,16 +204,17 @@ public abstract class TileTemp : TileTempDepr
 
 
 
-    public GameObject addFarmer()
+    public Farmer addFarmer()
     {
         if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not add farmers from the client! Wrap your method in a ServerRpc."); }
-        
-        farmerObj = SpriteRepo.Sprites["Farmer"];
+
+        farmerObj = SpriteRepo.Sprites["Farmer"].GetComponent<Farmer>();
         Farmer farmer = farmerObj.GetComponent<Farmer>();
         farmer.Owner.Value = tileOwner;
         farmerObj.transform.position = (Vector2)TileManager.TM.HexToWorld(hexCoord) + .25f * Vector2.right;
         farmerObj.GetComponent<NetworkObject>().Spawn();
         farmer.AddToTile(hexCoord);
+        
         return farmerObj;
     }
 
@@ -218,7 +222,9 @@ public abstract class TileTemp : TileTempDepr
     {
         if (!NetworkManager.Singleton.IsServer) { Debug.LogWarning("Do not remove farmers from the client! Wrap your method in a ServerRpc."); }
 
-        GameObject.Destroy(farmerObj);
+        if(farmerObj != null)
+            farmerObj.kill();
+
         farmerObj = null;
     }
 
@@ -313,7 +319,7 @@ public abstract class TileTemp : TileTempDepr
     /// <summary>
     /// the Gameobject representing a farmer
     /// </summary>
-    public GameObject farmerObj = null;
+    public Farmer farmerObj = null;
 
     /// <summary>
     /// the tiles owner

@@ -4,7 +4,10 @@ using System;
 using UnityEngine;
 using TMPro;
 
-public class CostUpdate : MonoBehaviour
+
+
+
+public class CostUpdateSoldier : MonoBehaviour
 {
     public float cost;
     public TMP_Text TmPro;
@@ -19,6 +22,8 @@ public class CostUpdate : MonoBehaviour
     
     void FixedUpdate()
     {
+        cost = Market.market.weightedSoldierCost;
+
         TmPro.text = "$ " + Math.Round(cost, 2).ToString() ;
         if (Repository.Central.money >= cost)
             TmPro.color = Color.green;

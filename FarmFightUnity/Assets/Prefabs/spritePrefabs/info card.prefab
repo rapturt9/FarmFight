@@ -268,7 +268,7 @@ MonoBehaviour:
   Count: {fileID: 3569311234091567513}
   health: {fileID: 83187268113881231}
   percent: {fileID: 4352634018636541404}
-  maxspeed: 1.5
+  maxspeed: 2
   goalposition: {x: 0, y: 0, z: 0}
 --- !u!114 &8514640559610743092
 MonoBehaviour:

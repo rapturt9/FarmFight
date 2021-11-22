@@ -9,7 +9,7 @@ public class TileManager : MonoBehaviour
 
     public TileHandler[] Handlers;
 
-    private Dictionary<string, TileHandler> handlers;
+    public Dictionary<string, TileHandler> handlers;
 
     public TileHandler this[string name]
     {

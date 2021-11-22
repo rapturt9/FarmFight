@@ -105,7 +105,11 @@ public class TileSyncer : NetworkBehaviour
         // Gets tile data and soldier data
         TileSyncData tileData = GameState.SerializeTile(handler[coord]);
         List<Soldier> soldiersToSync = new List<Soldier>(handler[coord].getSoldierEnumerator());
-        GameObject farmerToSync = handler[coord].farmerObj;
+        GameObject farmerToSync;
+        if (handler[coord].farmerObj == null)
+            farmerToSync = null;
+        else
+            farmerToSync = handler[coord].farmerObj.gameObject;
         GameObject battlecloudToSync = handler[coord].battleCloud;
 
         if (IsClient)
