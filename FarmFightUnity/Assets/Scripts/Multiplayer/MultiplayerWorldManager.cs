@@ -5,6 +5,7 @@ using MLAPI;
 using MLAPI.Serialization;
 using MLAPI.Serialization.Pooled;
 using MLAPI.Transports.PhotonRealtime;
+using Photon.Realtime;
 
 public class MultiplayerWorldManager : MonoBehaviour
 {
