@@ -13,6 +13,7 @@ public class BoardChecker : NetworkBehaviour
     public static BoardChecker Checker;
 
     public int[] ownedTileCount;
+    public int[] soldierCount;
 
     public int totalOwned { get
         {
@@ -46,6 +47,7 @@ public class BoardChecker : NetworkBehaviour
     {
         hexCoords = BoardHelperFns.HexList(TileManager.TM.size);
         ownedTileCount = new int[Repository.maxPlayers];
+        soldierCount = new int[Repository.maxPlayers];
     }
 
     public void StartChecking()
@@ -122,13 +124,22 @@ public class BoardChecker : NetworkBehaviour
     void UpdateTileCounts()
     {
         ownedTileCount = new int[Repository.maxPlayers];
+        var soldiers = new int[Repository.maxPlayers];
         foreach (var coord in hexCoords)
         {
+            
             TileTemp tile = cropTiles[coord];
             if (tile.tileOwner != -1)
             {
                 ownedTileCount[tile.tileOwner]++;
+
+                foreach (var player in tile.SortedSoldiers)
+                    soldierCount[player.Key] += player.Value.Count;
             }
         }
+
+        soldierCount = soldiers;
     }
+
+    
 }

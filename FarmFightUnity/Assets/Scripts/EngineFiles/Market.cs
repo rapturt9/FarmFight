@@ -22,15 +22,28 @@ public class Market : NetworkBehaviour
 
     public Text moneyText;
 
-    Dictionary<CropType, int> CropValues = new Dictionary<CropType, int>
+    public Dictionary<CropType, int> CropValues
     {
-        {CropType.potato, 1},
-        {CropType.carrot, 2},
-        {CropType.rice, 2},
-        {CropType.eggplant, 10},
-    };
-    float BaseSoldierCost = 5;
-    float farmerCost = 5;
+        get
+        {
+            return new Dictionary<CropType, int>
+            {
+                {CropType.potato, potatoCost },
+                {CropType.carrot, carrotCost},
+                {CropType.rice, riceCost},
+                {CropType.eggplant, EggplantCost}
+            };
+        }
+    }
+
+
+
+    public int potatoCost, carrotCost, riceCost, EggplantCost, farmerCost;
+
+    
+    
+    public float BaseSoldierCost = 5;
+    
 
     public float weightedSoldierCost {
         get
@@ -40,9 +53,10 @@ public class Market : NetworkBehaviour
 
 
             float soldierCount = Repository.Central.cropHandler[selectedHex].
-                        SortedSoldiers[Repository.Central.localPlayerId].Count;
+                        SortedSoldiers[central.localPlayerId].Count;
 
-            return BaseSoldierCost * (1+ (soldierCount * soldierCount / 16));
+            return BaseSoldierCost * (1+ (soldierCount * soldierCount / 16))+
+                BoardChecker.Checker.soldierCount[central.localPlayerId]/4;
         } }
 
     void Start()
@@ -224,7 +238,7 @@ public class Market : NetworkBehaviour
     {
         float SoldierCost = weightedSoldierCost;
         if (central.money >= SoldierCost && soldierManager.addSoldier(selectedHex))
-            central.money -= SoldierCost;
+            central.money -= Mathf.Floor(SoldierCost);
     }
 
     /// <summary>
@@ -280,13 +294,14 @@ public class Market : NetworkBehaviour
         {
             soldierManager.SendSoldier(start, end);
             SendSoldier();
+
             UIHandler[SoldierDestination] = new BlankTile();
         }
 
 
     }
 
-
+    public int soldierSendCost;
     public void SendSoldier()
     {
         if (central.GamesMode == PlayState.NormalGame)

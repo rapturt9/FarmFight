@@ -18,6 +18,6 @@ public class DomUpdate : MonoBehaviour
             owned = BoardChecker.Checker.ownedTileCount[Repository.Central.localPlayerId]
                         * 100 / BoardChecker.Checker.totalOwned;
 
-        text.text = "Domination: " + Mathf.RoundToInt(owned).ToString() + "%";
+        text.text = "% Owned: " + Mathf.RoundToInt(owned).ToString();
     }
 }

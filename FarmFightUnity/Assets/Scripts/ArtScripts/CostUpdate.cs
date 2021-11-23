@@ -8,6 +8,7 @@ public class CostUpdate : MonoBehaviour
 {
     public float cost;
     public TMP_Text TmPro;
+    public CropType crop;
 
     // Start is called before the first frame update
     void Start()
@@ -19,7 +20,8 @@ public class CostUpdate : MonoBehaviour
     
     void FixedUpdate()
     {
-        TmPro.text = "$ " + Math.Round(cost, 2).ToString() ;
+        cost = Market.market.CropValues[crop];
+        TmPro.text = "$" + Math.Round(cost, 2).ToString() ;
         if (Repository.Central.money >= cost)
             TmPro.color = Color.green;
         else

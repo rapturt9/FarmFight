@@ -488,6 +488,7 @@ MonoBehaviour:
   gameManager: {fileID: 58370721}
   gameEndDisplay: {fileID: 1898468915}
   ownedTileCount: 
+  soldierCount: 
   hexCoords: []
 --- !u!1001 &100725831
 PrefabInstance:
@@ -803,8 +804,15 @@ MonoBehaviour:
   soldierManager: {fileID: 1228046379}
   people: {fileID: 0}
   moneyText: {fileID: 1524123757}
+  potatoCost: 0
+  carrotCost: 0
+  riceCost: 0
+  EggplantCost: 0
+  farmerCost: 0
+  BaseSoldierCost: 5
   SoldierDestination:
     coords: {x: 0, y: 0}
+  soldierSendCost: 0
 --- !u!114 &172428238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -894,10 +902,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 188280570}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d35baf2c8c2f4c38b40d76568908448, type: 3}
+  m_Script: {fileID: 11500000, guid: be26ed9734a344f2394de22da13d349d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cost: 5
+  cost: 0
   TmPro: {fileID: 188280574}
 --- !u!222 &188280573
 CanvasRenderer:
@@ -990,7 +998,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: -7.2001576, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -3173,6 +3181,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cost: 2
   TmPro: {fileID: 633016139}
+  crop: 2
 --- !u!222 &633016138
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3264,7 +3273,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: -4.500099, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -3322,6 +3331,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cost: 10
   TmPro: {fileID: 730618829}
+  crop: 3
 --- !u!222 &730618828
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3413,7 +3423,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: -1.8000259, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -3942,7 +3952,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: -6.3001337, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -4364,6 +4374,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cost: 2
   TmPro: {fileID: 979975470}
+  crop: 1
 --- !u!222 &979975469
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4455,7 +4466,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: -5.4001007, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -4840,7 +4851,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0.000000001423387, y: -15.924219, z: 0, w: 0}
+  m_margin: {x: -7.2001724, y: -15.924219, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -4868,6 +4879,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cost: 1
   TmPro: {fileID: 1087086241}
+  crop: 0
 --- !u!1 &1141926242
 GameObject:
   m_ObjectHideFlags: 0
@@ -6151,8 +6163,15 @@ MonoBehaviour:
   soldierManager: {fileID: 0}
   people: {fileID: 0}
   moneyText: {fileID: 1524123757}
+  potatoCost: 0
+  carrotCost: 0
+  riceCost: 0
+  EggplantCost: 0
+  farmerCost: 0
+  BaseSoldierCost: 5
   SoldierDestination:
     coords: {x: 0, y: 0}
+  soldierSendCost: 0
 --- !u!114 &1524123757
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6439,8 +6458,15 @@ MonoBehaviour:
   soldierManager: {fileID: 1228046379}
   people: {fileID: 0}
   moneyText: {fileID: 1524123757}
+  potatoCost: 1
+  carrotCost: 2
+  riceCost: 4
+  EggplantCost: 10
+  farmerCost: 5
+  BaseSoldierCost: 5
   SoldierDestination:
     coords: {x: 0, y: 0}
+  soldierSendCost: 0
 --- !u!1 &1648115324
 GameObject:
   m_ObjectHideFlags: 0
