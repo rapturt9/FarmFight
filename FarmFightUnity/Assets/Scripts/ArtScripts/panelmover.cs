@@ -12,17 +12,21 @@ public class panelmover : MonoBehaviour
     private int Player;
     public void Init(int player)
     {
+        GetComponent<Image>().color = Repository.Central.TeamColors[player];
+        
+
         if (started == true)
         {
             return;
         }
-        GetComponent<Image>().color = Repository.Central.TeamColors[player];
-
-        started = true;
 
         startPos = GetComponent<RectTransform>().anchoredPosition;
+        started = true;
+
+        
 
         StartCoroutine(moveToPoint());
+        Player = player;
     }
 
     public TMP_Text Count, health, percent;
@@ -30,6 +34,12 @@ public class panelmover : MonoBehaviour
     public float maxspeed;
     public Vector3 goalposition;
     public (float, float, float) values;
+
+    public void setcolor(int player)
+    {
+        GetComponent<Image>().color = Repository.Central.TeamColors[player];
+        Player = player;
+    }
 
     private IEnumerator moveToPoint()
     {

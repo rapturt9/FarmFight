@@ -20,6 +20,7 @@ public class TileInformationPanel : MonoBehaviour
     private void Start()
     {
         StartCoroutine(Mover());
+
     }
 
     void FixedUpdate()
@@ -33,10 +34,17 @@ public class TileInformationPanel : MonoBehaviour
     {
         while (true)
         {
-            transform.position = Vector3.MoveTowards(transform.position,
-                                                        GoalPosition,
-                                                        movementSpeed);
+            while (Repository.Central.gameIsRunning)
+            {
+                transform.position = Vector3.MoveTowards(transform.position,
+                                                            GoalPosition,
+                                                            movementSpeed);
+                yield return null;
+            }
+            yield return null;
         }
+
+
     }
 
 }

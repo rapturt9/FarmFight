@@ -25,6 +25,18 @@ public class Repository : MonoBehaviour
     /// </summary>
     public static Repository Central;
 
+    [HideInInspector]
+    public List<float> vegetableValues = new List<float>();
+    public float vegetableSum { get
+        {
+            float sum = 0;
+            foreach (var veg in vegetableValues)
+                sum += veg;
+
+            return sum;
+                } }
+
+
     /// <summary>
     /// ensures that should a usuper attempt to arise,
     /// it shall be strangled in the cradle

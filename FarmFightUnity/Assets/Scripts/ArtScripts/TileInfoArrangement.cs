@@ -33,6 +33,7 @@ public class TileInfoArrangement : MonoBehaviour
             positions[i] = new Vector3(topPos.x,  topPos.y - (topPos.y - botPos.y) * i / 5, 0);
 
             panels[i].GetComponent<RectTransform>().anchoredPosition = positions[i];
+            panels[i].setcolor(i);
         }
 
         tileValues = new Dictionary<int, (float, float, float)>();

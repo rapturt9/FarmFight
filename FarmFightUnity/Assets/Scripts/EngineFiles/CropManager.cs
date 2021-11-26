@@ -47,19 +47,19 @@ public class CropManager : NetworkBehaviour
             int hLevel = 0;
             if (crop == CropType.potato)
             {
-                hLevel = 1;
+                hLevel = Market.market.CropValues[CropType.potato];
             }
             else if (crop == CropType.carrot)
             {
-                hLevel = 4;
+                hLevel = Market.market.CropValues[CropType.carrot];
             }
             else if (crop == CropType.rice)
             {
-                hLevel = 2;
+                hLevel = Market.market.CropValues[CropType.rice];
             }
             else if (crop == CropType.eggplant)
             {
-                hLevel = 10;
+                hLevel = Market.market.CropValues[CropType.eggplant];
             }
 
             if (hLevel > 0)
@@ -69,7 +69,7 @@ public class CropManager : NetworkBehaviour
 
                 if (central.flyingVegies && owner == central.localPlayerId)
                 {
-                    var vegie = GameObject.Instantiate(Vegetable);
+                    var vegie = Instantiate(Vegetable);
                     vegie.GetComponent<Vegetable>().init(hex, crop, add);
                     return 0;
                 }

@@ -453,6 +453,7 @@ MonoBehaviour:
   gameIsRunning: 0
   money: 10
   isBot: 1
+  vegetableValues: []
   GamesMode: 0
   flyingVegies: 1
 --- !u!114 &58370723
@@ -809,6 +810,11 @@ MonoBehaviour:
   riceCost: 0
   EggplantCost: 0
   farmerCost: 0
+  potatoCVal: 0
+  carrotVal: 0
+  riceVal: 0
+  EggplantVal: 0
+  farmerVal: 0
   BaseSoldierCost: 5
   SoldierDestination:
     coords: {x: 0, y: 0}
@@ -6168,6 +6174,11 @@ MonoBehaviour:
   riceCost: 0
   EggplantCost: 0
   farmerCost: 0
+  potatoCVal: 0
+  carrotVal: 0
+  riceVal: 0
+  EggplantVal: 0
+  farmerVal: 0
   BaseSoldierCost: 5
   SoldierDestination:
     coords: {x: 0, y: 0}
@@ -6463,6 +6474,11 @@ MonoBehaviour:
   riceCost: 4
   EggplantCost: 10
   farmerCost: 5
+  potatoCVal: 1
+  carrotVal: 2
+  riceVal: 4
+  EggplantVal: 10
+  farmerVal: 5
   BaseSoldierCost: 5
   SoldierDestination:
     coords: {x: 0, y: 0}

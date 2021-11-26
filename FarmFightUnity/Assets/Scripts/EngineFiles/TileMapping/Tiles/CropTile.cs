@@ -254,12 +254,19 @@ public abstract class TileTemp : TileTempDepr
         BattleFunctionality();
 
         // Check for capturing
-        if (tileOwner != -1 && 
-            soldier.owner.Value != tileOwner && 
-            SortedSoldiers[tileOwner].Count == 0)
+        if (tileOwner != -1 &&
+            soldier.owner.Value != tileOwner &&
+            SortedSoldiers[tileOwner].Count == 0 &&
+            soldierCount == 0
+            )
         {
             StartCapturing(soldier.owner.Value);
         }
+    }
+
+    public int otherPeoplesSoldiers(int me)
+    {
+        return soldierCount - SortedSoldiers[me].Count;
     }
 
     
@@ -399,7 +406,10 @@ public abstract class TileTemp : TileTempDepr
         // Capture farmer as well
         if (containsFarmer)
         {
-            farmerObj.GetComponent<Farmer>().Owner.Value = tileOwner;
+            removeFarmer();
+            addFarmer();
+            
+            
             TileSyncer.Syncer.SyncTileUpdate(hexCoord, new[] { CropTileSyncTypes.containsFarmer });
         }
     }
@@ -460,10 +470,7 @@ public abstract class TileTemp : TileTempDepr
         return hr;
     }
 
-    void killSoldier(Soldier soldier)
-    {
-        soldier.Kill();
-    }
+    
 
     public Soldier FindFirstSoldierWithID(int id)
     {
@@ -499,9 +506,12 @@ public abstract class TileTemp : TileTempDepr
                 StopBattle();
                 TileSyncer.Syncer.SyncTileUpdate(hexCoord, new[] { CropTileSyncTypes.battleOccurring });
                 SoldierManager.SM.StopBattleClientRpc(BoardHelperFns.HexToArray(hexCoord));
+                
             }
         }
     }
+
+    
 
     public void StartBattle()
     {
@@ -580,7 +590,9 @@ public abstract class TileTemp : TileTempDepr
             {
                 if (SortedSoldiers[playerId][i] == null)
                 {
+                    var fallenSoldier = SortedSoldiers[playerId][i];
                     SortedSoldiers[playerId].RemoveAt(i);
+                    fallenSoldier.Kill();
                 }
                 else
                 {
@@ -651,7 +663,11 @@ public abstract class TileTemp : TileTempDepr
         timeStartedCapturing = NetworkManager.Singleton.NetworkTime;
         effect.StartCapture(maxTimeToCapture,Repository.Central.TeamColors[newowner]);
     }
-    void StopCapturing() { timeStartedCapturing = -1f; }
+    void StopCapturing()
+    {
+        timeStartedCapturing = -1f;
+        effect.StopCapture();
+    }
 }
 
 

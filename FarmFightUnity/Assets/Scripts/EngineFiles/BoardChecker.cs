@@ -73,7 +73,7 @@ public class BoardChecker : NetworkBehaviour
                     yield return null;
                 }
             }
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForEndOfFrame(); ;
         }
     }
 

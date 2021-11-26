@@ -22,6 +22,20 @@ public class Market : NetworkBehaviour
 
     public Text moneyText;
 
+    public Dictionary<CropType, int> CropCosts
+    {
+        get
+        {
+            return new Dictionary<CropType, int>
+            {
+                {CropType.potato, potatoCost },
+                {CropType.carrot, carrotCost},
+                {CropType.rice, riceCost},
+                {CropType.eggplant, EggplantCost}
+            };
+        }
+    }
+
     public Dictionary<CropType, int> CropValues
     {
         get
@@ -36,12 +50,11 @@ public class Market : NetworkBehaviour
         }
     }
 
-
-
     public int potatoCost, carrotCost, riceCost, EggplantCost, farmerCost;
+    public int potatoCVal, carrotVal, riceVal, EggplantVal, farmerVal;
 
-    
-    
+
+
     public float BaseSoldierCost = 5;
     
 
@@ -229,8 +242,8 @@ public class Market : NetworkBehaviour
         // Remove farmer
         else
         {
-            central.money += farmerCost/2;
-            crops.removeFarmer(selectedHex);
+            //central.money += farmerCost/2;
+            //crops.removeFarmer(selectedHex);
         }
     }
 

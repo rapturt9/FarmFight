@@ -45,6 +45,8 @@ public class Vegetable : MonoBehaviour
         else if (crop == CropType.eggplant)
             GetComponent<SpriteRenderer>().sprite = vegietableSprites[3];
 
+        Repository.Central.money += cropValue;
+        Repository.Central.vegetableValues.Add((float)cropValue);
 
         StartCoroutine("Mover");
 
@@ -85,7 +87,7 @@ public class Vegetable : MonoBehaviour
 
         }
 
-        Repository.Central.money += value;
+        Repository.Central.vegetableValues.RemoveAt(0) ;
         Destroy(gameObject);
     }
 
