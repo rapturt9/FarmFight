@@ -2220,9 +2220,33 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 211607423}
     m_Modifications:
+    - target: {fileID: 45604098076801134, guid: ac5b08689e16a4d4e96792f6e4f1e737, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 929492935084493357, guid: ac5b08689e16a4d4e96792f6e4f1e737, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3727017812087899030, guid: ac5b08689e16a4d4e96792f6e4f1e737, type: 3}
       propertyPath: m_Name
       value: info card
+      objectReference: {fileID: 0}
+    - target: {fileID: 3727017812087899030, guid: ac5b08689e16a4d4e96792f6e4f1e737, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5390988484055791799, guid: ac5b08689e16a4d4e96792f6e4f1e737, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6223745281644462266, guid: ac5b08689e16a4d4e96792f6e4f1e737, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6545094683795238388, guid: ac5b08689e16a4d4e96792f6e4f1e737, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8046074540981165292, guid: ac5b08689e16a4d4e96792f6e4f1e737, type: 3}
       propertyPath: m_Pivot.x
@@ -2319,6 +2343,10 @@ PrefabInstance:
     - target: {fileID: 8046074540981165292, guid: ac5b08689e16a4d4e96792f6e4f1e737, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8790737942434912063, guid: ac5b08689e16a4d4e96792f6e4f1e737, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ac5b08689e16a4d4e96792f6e4f1e737, type: 3}
@@ -5237,6 +5265,7 @@ GameObject:
   - component: {fileID: 1228046379}
   - component: {fileID: 1228046378}
   - component: {fileID: 1228046380}
+  - component: {fileID: 1228046381}
   m_Layer: 0
   m_Name: CropTiles
   m_TagString: Untagged
@@ -5450,6 +5479,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 588d6704ef6aaf74f99d4049e2716f88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1228046381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228046372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d41803b47f766c34faf43c13a9e5a14f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  crops: {fileID: 1228046376}
 --- !u!1 &1237026040
 GameObject:
   m_ObjectHideFlags: 0
@@ -5944,6 +5986,8 @@ MonoBehaviour:
     - Prefab: {fileID: 6142443459459213303, guid: 7578e400634adf84399e87fc3357b6af, type: 3}
       PlayerPrefab: 0
     - Prefab: {fileID: 2082715349369691973, guid: 9c309dbf016de4ece970ee9b139c46f3, type: 3}
+      PlayerPrefab: 0
+    - Prefab: {fileID: 6545641266421928007, guid: 1315cebfc16764d439b2b59c386e7e74, type: 3}
       PlayerPrefab: 0
     PlayerPrefabHash:
       id: 0

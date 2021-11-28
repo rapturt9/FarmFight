@@ -418,7 +418,6 @@ public abstract class TileTemp : TileTempDepr
     {
         StopCapturing();
         int newTileOwner = GetCapturingPlayer();
-
         tileOwner = newTileOwner;
         TileSyncer.Syncer.SyncTileUpdate(hexCoord, new[] { CropTileSyncTypes.tileOwner });
         // Capture farmer as well
@@ -426,7 +425,6 @@ public abstract class TileTemp : TileTempDepr
         {
             removeFarmer();
             addFarmer();
-            
             
             TileSyncer.Syncer.SyncTileUpdate(hexCoord, new[] { CropTileSyncTypes.containsFarmer });
         }
@@ -676,11 +674,25 @@ public abstract class TileTemp : TileTempDepr
     void StartCapturing(int newowner)
     {
         timeStartedCapturing = NetworkManager.Singleton.NetworkTime;
-        effect.StartCapture(maxTimeToCapture,Repository.Central.TeamColors[newowner]);
+        CropTileRpcHelper.CTRPC.StartCapturingClientRpc(BoardHelperFns.HexToArray(hexCoord), newowner);
+        //effect.StartCapture(maxTimeToCapture, Repository.Central.TeamColors[newowner]);
     }
+
+    // Called from CTRPC
+    public void StartCapturingClientRpc(int newowner)
+    {
+        effect.StartCapture(maxTimeToCapture, Repository.Central.TeamColors[newowner]);
+    }
+
     void StopCapturing()
     {
         timeStartedCapturing = -1f;
+        CropTileRpcHelper.CTRPC.StopCapturingClientRpc(BoardHelperFns.HexToArray(hexCoord));
+        //effect.StopCapture();
+    }
+
+    public void StopCapturingClientRpc()
+    {
         effect.StopCapture();
     }
 }

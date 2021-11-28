@@ -147,7 +147,6 @@ public class CropManager : NetworkBehaviour
         }
         handler.TileDict[hex].Tile.tileOwner = owner;
 
-        //handler.TileDict[hex].Tile.timeLastPlanted = 0f;
         handler.TileDict[hex].Tile.battleOccurring = oldTile.battleOccurring;
         handler.TileDict[hex].Tile.battleCloud = oldTile.battleCloud;
         handler.TileDict[hex].Tile.farmerObj = oldTile.farmerObj;

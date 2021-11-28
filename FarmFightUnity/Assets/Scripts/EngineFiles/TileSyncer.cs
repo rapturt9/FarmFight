@@ -173,7 +173,6 @@ public class TileSyncer : NetworkBehaviour
         handler.TileDict[coord].Tile = newTile;
 
         // Rewrite newTile with all other values of oldTile
-        //newTile.timeLastPlanted = 0f;
         newTile.battleOccurring = oldTile.battleOccurring;
         newTile.battleCloud = oldTile.battleCloud;
         newTile.farmerObj = oldTile.farmerObj;

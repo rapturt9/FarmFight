@@ -1,9 +1,11 @@
+using MLAPI;
+using MLAPI.Messaging;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.VFX;
 
-public class CropEffect : MonoBehaviour
+public class CropEffect : NetworkBehaviour
 {
     // Start is called before the first frame update
     public Sprite[] effectSprites;
@@ -187,7 +189,7 @@ public class CropEffect : MonoBehaviour
         return newColor;
     }
 
-    public void StartCapture(float time,Color color)
+    public void StartCapture(float time, Color color)
     {
         transform.position = startPos;
         effects.SetBool("Capturing", true);
