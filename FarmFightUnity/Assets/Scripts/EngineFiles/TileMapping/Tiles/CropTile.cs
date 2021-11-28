@@ -24,20 +24,14 @@ public abstract class TileTemp : TileTempDepr
         get { return timeStartedCapturing != -1f; }
     }
 
-    
-
     public CropEffect effect;
 
-   
-    
-    
-
     public float tileDamage = 0.0f;
+
     public override void Start()
     {
         if (effect == null)
         {
-
             effect = SpriteRepo.Sprites["CropEffect"].GetComponent<CropEffect>();
             effect.GetComponent<CropEffect>().init(this);
         }
@@ -50,6 +44,7 @@ public abstract class TileTemp : TileTempDepr
         if (timeLastPlanted == 0f)
             timeLastPlanted = NetworkManager.Singleton.NetworkTime;
         frame = 0;
+        mid = 0;
         frameRate = 60;
         frameInternal = 0;
     }
@@ -57,14 +52,30 @@ public abstract class TileTemp : TileTempDepr
 
     public override void Behavior()
     {
+        UpdateFrame();
+        UpdateEffect();
+        TryFarmerAutoharvest();
+        UpdateTileArtAndCracks();
+        UpdateSelectedTileInfo();
+        BattleFunctionality();
+        TryCapture();
+    }
+
+    // Changes the displayed crop frame
+    void UpdateFrame()
+    {
         // Update frames
         frameInternal = Mathf.Min(
             (int)((NetworkManager.Singleton.NetworkTime - timeLastPlanted) * frameRate),
             tileArts.Count * frameRate);
 
         frame = (int)(frameInternal / frameRate);
+    }
 
-        double mid = tileArts.Count / 2; //optimal harvest level
+    // For crop effects
+    void UpdateEffect()
+    {
+        mid = tileArts.Count / 2; //optimal harvest level
         if (cropType == CropType.eggplant)
         {
             mid = 4.5;
@@ -73,19 +84,11 @@ public abstract class TileTemp : TileTempDepr
         {
             mid = 5.5;
         }
-
         double diff = frameInternal / frameRate - mid; //for sparkle
         double diff2 = tileArts.Count - frameInternal / frameRate; //for rot
 
-    
-
-        /*if (cropType == CropType.blankTile)
+        if (-.3 < diff && diff < .3)
         {
-            GameObject.Destroy(effect);
-        }
-        else */if (-.3 < diff && diff < .3)
-        {
-
             effect.GetComponent<CropEffect>().Sparkle();
         }
         else if (diff2 < .3)
@@ -96,8 +99,11 @@ public abstract class TileTemp : TileTempDepr
         {
             effect.GetComponent<CropEffect>().Stop();
         }
-
-        //farmer autoharvest
+    }
+    
+    // Sees if the farmer should harvest its crop
+    void TryFarmerAutoharvest()
+    {
         if (containsFarmer && frameInternal / frameRate >= mid)
         {
             int hLevel = 0;
@@ -125,16 +131,19 @@ public abstract class TileTemp : TileTempDepr
             if (tileOwner == Repository.Central.localPlayerId)
                 Repository.Central.money += moneyToAdd;
 
-            // Is a bot
+            // Is a bot or other player
             else
             {
                 GameManager.GM.gameState.TryAddBotMoney(tileOwner, moneyToAdd);
             }
         }
+    }
+    
 
-
-        
-        // Changing tile art
+    // Change the ripeness and cracks
+    void UpdateTileArtAndCracks()
+    {
+        // Update art if no battle is happening, so growing
         if (!battleOccurring)
         {
             effect.crackAmount = tileDamage / 10.0f;
@@ -146,28 +155,40 @@ public abstract class TileTemp : TileTempDepr
             {
                 currentArt = tileArts[tileArts.Count - 1];
             }
-            
-            if( tileDamage > 0.0f){
+
+            if (tileDamage > 0.0f)
+            {
                 tileDamage -= Time.deltaTime / 3;
-                
+
             }
-        } else
+        }
+        // If we're battling, the tile gets more cracked
+        else
         {
-            
+            currentArt = null;
+
             effect.crackAmount = (tileDamage / 10.0f);
-              
-            if(tileDamage < 10.0f){
+
+            if (tileDamage < 10.0f)
+            {
                 tileDamage += Time.deltaTime;
             }
         }
 
-        if(NetworkManager.Singleton.IsServer){
-            if(tileDamage % 1 > .9f){
-                TileSyncer.Syncer.SyncTileUpdate(hexCoord,new[] {CropTileSyncTypes.tileDamage});
+        // Sync the damage
+        if (NetworkManager.Singleton.IsServer)
+        {
+            if (tileDamage % 1 > .9f)
+            {
+                TileSyncer.Syncer.SyncTileUpdate(hexCoord, new[] { CropTileSyncTypes.tileDamage });
             }
         }
+    }
 
-        //update tileinfo
+
+    // Update the top right tile info with whichever tile we have selected
+    void UpdateSelectedTileInfo()
+    {
         if (Repository.Central.selectedHex == hexCoord)
         {
             Dictionary<int, Dictionary<string, int>> dict = Repository.Central.tileinfo.soldierInfo;
@@ -183,12 +204,15 @@ public abstract class TileTemp : TileTempDepr
                 dict[playerId]["health"] = (int)totalHealth;
             }
         }
+    }
 
-        // Battling
-        BattleFunctionality();
 
-        // Capturing
-        if (hostileOccupation && NetworkManager.Singleton.IsServer && (NetworkManager.Singleton.NetworkTime - timeStartedCapturing) >= maxTimeToCapture)
+    // Should we capture a tile?
+    void TryCapture()
+    {
+        if (NetworkManager.Singleton.IsServer && // Only server can change capture status
+            hostileOccupation && // We must be occupied by a hostile soldier
+            (NetworkManager.Singleton.NetworkTime - timeStartedCapturing) >= maxTimeToCapture) // The soldier must have been sitting there long enuogh
         {
             CaptureThis();
         }
@@ -199,9 +223,7 @@ public abstract class TileTemp : TileTempDepr
     {
         if(effect != null)
             GameObject.Destroy(effect.gameObject);
-        
     }
-
 
 
     public Farmer addFarmer()
@@ -318,11 +340,6 @@ public abstract class TileTemp : TileTempDepr
         return false;
     }
 
-    
-
-
-   
-
     /// <summary>
     /// the Gameobject representing a farmer
     /// </summary>
@@ -386,6 +403,8 @@ public abstract class TileTemp : TileTempDepr
     /// </summary>
     public int frame;
 
+    private double mid;
+
     /// <summary>
     /// the the framerate
     /// </summary>
@@ -393,7 +412,6 @@ public abstract class TileTemp : TileTempDepr
 
 
     private float frameInternal;
-
 
 
     void CaptureThis()
@@ -470,8 +488,6 @@ public abstract class TileTemp : TileTempDepr
         return hr;
     }
 
-    
-
     public Soldier FindFirstSoldierWithID(int id)
     {
         return SortedSoldiers[id].Count == 0 ? null : SortedSoldiers[id][0];
@@ -511,7 +527,6 @@ public abstract class TileTemp : TileTempDepr
         }
     }
 
-    
 
     public void StartBattle()
     {
@@ -592,7 +607,7 @@ public abstract class TileTemp : TileTempDepr
                 {
                     var fallenSoldier = SortedSoldiers[playerId][i];
                     SortedSoldiers[playerId].RemoveAt(i);
-                    fallenSoldier.Kill();
+                    //fallenSoldier.Kill(); // This game me an error
                 }
                 else
                 {

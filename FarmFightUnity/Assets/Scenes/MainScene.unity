@@ -486,7 +486,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cropTiles: {fileID: 1228046376}
-  gameManager: {fileID: 58370721}
   gameEndDisplay: {fileID: 1898468915}
   ownedTileCount: 
   soldierCount: 
@@ -4586,7 +4585,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a1add2ae3604ae4793247b72ea82b31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 58370721}
   interstitial: {fileID: 805581830}
   startGameButton: {fileID: 490280244}
 --- !u!4 &1041828389
@@ -5409,7 +5407,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handler: {fileID: 1228046376}
-  gameManager: {fileID: 0}
   Vegetable: {fileID: 6691272625109682036, guid: e3aa8ca6f4dd643b489f057dd6426411, type: 3}
 --- !u!114 &1228046378
 MonoBehaviour:
@@ -5600,7 +5597,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d612e646c52a8c439b58666848f3e09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
   startTimeLeft: 31
 --- !u!114 &1276782570
 MonoBehaviour:
@@ -5907,7 +5903,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_NickName: FF
-  m_RoomName: 3
+  m_RoomName: 2
   m_MaxPlayers: 6
   m_ChannelIdCodesStartRange: 0
   m_AttachSupportLogger: 0

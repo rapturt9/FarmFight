@@ -23,9 +23,9 @@ public class TileSyncer : NetworkBehaviour
         }
     }
 
-    public void Init(TileHandler _handler)
+    public void Init(TileHandler handler)
     {
-        handler = _handler;
+        this.handler = handler;
     }
 
     // Updating only some data
@@ -167,12 +167,13 @@ public class TileSyncer : NetworkBehaviour
 
 
     // Syncing individual parts
-    void _SyncTileUpdateCropType(Hex coord, TileSyncData tileData, ref TileTemp oldTile)
+    public void _SyncTileUpdateCropType(Hex coord, TileSyncData tileData, ref TileTemp oldTile)
     {
         TileTemp newTile = GameState.DeserializeTile(tileData);
+        handler.TileDict[coord].Tile = newTile;
 
         // Rewrite newTile with all other values of oldTile
-        newTile.timeLastPlanted = oldTile.timeLastPlanted;
+        //newTile.timeLastPlanted = 0f;
         newTile.battleOccurring = oldTile.battleOccurring;
         newTile.battleCloud = oldTile.battleCloud;
         newTile.farmerObj = oldTile.farmerObj;
@@ -182,7 +183,6 @@ public class TileSyncer : NetworkBehaviour
         newTile.tileDamage = oldTile.tileDamage;
 
         oldTile = newTile;
-        handler.TileDict[coord].Tile = newTile;
     }
 
     void _SyncTileUpdateLastPlanted(TileSyncData tileData, ref TileTemp oldTile)

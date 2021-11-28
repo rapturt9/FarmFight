@@ -59,7 +59,6 @@ public class TileInterFace
     public void Update()
     {
         tileInternal.Behavior();
-
     }
 
     public void changeTile(TileTemp tile)
@@ -68,7 +67,6 @@ public class TileInterFace
             End();
         tileInternal = tile;
         Begin();
-
     }
 
 

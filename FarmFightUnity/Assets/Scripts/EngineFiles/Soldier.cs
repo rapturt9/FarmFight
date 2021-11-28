@@ -180,7 +180,8 @@ public class Soldier: NetworkBehaviour
 
     public void Kill()
     {
-        Destroy(gameObject);
+        if (gameObject != null)
+            Destroy(gameObject);
     }
 
 }

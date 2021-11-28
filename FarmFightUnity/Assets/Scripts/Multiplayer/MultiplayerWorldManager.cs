@@ -11,7 +11,6 @@ public class MultiplayerWorldManager : MonoBehaviour
 {
     PhotonRealtimeTransport transport;
 
-    public GameManager gameManager;
     public GameObject interstitial;
     public GameObject startGameButton;
 
@@ -91,7 +90,7 @@ public class MultiplayerWorldManager : MonoBehaviour
         if (SceneVariables.cameThroughMenu)
             startGameButton.SetActive(true);
         else
-            gameManager.GameStart();
+            GameManager.GM.GameStart();
 
         print("Joining as Host");
     }
@@ -109,7 +108,7 @@ public class MultiplayerWorldManager : MonoBehaviour
         NetworkManager.Singleton.StartClient();
 
         if (!SceneVariables.cameThroughMenu)
-            gameManager.startOnNetworkStart = true;
+            GameManager.GM.startOnNetworkStart = true;
 
         print("Joining as Client");
     }

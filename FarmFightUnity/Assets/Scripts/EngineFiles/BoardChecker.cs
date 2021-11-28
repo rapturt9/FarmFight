@@ -7,7 +7,6 @@ using MLAPI.Messaging;
 public class BoardChecker : NetworkBehaviour
 {
     public TileHandler cropTiles;
-    public GameManager gameManager;
     public GameEndDisplay gameEndDisplay;
 
     public static BoardChecker Checker;
@@ -52,10 +51,7 @@ public class BoardChecker : NetworkBehaviour
 
     public void StartChecking()
     {
-        if (IsServer)
-        {
-            StartCoroutine("CheckBoard");
-        }
+        StartCoroutine("CheckBoard");
     }
 
     public IEnumerator CheckBoard()
@@ -63,7 +59,7 @@ public class BoardChecker : NetworkBehaviour
         while (Repository.Central.gameIsRunning)
         {
             UpdateTileCounts();
-            if (gameManager.totalPlayersAndBots > 1) // Is there at least one player to win against
+            if (GameManager.GM.totalPlayersAndBots > 1 && IsServer) // Is there at least one player to win against
             {
                 int winningPlayer = CheckForAnyWin();
                 if (winningPlayer != -1)
@@ -91,7 +87,7 @@ public class BoardChecker : NetworkBehaviour
 
     public int CheckForAnyWin()
     {
-        for (int playerId = 0; playerId < gameManager.totalPlayersAndBots; playerId++)
+        for (int playerId = 0; playerId < GameManager.GM.totalPlayersAndBots; playerId++)
         {
             if (CheckForWin(playerId)) // Have we actually won
             {

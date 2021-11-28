@@ -7,8 +7,6 @@ using MLAPI.NetworkVariable;
 
 public class GameStartCountdown : NetworkBehaviour
 {
-    public GameManager gameManager;
-
     TextMeshProUGUI text;
 
     NetworkVariable<float> startTime;
@@ -46,7 +44,7 @@ public class GameStartCountdown : NetworkBehaviour
         // Start the game if the timer runs out
         if (timeLeft <= 0 && IsServer)
         {
-            gameManager.GameStartClientRpc();
+            GameManager.GM.GameStartClientRpc();
         }
     }
 }

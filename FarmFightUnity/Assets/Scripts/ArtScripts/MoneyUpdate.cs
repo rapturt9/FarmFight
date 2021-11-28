@@ -16,7 +16,7 @@ public class MoneyUpdate : MonoBehaviour
 
         displaymoney = (float)Math.Round( Mathf.Max(displaymoney, 0), 2);
 
-        Debug.Log(displaymoney);
+        //Debug.Log(displaymoney);
 
         if (Mathf.Round(displaymoney) < 10)
         {

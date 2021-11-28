@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MLAPI;
 using MLAPI.Messaging;
+using System;
 
 public class CropManager : NetworkBehaviour
 {
@@ -20,7 +21,6 @@ public class CropManager : NetworkBehaviour
     }
 
     public static CropManager Crops;
-    public GameManager gameManager;
 
 
     private void Update()
@@ -90,9 +90,9 @@ public class CropManager : NetworkBehaviour
         if (owner == -1)
             owner = central.localPlayerId;
 
-        if (handler[hex].cropType != CropType.blankTile && 
-            handler[hex].tileOwner != owner && // We can't overwrite an opponent's crop
-            !handler[hex].hostileOccupation)
+        // Disqualifying attributes
+        if ((handler[hex].tileOwner != -1 && handler[hex].tileOwner != owner) || // We can't overwrite an opponent's crop
+            handler[hex].hostileOccupation) // Can't change the tile if it's occupied by an enemy
         {
             return false;
         }
@@ -123,26 +123,38 @@ public class CropManager : NetworkBehaviour
         {
             return false;
         }
-        
+
+        TileTemp oldTile = handler.TileDict[hex].Tile;
         if (cropType == CropType.potato)
         {
-            handler[hex] = new Potato();
+            handler.TileDict[hex].Tile = new Potato();
         }
         else if (cropType == CropType.carrot)
         {
-            handler[hex] = new Carrot();
+            handler.TileDict[hex].Tile = new Carrot();
         }
         else if (cropType == CropType.rice)
         {
-            handler[hex] = new Rice();
+            handler.TileDict[hex].Tile = new Rice();
         }
         else if (cropType == CropType.eggplant)
         {
-            handler[hex] = new Eggplant();
+            handler.TileDict[hex].Tile = new Eggplant();
         }
+        else
+        {
+            throw new Exception("Invalid crop type");
+        }
+        handler.TileDict[hex].Tile.tileOwner = owner;
 
-        // Set owner
-        handler[hex].tileOwner = owner;
+        //handler.TileDict[hex].Tile.timeLastPlanted = 0f;
+        handler.TileDict[hex].Tile.battleOccurring = oldTile.battleOccurring;
+        handler.TileDict[hex].Tile.battleCloud = oldTile.battleCloud;
+        handler.TileDict[hex].Tile.farmerObj = oldTile.farmerObj;
+        handler.TileDict[hex].Tile.SortedSoldiers = oldTile.SortedSoldiers;
+        handler.TileDict[hex].Tile.timeStartedCapturing = oldTile.timeStartedCapturing;
+        handler.TileDict[hex].Tile.tileDamage = oldTile.tileDamage;
+
         handler.SyncTileUpdate(hex, new[] { CropTileSyncTypes.cropNum, CropTileSyncTypes.tileOwner });
 
         return true;

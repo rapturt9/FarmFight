@@ -176,10 +176,6 @@ public class Market : NetworkBehaviour
         {
             SetCrop((int)CropType.potato);
         }
-        if (Input.GetKeyDown("x") && Input.GetKey(KeyCode.LeftShift))
-        {
-            central.money += 100;
-        }
         else if (Input.GetKeyDown("2"))
         {
             SetCrop((int)CropType.carrot);
@@ -203,17 +199,22 @@ public class Market : NetworkBehaviour
         else if (Input.GetKeyDown("7"))
         {
             //if(crops.handler[selectedHex].tileOwner == Repository.Central.localPlayerId)
-                SendSoldier();
+            SendSoldier();
         }
 
         // DEBUG
-        else if (Input.GetKeyDown("d"))
+        if (Input.GetKeyDown("d"))
         {
             var iter = crops.handler[selectedHex].getSoldierEnumerator().GetEnumerator();
             if (iter.MoveNext())
             {
                 Debug.Log(iter.Current.Health.Value);
             }
+        }
+        // Free money DEBUG
+        if (Input.GetKeyDown("x") && Input.GetKey(KeyCode.LeftShift))
+        {
+            central.money += 100;
         }
     }
 

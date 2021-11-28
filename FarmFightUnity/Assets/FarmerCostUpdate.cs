@@ -19,6 +19,11 @@ public class FarmerCostUpdate : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!Repository.Central.gameIsRunning)
+        {
+            return;
+        }
+
         cost = Market.market.farmerCost;
         
         if (Repository.Central.cropHandler[Repository.Central.selectedHex].containsFarmer)
