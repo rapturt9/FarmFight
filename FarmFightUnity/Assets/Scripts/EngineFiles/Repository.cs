@@ -25,6 +25,8 @@ public class Repository : MonoBehaviour
     /// </summary>
     public static Repository Central;
 
+    public int framerate = 30;
+
     [HideInInspector]
     public List<float> vegetableValues = new List<float>();
     public float vegetableSum { get

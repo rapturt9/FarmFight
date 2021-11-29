@@ -12,7 +12,7 @@ public class CropTileRpcHelper : NetworkBehaviour
 
     private void Awake()
     {
-        Application.targetFrameRate = 30;
+        Application.targetFrameRate = Repository.Central.framerate;
 
         if (CTRPC == null)
         {

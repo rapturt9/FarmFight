@@ -25,6 +25,7 @@ public class CropEffect : NetworkBehaviour
     public float crackAmount;
 
     public SpriteRenderer crackRender;
+    public VisualEffect visual;
 
 
     public void LateUpdate()
@@ -36,7 +37,11 @@ public class CropEffect : NetworkBehaviour
             Destroy(gameObject);
         }
 
+        crackAmount = tile.tileDamage/10f;
+
         transform.position = startPos;
+
+        crackRender.transform.position = startPos;
 
         crackRender.material.SetFloat("CrackAmt", crackAmount);
     }
@@ -47,8 +52,10 @@ public class CropEffect : NetworkBehaviour
 
         
         
-
         transform.parent = SpriteRepo.Sprites.transform;
+
+        
+
 
         this.tile = tile;
 
@@ -59,7 +66,7 @@ public class CropEffect : NetworkBehaviour
         Stop();
     }
 
-    VisualEffect effects { get { return GetComponent<VisualEffect>(); } }
+    VisualEffect effects { get { return visual; } }
     public void Sparkle()
     {
         if (!sparkling)
@@ -211,6 +218,11 @@ public class CropEffect : NetworkBehaviour
         Capture.Play();
     }
 
+
+    private void UpdatePosition()
+    {
+        
+    }
 
 }
 

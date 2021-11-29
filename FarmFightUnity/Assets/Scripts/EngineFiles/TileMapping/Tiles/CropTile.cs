@@ -146,7 +146,7 @@ public abstract class TileTemp : TileTempDepr
         // Update art if no battle is happening, so growing
         if (!battleOccurring)
         {
-            effect.crackAmount = tileDamage / 10.0f;
+            //effect.crackAmount = tileDamage / 10.0f;
             if (0 <= frame && frame < tileArts.Count)
             {
                 currentArt = tileArts[frame];
@@ -167,7 +167,7 @@ public abstract class TileTemp : TileTempDepr
         {
             currentArt = null;
 
-            effect.crackAmount = (tileDamage / 10.0f);
+            //effect.crackAmount = (tileDamage / 10.0f);
 
             if (tileDamage < 10.0f)
             {
