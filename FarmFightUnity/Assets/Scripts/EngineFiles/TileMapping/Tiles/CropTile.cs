@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MLAPI;
-using MLAPI.Messaging;
 
 public abstract class TileTemp : TileTempDepr
 {
@@ -291,8 +290,6 @@ public abstract class TileTemp : TileTempDepr
         return soldierCount - SortedSoldiers[me].Count;
     }
 
-    
-
     public bool sendSoldier(Hex end, int owner)
     {
         // Can we send?
@@ -317,6 +314,7 @@ public abstract class TileTemp : TileTempDepr
 
             if (pathPossible)
             {
+                soldier._RemoveFromTile(BoardHelperFns.HexToArray(hexCoord));
                 soldier.RemoveFromTile(hexCoord);
                 soldier.FadeIn();
 
@@ -324,6 +322,7 @@ public abstract class TileTemp : TileTempDepr
                 soldier.StartTripAsClientRpc(BoardHelperFns.HexToArray(hexCoord), BoardHelperFns.HexToArray(end));
 
                 // Stop capturing if there are no occupying soldiers
+                Debug.Log(soldierCount);
                 if (soldierCount == 0)
                 {
                     StopCapturing();
@@ -695,6 +694,7 @@ public abstract class TileTemp : TileTempDepr
 
     public void StopCapturingClientRpc()
     {
+        timeStartedCapturing = -1f;
         effect.StopCapture();
     }
 }

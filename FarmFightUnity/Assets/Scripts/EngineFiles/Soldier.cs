@@ -78,7 +78,7 @@ public class Soldier: NetworkBehaviour
     }
 
     // Internal function, actually changes the tile
-    void _RemoveFromTile(int[] coordArray)
+    public void _RemoveFromTile(int[] coordArray)
     {
         Hex coord = BoardHelperFns.ArrayToHex(coordArray);
         if (handler[coord].SortedSoldiers[owner.Value].Contains(this))
