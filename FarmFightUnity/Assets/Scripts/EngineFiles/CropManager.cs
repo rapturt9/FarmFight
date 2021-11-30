@@ -92,7 +92,9 @@ public class CropManager : NetworkBehaviour
 
         // Disqualifying attributes
         if ((handler[hex].tileOwner != -1 && handler[hex].tileOwner != owner) || // We can't overwrite an opponent's crop
-            handler[hex].hostileOccupation) // Can't change the tile if it's occupied by an enemy
+            //handler[hex].hostileOccupation || // Can't change the tile if it's occupied by an enemy
+            handler[hex].otherPeoplesSoldiers(owner) != 0 // Can't change the tile if it's occupied by an enemy
+            )
         {
             return false;
         }

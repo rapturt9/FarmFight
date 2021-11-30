@@ -295,14 +295,15 @@ public abstract class TileTemp : TileTempDepr
 
     public bool sendSoldier(Hex end, int owner)
     {
-        if (soldierCount != 0 &&
-            end != hexCoord &&
-            TileManager.TM.isValidHex(end) &&
-            SortedSoldiers[owner].Count != 0)
+        // Can we send?
+        if (end != hexCoord && // We aren't sending to the same tile we're already on
+            SortedSoldiers[owner].Count != 0 && // There is one of our soldiers
+            TileManager.TM.isValidHex(end) // The tile is a valid one on the board
+            )
         {
             Soldier soldier = FindFirstSoldierWithID(owner);
 
-            if (soldier == null)
+            if (soldier == null) // This shouldn't ever happen but it's here as a safeguard
                 return false;
 
             SoldierTrip trip;
@@ -318,7 +319,8 @@ public abstract class TileTemp : TileTempDepr
             {
                 soldier.RemoveFromTile(hexCoord);
                 soldier.FadeIn();
-                // Make trip smooth for clients
+
+                // Soldier does stuff to remove itself and moove smoothly
                 soldier.StartTripAsClientRpc(BoardHelperFns.HexToArray(hexCoord), BoardHelperFns.HexToArray(end));
 
                 // Stop capturing if there are no occupying soldiers
@@ -605,7 +607,7 @@ public abstract class TileTemp : TileTempDepr
                 {
                     var fallenSoldier = SortedSoldiers[playerId][i];
                     SortedSoldiers[playerId].RemoveAt(i);
-                    //fallenSoldier.Kill(); // This game me an error
+                    //fallenSoldier.Kill(); // This gave me an error
                 }
                 else
                 {

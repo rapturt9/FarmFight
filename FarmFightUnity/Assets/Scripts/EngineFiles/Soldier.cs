@@ -133,13 +133,27 @@ public class Soldier: NetworkBehaviour
     [ClientRpc]
     public void StartTripAsClientRpc(int[] startArray, int[] endArray)
     {
+        Hex start = BoardHelperFns.ArrayToHex(startArray);
+        Hex end = BoardHelperFns.ArrayToHex(endArray);
+
+        // Removing from tile if the rpc hasn't been processed
+        _RemoveFromTile(startArray);
+
+        // Fading
+        if (!handler[start].battleOccurring)
+        {
+            Soldier newTopSoldier;
+            if ((newTopSoldier = handler[start].FindFirstSoldierWithID(owner.Value)) != null)
+            {
+                newTopSoldier.FadeIn();
+            }
+        }
+
+        // Trip smoothness, only on client
         if (IsServer)
         {
             return;
         }
-        Hex start = BoardHelperFns.ArrayToHex(startArray);
-        Hex end = BoardHelperFns.ArrayToHex(endArray);
-
         FadeIn();
         // Starts trip
         SoldierTrip trip;
