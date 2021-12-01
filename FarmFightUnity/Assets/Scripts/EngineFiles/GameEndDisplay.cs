@@ -22,6 +22,7 @@ public class GameEndDisplay : MonoBehaviour
     {
         GameObject endingMessage = won ? endingMessages[0] : endingMessages[1];
         endingMessage.transform.localScale = new Vector3(startScale, startScale, startScale);
+        tintPanel.SetActive(true);
         endingMessage.SetActive(true);
 
         do

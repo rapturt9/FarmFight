@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using MLAPI;
 using MLAPI.Messaging;
+using MLAPI.Transports.PhotonRealtime;
 
 public class GameManager : NetworkBehaviour
 {
@@ -16,6 +17,7 @@ public class GameManager : NetworkBehaviour
     public int totalPlayersAndBots = 0;
     private List<Hex> openCorners;
     Repository central;
+    PhotonRealtimeTransport transport;
     public bool startOnNetworkStart = false; // DEBUG
 
     public static GameManager GM;
@@ -38,6 +40,7 @@ public class GameManager : NetworkBehaviour
     private void Start()
     {
         central = Repository.Central;
+        transport = NetworkManager.Singleton.GetComponent<PhotonRealtimeTransport>();
 
         central.GamesMode = PlayState.NormalGame;
     }
@@ -61,9 +64,16 @@ public class GameManager : NetworkBehaviour
         TileManager.TM.Init();
         SetupCorners();
 
-        // Add bots
         if (IsServer)
         {
+            // Only make private if starting from the menu
+            if (SceneVariables.cameThroughMenu)
+            {
+                transport.Client.CurrentRoom.IsOpen = false;
+                transport.Client.CurrentRoom.IsVisible = false;
+            }
+
+            // Bots
             int numPlayers = NetworkManager.Singleton.ConnectedClientsList.Count;
             int botsToAdd = SceneVariables.maxBots;
             if (botsToAdd + numPlayers > Repository.maxPlayers)

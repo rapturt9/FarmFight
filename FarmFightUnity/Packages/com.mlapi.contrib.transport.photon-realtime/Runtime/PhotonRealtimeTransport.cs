@@ -30,6 +30,10 @@ namespace MLAPI.Transports.PhotonRealtime
         [SerializeField]
         private byte m_MaxPlayers = 16;
 
+        [Tooltip("Whether to start the room as private or not.")]
+        [SerializeField]
+        private bool m_IsVisible = true;
+
         [Header("Advanced Settings")]
         [Tooltip("The first byte of the range of photon event codes which this transport will reserve for unbatched messages. Should be set to a number lower then 200 to not interfere with photon internal events. Approximately 8 events will be reserved.")]
         [SerializeField]
@@ -89,7 +93,16 @@ namespace MLAPI.Transports.PhotonRealtime
             get => m_RoomName;
             set => m_RoomName = value;
         }
-        
+
+        /// <summary>
+        /// Determines whether to start a room as private or not.
+        /// </summary>
+        public bool IsVisible
+        {
+            get => m_IsVisible;
+            set => m_IsVisible = value;
+        }
+
         /// <summary>
         /// The Photon loadbalancing client used by this transport for everything networking related.
         /// </summary>

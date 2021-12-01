@@ -22,7 +22,7 @@ public class panelmover : MonoBehaviour
 
         startPos = GetComponent<RectTransform>().anchoredPosition;
         started = true;
-
+        
         
 
         StartCoroutine(moveToPoint());
@@ -49,8 +49,10 @@ public class panelmover : MonoBehaviour
 
             Count.text = values.Item1.ToString();
             health.text = Mathf.Round(values.Item2).ToString();
+            // If we've started from MainScene, totalOwned will be 0. This fixes this on the client.
+            int ownedByAnybody = BoardChecker.Checker.totalOwned > 0 ? BoardChecker.Checker.totalOwned : 1;
             float owned = BoardChecker.Checker.ownedTileCount[Player]
-                        * 100 / BoardChecker.Checker.totalOwned;
+                        * 100 / ownedByAnybody;
             percent.text = Mathf.Round(owned).ToString() + "%";
 
             Vector2 position = GetComponent<RectTransform>().anchoredPosition;

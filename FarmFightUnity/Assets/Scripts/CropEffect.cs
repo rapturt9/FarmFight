@@ -69,7 +69,7 @@ public class CropEffect : NetworkBehaviour
     VisualEffect effects { get { return visual; } }
     public void Sparkle()
     {
-        if (!sparkling)
+        if (!sparkling && !tile.battleOccurring)
         {
             //TimeToHarvest.Play();
             //Flies.Stop();
@@ -111,6 +111,21 @@ public class CropEffect : NetworkBehaviour
     public void HarvestSound()
     {
         //Harvest.Play();
+    }
+
+    public void Pause()
+    {
+        effects.SendEvent("StopFlies");
+        effects.SetBool("FliesAlive", false);
+    }
+
+    public void Resume()
+    {
+        if (rotting)
+        {
+            effects.SetBool("FliesAlive", true);
+            effects.SendEvent("StartFlies");
+        }
     }
 
     public void Stop()

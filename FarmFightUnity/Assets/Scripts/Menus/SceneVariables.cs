@@ -15,4 +15,7 @@ public static class SceneVariables
 
     // Lobby ID
     public static string lobbyId = "1";
+
+    // Whether the lobby is private
+    public static bool isPrivate = false;
 }

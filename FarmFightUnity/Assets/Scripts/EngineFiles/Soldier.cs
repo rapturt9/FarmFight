@@ -78,7 +78,7 @@ public class Soldier: NetworkBehaviour
     }
 
     // Internal function, actually changes the tile
-    void _RemoveFromTile(int[] coordArray)
+    public void _RemoveFromTile(int[] coordArray)
     {
         Hex coord = BoardHelperFns.ArrayToHex(coordArray);
         if (handler[coord].SortedSoldiers[owner.Value].Contains(this))
@@ -115,15 +115,16 @@ public class Soldier: NetworkBehaviour
     {
         Hex coord = BoardHelperFns.ArrayToHex(coordArray);
         List<Soldier> fellowSoldiers = handler[coord].SortedSoldiers[owner.Value];
-
+        
         // Adds to SortedSoldiers
         if (!fellowSoldiers.Contains(this))
         {
-            if (handler[coord].battleOccurring)
-            {
-                FadeOut();
-            }
             fellowSoldiers.Add(this);
+        }
+        // Fades out if battling
+        if (handler[coord].battleOccurring)
+        {
+            FadeOut();
         }
         // Changes position
         transform.position = TileManager.TM.HexToWorld(coord) + .25f * Vector3.left;
@@ -133,13 +134,27 @@ public class Soldier: NetworkBehaviour
     [ClientRpc]
     public void StartTripAsClientRpc(int[] startArray, int[] endArray)
     {
+        Hex start = BoardHelperFns.ArrayToHex(startArray);
+        Hex end = BoardHelperFns.ArrayToHex(endArray);
+
+        // Removing from tile if the rpc hasn't been processed
+        _RemoveFromTile(startArray);
+
+        // Fading
+        if (!handler[start].battleOccurring)
+        {
+            Soldier newTopSoldier;
+            if ((newTopSoldier = handler[start].FindFirstSoldierWithID(owner.Value)) != null)
+            {
+                newTopSoldier.FadeIn();
+            }
+        }
+
+        // Trip smoothness, only on client
         if (IsServer)
         {
             return;
         }
-        Hex start = BoardHelperFns.ArrayToHex(startArray);
-        Hex end = BoardHelperFns.ArrayToHex(endArray);
-
         FadeIn();
         // Starts trip
         SoldierTrip trip;

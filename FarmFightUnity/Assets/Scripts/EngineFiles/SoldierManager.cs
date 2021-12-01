@@ -47,14 +47,14 @@ public class SoldierManager : NetworkBehaviour
         int[] hexArray = BoardHelperFns.HexToArray(hex);
         if (crops[hex].tileOwner == owner)
         {
-            addSoldierServerRpc(hexArray, owner);
+            AddSoldierServerRpc(hexArray, owner);
             return true;
         }
         return false;
     }
 
     [ServerRpc(RequireOwnership = false)]
-    void addSoldierServerRpc(int[] hexArray, int owner)
+    void AddSoldierServerRpc(int[] hexArray, int owner)
     {
         Hex hex = BoardHelperFns.ArrayToHex(hexArray);
         crops[hex].addSoldier(owner);
@@ -67,13 +67,13 @@ public class SoldierManager : NetworkBehaviour
         if (owner == -1)
             owner = Repository.Central.localPlayerId;
 
-        sendSoldierServerRpc(BoardHelperFns.HexToArray(start),
+        SendSoldierServerRpc(BoardHelperFns.HexToArray(start),
                 BoardHelperFns.HexToArray(end),
                 owner);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void sendSoldierServerRpc(int[] startArray, int[] endArray, int owner)
+    public void SendSoldierServerRpc(int[] startArray, int[] endArray, int owner)
     {
         Hex start = BoardHelperFns.ArrayToHex(startArray);
         Hex end = BoardHelperFns.ArrayToHex(endArray);
