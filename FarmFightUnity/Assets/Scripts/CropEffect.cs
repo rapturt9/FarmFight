@@ -71,8 +71,8 @@ public class CropEffect : NetworkBehaviour
     {
         if (!sparkling && !tile.battleOccurring)
         {
-            //TimeToHarvest.Play();
-            //Flies.Stop();
+            TimeToHarvest.Play();
+            Flies.Stop();
             transform.position = startPos;
             sparkling = true;
             rotting = false;
@@ -98,11 +98,13 @@ public class CropEffect : NetworkBehaviour
             effects.SetBool("FliesAlive", true);
 
             effects.SendEvent("StartFlies");
-            
+
+            Flies.Play();
+
         }
         if (rotting)
         {
-            //Flies.Play();
+            
         }
             
         
@@ -110,7 +112,7 @@ public class CropEffect : NetworkBehaviour
 
     public void HarvestSound()
     {
-        //Harvest.Play();
+        Harvest.Play();
     }
 
     public void Pause()
@@ -138,6 +140,8 @@ public class CropEffect : NetworkBehaviour
 
         effects.SendEvent("StopFlies");
         effects.SetBool("FliesAlive",false);
+        Flies.Stop();
+        
     }
 
 
@@ -160,7 +164,7 @@ public class CropEffect : NetworkBehaviour
 
             Color color = getCloudColor();
             
-            effects.SetVector4("CloudColor", getCloudColor());
+            effects.SetVector4("CloudColor", color);
 
             effects.SetFloat("CloudSize", size + CloudSpeed);
         }
