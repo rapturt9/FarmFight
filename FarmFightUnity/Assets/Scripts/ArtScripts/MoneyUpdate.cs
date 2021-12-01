@@ -49,7 +49,7 @@ public class MoneyUpdate : MonoBehaviour
             float display = (float)Math.Round(displaymoney / 1000f, 1);
             if (display % 1 == 0)
             {
-                text.text = "Money: ₣" + display + "0k";
+                text.text = "Money: ₣" + display + ".0k";
             }
             else
                 text.text = "Money: ₣" + Math.Round(displaymoney / 1000f,1) + "k";

@@ -115,15 +115,16 @@ public class Soldier: NetworkBehaviour
     {
         Hex coord = BoardHelperFns.ArrayToHex(coordArray);
         List<Soldier> fellowSoldiers = handler[coord].SortedSoldiers[owner.Value];
-
+        
         // Adds to SortedSoldiers
         if (!fellowSoldiers.Contains(this))
         {
-            if (handler[coord].battleOccurring)
-            {
-                FadeOut();
-            }
             fellowSoldiers.Add(this);
+        }
+        // Fades out if battling
+        if (handler[coord].battleOccurring)
+        {
+            FadeOut();
         }
         // Changes position
         transform.position = TileManager.TM.HexToWorld(coord) + .25f * Vector3.left;

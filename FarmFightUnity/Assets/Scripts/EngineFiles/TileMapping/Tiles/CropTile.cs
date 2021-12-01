@@ -544,6 +544,7 @@ public abstract class TileTemp : TileTempDepr
         }
         StopCapturing();
         FadeOutSoldiers();
+        effect.Pause();
     }
 
     public void StopBattle()
@@ -556,6 +557,7 @@ public abstract class TileTemp : TileTempDepr
         PruneSoldiers();
         FadeInSoldiers();
         OwnershipSwitch();
+        effect.Resume();
     }
 
     private int GetCapturingPlayer()
