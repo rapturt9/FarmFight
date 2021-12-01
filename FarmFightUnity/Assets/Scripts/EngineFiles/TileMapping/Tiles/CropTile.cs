@@ -322,7 +322,6 @@ public abstract class TileTemp : TileTempDepr
                 soldier.StartTripAsClientRpc(BoardHelperFns.HexToArray(hexCoord), BoardHelperFns.HexToArray(end));
 
                 // Stop capturing if there are no occupying soldiers
-                Debug.Log(soldierCount);
                 if (soldierCount == 0)
                 {
                     StopCapturing();

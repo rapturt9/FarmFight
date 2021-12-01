@@ -56,9 +56,10 @@ public class TileInfoArrangement : MonoBehaviour
                 = Repository.Central.cropHandler
                 [Repository.Central.selectedHex];
 
-
-            if (selected.tileOwner != -1)
-                sortedSoldiers = selected.SortedSoldiers;
+            // I removed this so you can see soldier stats on empty tiles - Eli
+            //if (selected.tileOwner != -1)
+            //    sortedSoldiers = selected.SortedSoldiers;
+            sortedSoldiers = selected.SortedSoldiers;
 
             if (tileValues.Count > 5)
             {
