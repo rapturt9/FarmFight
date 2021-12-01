@@ -12,6 +12,8 @@ public class TileInfoArrangement : MonoBehaviour
 
     public panelmover[] panels;
 
+    public
+
     
 
     Coroutine valuechecker;

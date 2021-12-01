@@ -453,6 +453,7 @@ MonoBehaviour:
   gameIsRunning: 0
   money: 10
   isBot: 1
+  framerate: 45
   vegetableValues: []
   GamesMode: 0
   flyingVegies: 1
@@ -5639,7 +5640,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d612e646c52a8c439b58666848f3e09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 58370721}
   startTimeLeft: 31
 --- !u!114 &1276782570
 MonoBehaviour:
