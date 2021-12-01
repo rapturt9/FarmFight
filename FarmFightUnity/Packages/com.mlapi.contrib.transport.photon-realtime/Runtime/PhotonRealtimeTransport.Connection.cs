@@ -21,6 +21,7 @@ namespace MLAPI.Transports.PhotonRealtime
                 RoomOptions = new RoomOptions()
                 {
                     MaxPlayers = m_MaxPlayers,
+                    IsVisible = m_IsVisible,
                 }
             };
 

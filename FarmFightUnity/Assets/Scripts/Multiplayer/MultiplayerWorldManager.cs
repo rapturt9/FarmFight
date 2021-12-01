@@ -9,7 +9,7 @@ using Photon.Realtime;
 
 public class MultiplayerWorldManager : MonoBehaviour
 {
-    PhotonRealtimeTransport transport;
+    public PhotonRealtimeTransport transport;
 
     public GameObject interstitial;
     public GameObject startGameButton;
@@ -38,6 +38,8 @@ public class MultiplayerWorldManager : MonoBehaviour
         if (SceneVariables.cameThroughMenu)
         {
             transport.RoomName = SceneVariables.lobbyId;
+            transport.IsVisible = !SceneVariables.isPrivate;
+            
             // Are we hosting
             if (SceneVariables.isHosting)
             {

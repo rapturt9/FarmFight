@@ -75,6 +75,11 @@ public class LobbyMenu : MonoBehaviour
         maxBotsText.text = maxBots.ToString();
     }
 
+    public void EditPrivate(bool toggle)
+    {
+        SceneVariables.isPrivate = toggle;
+    }
+
     public void RefreshJoinableLobbies()
     {
         // Destroys old buttons

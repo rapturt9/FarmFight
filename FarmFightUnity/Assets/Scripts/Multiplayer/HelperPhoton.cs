@@ -103,7 +103,7 @@ partial class HelperPhoton : ILobbyCallbacks
             {
                 availableRooms.Remove(room);
             }
-            else
+            else if (!availableRoomNames.Contains(room.Name))
             {
                 availableRooms.Add(room);
             }
