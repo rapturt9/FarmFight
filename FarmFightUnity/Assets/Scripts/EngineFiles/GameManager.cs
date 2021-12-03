@@ -63,6 +63,7 @@ public class GameManager : NetworkBehaviour
         TileArtRepository.Art.Init();
         TileManager.TM.Init();
         SetupCorners();
+        Repository.Central.timer.init(Repository.Central.time.x, Repository.Central.time.y);
 
         if (IsServer)
         {
@@ -104,6 +105,12 @@ public class GameManager : NetworkBehaviour
         {
             Repository.Central.selectedHex = hex;
         }
+
+        if (BoardChecker.Checker.ownedTileCount[central.localPlayerId] > 0)
+            gameStarted = true;
+
+        gameLost();
+      
     }
 
 
@@ -187,6 +194,19 @@ public class GameManager : NetworkBehaviour
             }
         };
         StartFromMainSceneClientRpc(clientRpcParams);
+    }
+
+    private bool gameStarted;
+
+    private void gameLost()
+    {
+        if(gameStarted &&
+            BoardChecker.Checker.ownedTileCount[central.localPlayerId] == 0 &&
+            BoardChecker.Checker.soldierCount[central.localPlayerId] == 0)
+        {
+            Debug.Log("YouLost");
+            central.money = 0;
+        }
     }
 
     [ClientRpc]

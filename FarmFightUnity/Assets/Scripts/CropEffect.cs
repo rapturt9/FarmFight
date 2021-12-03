@@ -44,8 +44,14 @@ public class CropEffect : NetworkBehaviour
         crackRender.transform.position = startPos;
 
         crackRender.material.SetFloat("CrackAmt", crackAmount);
+
+        if (tile.tileOwner == Repository.Central.localPlayerId)
+            Flies.volume = .05f * (1 - Mathf.Pow(BoardChecker.Checker.ownedTileCount[tile.tileOwner] / 37f, 2));
+        else
+            Flies.volume = 0;
     }
 
+    
 
     public void init(TileTemp tile)
     {

@@ -48,7 +48,9 @@ public abstract class TileTemp : TileTempDepr
         frameInternal = 0;
     }
 
-
+    /// <summary>
+    /// love this!!!
+    /// </summary>
     public override void Behavior()
     {
         UpdateFrame();

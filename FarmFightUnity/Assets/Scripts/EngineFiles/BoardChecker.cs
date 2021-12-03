@@ -120,7 +120,7 @@ public class BoardChecker : NetworkBehaviour
     void UpdateTileCounts()
     {
         ownedTileCount = new int[Repository.maxPlayers];
-        var soldiers = new int[Repository.maxPlayers];
+        soldierCount = new int[Repository.maxPlayers];
         foreach (var coord in hexCoords)
         {
             
@@ -134,7 +134,7 @@ public class BoardChecker : NetworkBehaviour
             }
         }
 
-        soldierCount = soldiers;
+         
     }
 
     

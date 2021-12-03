@@ -27,6 +27,9 @@ public class Repository : MonoBehaviour
 
     public int framerate = 30;
 
+    public TimerScript timer;
+    public Vector2Int time;
+
     [HideInInspector]
     public List<float> vegetableValues = new List<float>();
     public float vegetableSum { get

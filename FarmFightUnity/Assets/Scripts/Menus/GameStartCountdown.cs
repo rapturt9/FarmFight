@@ -17,6 +17,7 @@ public class GameStartCountdown : NetworkBehaviour
     void Start()
     {
         text = GetComponent<TextMeshProUGUI>();
+        text.color = Repository.Central.TeamColors[Repository.Central.localPlayerId];
     }
 
     public override void NetworkStart()
