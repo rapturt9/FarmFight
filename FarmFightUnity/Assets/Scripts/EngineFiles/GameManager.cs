@@ -88,7 +88,7 @@ public class GameManager : NetworkBehaviour
         // Adds a new player and gets their ID
         addNewPlayerServerRpc(NetworkManager.Singleton.LocalClientId);
 
-        // Now, lets things update
+        // Now, let things update
         central.gameIsRunning = true;
         BoardChecker.Checker.StartChecking();
     }
@@ -106,11 +106,10 @@ public class GameManager : NetworkBehaviour
             Repository.Central.selectedHex = hex;
         }
 
-        if (BoardChecker.Checker.ownedTileCount[central.localPlayerId] > 0)
-            gameStarted = true;
-
-        gameLost();
-      
+        // Moved to BoardChecker
+        //if (BoardChecker.Checker.ownedTileCount[central.localPlayerId] > 0)
+        //    gameStarted = true;
+        //gameLost(); 
     }
 
 

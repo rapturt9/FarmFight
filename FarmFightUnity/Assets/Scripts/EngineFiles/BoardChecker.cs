@@ -56,28 +56,56 @@ public class BoardChecker : NetworkBehaviour
 
     public IEnumerator CheckBoard()
     {
+        // Initializing
+        do
+        {
+            UpdateTileCounts();
+            yield return new WaitForEndOfFrame();
+        }
+        while (ownedTileCount[Repository.Central.localPlayerId] == 0);
+
+        // Actual gameplay
         while (Repository.Central.gameIsRunning)
         {
             UpdateTileCounts();
-            if (GameManager.GM.totalPlayersAndBots > 1 && IsServer) // Is there at least one player to win against
+
+            // Losing
+            if (CheckForLost(Repository.Central.localPlayerId))
+            {
+                EndGame(false);
+            }
+            // Winning
+            if (GameManager.GM.totalPlayersAndBots > 1 && IsServer) // Make sure we don't win with only one person playing
             {
                 int winningPlayer = CheckForAnyWin();
                 if (winningPlayer != -1)
                 {
                     Repository.Central.gameIsRunning = false;
-                    EndGameClientRpc(winningPlayer);
+                    EndGameWinClientRpc(winningPlayer);
+                    gameEndDisplay.EnableHostPlayAgain();
                     yield return null;
                 }
             }
-            yield return new WaitForEndOfFrame(); ;
+
+            yield return new WaitForEndOfFrame();
         }
+    }
+
+    private bool CheckForLost(int playerId)
+    {
+        if (ownedTileCount[playerId] == 0 &&
+            soldierCount[playerId] == 0)
+        {
+            return true;
+        }
+        return false;
     }
 
     bool CheckForWin(int playerId)
     {
         for (int id = 0; id<Repository.maxPlayers; id++)
         {
-            if (id != playerId && ownedTileCount[id] != 0)
+            if (id != playerId && !CheckForLost(id))
             {
                 return false;
             }
@@ -97,24 +125,23 @@ public class BoardChecker : NetworkBehaviour
         return -1;
     }
 
-    [ClientRpc]
-    public void EndGameClientRpc(int winningPlayer)
+    public void EndGame(bool won)
     {
-        Repository.Central.gameIsRunning = false;
-        bool won = Repository.Central.localPlayerId == winningPlayer;
-        gameEndDisplay.EndDisplay(won);
+        if (!IsServer)
+        {
+            Repository.Central.gameIsRunning = false;
+        }
+        gameEndDisplay.EndingDisplay(won);
+    }
 
+    [ClientRpc]
+    public void EndGameWinClientRpc(int winningPlayer)
+    {
+        bool won = winningPlayer == Repository.Central.localPlayerId;
         if (won)
         {
-            Debug.Log("You won!");
+            EndGame(won);
         }
-        else
-        {
-            Debug.Log("You lost :(");
-        }
-
-        if (winningPlayer != -1)
-            Debug.Log("Player " + winningPlayer.ToString() + " has won");
     }
 
     void UpdateTileCounts()
@@ -128,14 +155,9 @@ public class BoardChecker : NetworkBehaviour
             if (tile.tileOwner != -1)
             {
                 ownedTileCount[tile.tileOwner]++;
-
-                foreach (var player in tile.SortedSoldiers)
-                    soldierCount[player.Key] += player.Value.Count;
             }
+            foreach (var player in tile.SortedSoldiers)
+                soldierCount[player.Key] += player.Value.Count;
         }
-
-         
     }
-
-    
 }
