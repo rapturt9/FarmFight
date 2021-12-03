@@ -182,15 +182,14 @@ public struct TileSyncData : INetworkSerializable
 
     public float tileDamage;
 
-    public TileSyncData(CropType cropTypeArg, float timeLastPlantedArg, bool containsFarmerArg, int tileOwnerArg, bool battleOccurringArg, float tileDamageArg) : this()
+    public TileSyncData(CropType cropType, float timeLastPlanted, bool containsFarmer, int tileOwner, bool battleOccurring, float tileDamage) : this()
     {
-        cropType = cropTypeArg;
-        timeLastPlanted = timeLastPlantedArg;
-        containsFarmer = containsFarmerArg;
-        tileOwner = tileOwnerArg;
-        battleOccurring = battleOccurringArg;
-        tileDamage = tileDamageArg;
-        //soldiers = soldiersArg;
+        this.cropType = cropType;
+        this.timeLastPlanted = timeLastPlanted;
+        this.containsFarmer = containsFarmer;
+        this.tileOwner = tileOwner;
+        this.battleOccurring = battleOccurring;
+        this.tileDamage = tileDamage;
     }
 
     public void NetworkSerialize(NetworkSerializer serializer)

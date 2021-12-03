@@ -12,9 +12,12 @@ public class GameManager : NetworkBehaviour
     public TileHandler[] TileHandler;
     public GameState gameState;
     public GameObject interstitial;
+    public GameObject disconnected;
 
     public int currMaxLocalPlayerId = 0;
     public int totalPlayersAndBots = 0;
+    public int botsToAdd = 0;
+    public List<int> realPlayers = new List<int>();
     private List<Hex> openCorners;
     Repository central;
     PhotonRealtimeTransport transport;
@@ -76,7 +79,7 @@ public class GameManager : NetworkBehaviour
 
             // Bots
             int numPlayers = NetworkManager.Singleton.ConnectedClientsList.Count;
-            int botsToAdd = SceneVariables.maxBots;
+            botsToAdd = SceneVariables.maxBots;
             if (botsToAdd + numPlayers > Repository.maxPlayers)
             {
                 botsToAdd = Repository.maxPlayers - numPlayers;
@@ -88,7 +91,7 @@ public class GameManager : NetworkBehaviour
         // Adds a new player and gets their ID
         addNewPlayerServerRpc(NetworkManager.Singleton.LocalClientId);
 
-        // Now, lets things update
+        // Now, let things update
         central.gameIsRunning = true;
         BoardChecker.Checker.StartChecking();
     }
@@ -98,6 +101,13 @@ public class GameManager : NetworkBehaviour
     {
         if (!central.gameIsRunning) { return; }
 
+        // Exit game if host or we disconnect
+        if (!IsClient)
+        {
+            central.gameIsRunning = false;
+            StartCoroutine("Disconnect");
+        }
+
         Hex hex = TileManager.TM.getMouseHex();
 
         if (Input.GetMouseButtonDown(0) &
@@ -106,11 +116,10 @@ public class GameManager : NetworkBehaviour
             Repository.Central.selectedHex = hex;
         }
 
-        if (BoardChecker.Checker.ownedTileCount[central.localPlayerId] > 0)
-            gameStarted = true;
-
-        gameLost();
-      
+        // Moved to BoardChecker
+        //if (BoardChecker.Checker.ownedTileCount[central.localPlayerId] > 0)
+        //    gameStarted = true;
+        //gameLost(); 
     }
 
 
@@ -140,6 +149,7 @@ public class GameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     void addNewPlayerServerRpc(ulong targetClientId)
     {
+        realPlayers.Add(currMaxLocalPlayerId);
         addNewPlayer(currMaxLocalPlayerId);
 
         // Serializes entire board
@@ -213,5 +223,15 @@ public class GameManager : NetworkBehaviour
     public void StartFromMainSceneClientRpc(ClientRpcParams clientRpcParams = default)
     {
         GameStart();
+    }
+
+    IEnumerator Disconnect()
+    {
+        yield return new WaitForSeconds(2);
+        disconnected.SetActive(true);
+        yield return new WaitForSeconds(5);
+        GetComponent<ExitFunction>().exit();
+        print("Failed to reconnect");
+        yield return null;
     }
 }

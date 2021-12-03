@@ -126,10 +126,6 @@ public class Market : NetworkBehaviour
             Hex endHex = TileManager.TM.getMouseHex();
             soldierManager.SendSoldier(selectedHex, endHex);
         }
-
-       
-        
-
     }
 
     public void MarketUpdateFunctionality()

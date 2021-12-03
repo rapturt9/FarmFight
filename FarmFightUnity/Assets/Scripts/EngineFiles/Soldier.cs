@@ -20,9 +20,8 @@ public class Soldier: NetworkBehaviour
 
     public Hex Position;
 
-    public void Start()
+    void Awake()
     {
-        
         handler = TileManager.TM["Crops"];
     }
     

@@ -65,7 +65,7 @@ public class LobbyMenu : MonoBehaviour
 
     public void EditLobbyId(string lobbyId)
     {
-        SceneVariables.lobbyId = lobbyId;
+        SceneVariables.lobbyId = lobbyId.ToUpper();
     }
 
     public void EditMaxBots(float maxBotsF)

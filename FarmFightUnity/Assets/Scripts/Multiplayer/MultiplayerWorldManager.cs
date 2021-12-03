@@ -6,6 +6,7 @@ using MLAPI.Serialization;
 using MLAPI.Serialization.Pooled;
 using MLAPI.Transports.PhotonRealtime;
 using Photon.Realtime;
+using ParrelSync;
 
 public class MultiplayerWorldManager : MonoBehaviour
 {
@@ -34,12 +35,12 @@ public class MultiplayerWorldManager : MonoBehaviour
             }
         });
 
-        // If we started directly from MainScene, we don't want to immediately host/client
+        // Starting from the main menu means host/client is dictated by user deciding to host
         if (SceneVariables.cameThroughMenu)
         {
             transport.RoomName = SceneVariables.lobbyId;
             transport.IsVisible = !SceneVariables.isPrivate;
-            
+
             // Are we hosting
             if (SceneVariables.isHosting)
             {
@@ -50,13 +51,26 @@ public class MultiplayerWorldManager : MonoBehaviour
                 Join();
             }
         }
+        // Starting directly from MainScene means host/client is dictated by clone or not
+        else
+        {
+            if (ClonesManager.IsClone())
+            {
+                Join();
+            }
+            else
+            {
+                Host();
+            }
+        }
     }
+
     void OnGUI()
     {
         GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-        if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
+        if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer && !SceneVariables.cameThroughMenu)
         {
-            StartButtons();
+            //StartButtons();
         }
         else
         {
@@ -77,10 +91,10 @@ public class MultiplayerWorldManager : MonoBehaviour
     {
         var mode = NetworkManager.Singleton.IsHost ?
             "Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
-
-        GUILayout.Label("Transport: " +
-            NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
-        GUILayout.Label("Mode: " + mode);
+        
+        //GUILayout.Label("Transport: " +
+        //    NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
+        //GUILayout.Label("Mode: " + mode);
     }
 
     public void Host()
