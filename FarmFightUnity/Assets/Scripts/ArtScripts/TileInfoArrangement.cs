@@ -77,7 +77,7 @@ public class TileInfoArrangement : MonoBehaviour
     void sendInfo()
     {
 
-        (int, float)[] sorted = sort();
+        (int, int)[] sorted = sort();
 
         for (int i = 0; i<6; i++)
         {
@@ -89,30 +89,30 @@ public class TileInfoArrangement : MonoBehaviour
 
     }
 
-    (int,float)[] sort()
+    (int,int)[] sort()
     {
-        
-        List<(int, float)> sorting = new List<(int, float)>();
+        int[] board = BoardChecker.Checker.ownedTileCount;
+        List<(int, int)> sorting = new List<(int, int)>();
 
         
         sorting.Add((0,
-            tileValues[0].Item2));
+            board[0]));
 
-        foreach(var player in tileValues)
+        for (int i = 0; i < board.Length; i++)
         {
-            for(int i = 0; i < sorting.Count; i++)
+            for(int ii = 0; ii < sorting.Count; ii++)
             {
-                if(player.Value.Item2 > sorting[i].Item2)
+                if(board[i] > sorting[ii].Item2)
                 {
-                    sorting.Insert(i, (player.Key, player.Value.Item2));
+                    sorting.Insert(ii, (i,board[i] ));
                     break;
                 }
             }
 
 
-            if(!sorting.Contains((player.Key, player.Value.Item2)))
+            if(!sorting.Contains((i, board[i])))
             {
-                sorting.Add((player.Key, player.Value.Item2));
+                sorting.Add((i, board[i]));
             }
 
         }
