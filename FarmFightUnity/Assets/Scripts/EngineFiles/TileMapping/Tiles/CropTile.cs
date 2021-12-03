@@ -114,11 +114,11 @@ public abstract class TileTemp : TileTempDepr
             }
             else if (cropType == CropType.carrot)
             {
-                hLevel = 4;
+                hLevel = 3;
             }
             else if (cropType == CropType.rice)
             {
-                hLevel = 2;
+                hLevel = 6;
             }
 
             else if (cropType == CropType.eggplant)

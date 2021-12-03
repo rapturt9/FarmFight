@@ -124,7 +124,16 @@ public class Market : NetworkBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             Hex endHex = TileManager.TM.getMouseHex();
-            soldierManager.SendSoldier(selectedHex, endHex);
+            if(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)){ //shift rightclick means send all soldiers
+                var soldiers = crops.handler[central.selectedHex].SortedSoldiers[central.localPlayerId];
+                int soldierCount = soldiers.Count;
+                Debug.Log(soldierCount);
+                for(int i=0; i< soldierCount; i++){
+                    soldierManager.SendSoldier(selectedHex, endHex);
+                }
+            } else {
+                soldierManager.SendSoldier(selectedHex, endHex);
+            }
         }
     }
 

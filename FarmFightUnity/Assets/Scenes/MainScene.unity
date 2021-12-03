@@ -7189,8 +7189,8 @@ MonoBehaviour:
   EggplantCost: 10
   farmerCost: 5
   potatoCVal: 1
-  carrotVal: 2
-  riceVal: 4
+  carrotVal: 3
+  riceVal: 6
   EggplantVal: 10
   farmerVal: 5
   BaseSoldierCost: 5
