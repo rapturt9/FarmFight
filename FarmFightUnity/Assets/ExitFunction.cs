@@ -15,7 +15,6 @@ public class ExitFunction : MonoBehaviour
         //    Destroy(obj);
         //}
 
-
         // This stops the network
         NetworkManager.Singleton.Shutdown();
     }

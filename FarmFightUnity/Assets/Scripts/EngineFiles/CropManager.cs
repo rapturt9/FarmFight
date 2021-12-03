@@ -174,7 +174,8 @@ public class CropManager : NetworkBehaviour
 
         if (handler[hex].containsFarmer == false && 
             handler[hex].tileOwner == owner && 
-            !handler[hex].hostileOccupation)
+            !handler[hex].hostileOccupation && 
+            !handler[hex].battleOccurring)
         {
             addFarmerServerRpc(BoardHelperFns.HexToArray(hex));
             return true;

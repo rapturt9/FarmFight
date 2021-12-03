@@ -22,7 +22,7 @@ public class GameEndDisplay : MonoBehaviour
     const float scaleSpeed = 1f;
 
     bool gameEnded = false;
-    public bool hostCanContinue = false;
+    [HideInInspector] public bool hostCanContinue = false;
 
     public void EndingDisplay(bool won)
     {
@@ -34,7 +34,9 @@ public class GameEndDisplay : MonoBehaviour
 
         // If we're hosting, make it so you can't quit
         // Listen server means host quitting makes everyone gets kicked out
-        if (NetworkManager.Singleton.IsHost && !won)
+        if (NetworkManager.Singleton.IsHost &&
+            !won &&
+            GameManager.GM.realPlayers.Count > 1)
         {
             winlose.GetComponent<SpriteRenderer>().sprite = endingCardTypes[1];
             playAgainButton.SetActive(false);

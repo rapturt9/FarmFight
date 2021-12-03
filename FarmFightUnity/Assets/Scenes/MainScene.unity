@@ -395,6 +395,7 @@ GameObject:
   - component: {fileID: 58370722}
   - component: {fileID: 58370723}
   - component: {fileID: 58370724}
+  - component: {fileID: 58370725}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -434,6 +435,8 @@ MonoBehaviour:
   interstitial: {fileID: 805581830}
   currMaxLocalPlayerId: 0
   totalPlayersAndBots: 0
+  botsToAdd: 0
+  realPlayers: 
   startOnNetworkStart: 0
 --- !u!114 &58370722
 MonoBehaviour:
@@ -493,6 +496,19 @@ MonoBehaviour:
   ownedTileCount: 
   soldierCount: 
   hexCoords: []
+--- !u!114 &58370725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 58370719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf9663e6f14d14421a34cb15f49a5733, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objToDestroy: []
 --- !u!1001 &100725831
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6905,7 +6921,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1603663549}
+      - m_Target: {fileID: 58370725}
         m_TargetAssemblyTypeName: ExitFunction, Assembly-CSharp
         m_MethodName: exit
         m_Mode: 1
@@ -8218,7 +8234,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1845391923}
   - component: {fileID: 1845391926}
-  - component: {fileID: 1845391927}
   - component: {fileID: 1845391925}
   - component: {fileID: 1845391924}
   m_Layer: 5
@@ -8292,7 +8307,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1845391927}
+      - m_Target: {fileID: 58370725}
         m_TargetAssemblyTypeName: ExitFunction, Assembly-CSharp
         m_MethodName: exit
         m_Mode: 1
@@ -8342,21 +8357,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1845391922}
   m_CullTransparentMesh: 1
---- !u!114 &1845391927
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1845391922}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf9663e6f14d14421a34cb15f49a5733, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  objToDestroy:
-  - {fileID: 1424662204}
-  - {fileID: 1201261306}
 --- !u!1 &1879254976
 GameObject:
   m_ObjectHideFlags: 0

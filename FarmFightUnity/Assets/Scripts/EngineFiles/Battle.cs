@@ -90,7 +90,6 @@ public static class Battle
                 if (soldier.Health.Value <= 0)
                 {
                     soldier.Kill();
-                    Debug.Log("killed soldier owned by " + soldier.owner.Value.ToString());
                     killed = true;
                 }
             }

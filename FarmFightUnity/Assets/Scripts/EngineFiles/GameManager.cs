@@ -15,6 +15,8 @@ public class GameManager : NetworkBehaviour
 
     public int currMaxLocalPlayerId = 0;
     public int totalPlayersAndBots = 0;
+    public int botsToAdd = 0;
+    public List<int> realPlayers = new List<int>();
     private List<Hex> openCorners;
     Repository central;
     PhotonRealtimeTransport transport;
@@ -76,7 +78,7 @@ public class GameManager : NetworkBehaviour
 
             // Bots
             int numPlayers = NetworkManager.Singleton.ConnectedClientsList.Count;
-            int botsToAdd = SceneVariables.maxBots;
+            botsToAdd = SceneVariables.maxBots;
             if (botsToAdd + numPlayers > Repository.maxPlayers)
             {
                 botsToAdd = Repository.maxPlayers - numPlayers;
@@ -139,6 +141,7 @@ public class GameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     void addNewPlayerServerRpc(ulong targetClientId)
     {
+        realPlayers.Add(currMaxLocalPlayerId);
         addNewPlayer(currMaxLocalPlayerId);
 
         // Serializes entire board

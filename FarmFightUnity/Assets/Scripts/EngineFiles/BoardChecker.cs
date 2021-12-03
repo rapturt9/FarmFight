@@ -72,6 +72,7 @@ public class BoardChecker : NetworkBehaviour
             // Losing
             if (CheckForLost(Repository.Central.localPlayerId))
             {
+                MarkAsDeadServerRpc(Repository.Central.localPlayerId);
                 EndGame(false);
             }
             // Winning
@@ -159,5 +160,11 @@ public class BoardChecker : NetworkBehaviour
             foreach (var player in tile.SortedSoldiers)
                 soldierCount[player.Key] += player.Value.Count;
         }
+    }
+
+    [ServerRpc]
+    void MarkAsDeadServerRpc(int playerId)
+    {
+        GameManager.GM.realPlayers.Remove(playerId);
     }
 }
