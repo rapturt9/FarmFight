@@ -12,6 +12,7 @@ public class GameManager : NetworkBehaviour
     public TileHandler[] TileHandler;
     public GameState gameState;
     public GameObject interstitial;
+    public GameObject disconnected;
 
     public int currMaxLocalPlayerId = 0;
     public int totalPlayersAndBots = 0;
@@ -99,6 +100,13 @@ public class GameManager : NetworkBehaviour
     void Update()
     {
         if (!central.gameIsRunning) { return; }
+
+        // Exit game if host or we disconnect
+        if (!IsClient)
+        {
+            central.gameIsRunning = false;
+            StartCoroutine("Disconnect");
+        }
 
         Hex hex = TileManager.TM.getMouseHex();
 
@@ -215,5 +223,15 @@ public class GameManager : NetworkBehaviour
     public void StartFromMainSceneClientRpc(ClientRpcParams clientRpcParams = default)
     {
         GameStart();
+    }
+
+    IEnumerator Disconnect()
+    {
+        yield return new WaitForSeconds(2);
+        disconnected.SetActive(true);
+        yield return new WaitForSeconds(5);
+        GetComponent<ExitFunction>().exit();
+        print("Failed to reconnect");
+        yield return null;
     }
 }
