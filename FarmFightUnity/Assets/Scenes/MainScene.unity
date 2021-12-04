@@ -459,7 +459,7 @@ MonoBehaviour:
   isBot: 1
   framerate: 30
   timer: {fileID: 252924277}
-  time: {x: 0, y: 15}
+  time: {x: 5, y: 0}
   vegetableValues: []
   GamesMode: 0
   flyingVegies: 1

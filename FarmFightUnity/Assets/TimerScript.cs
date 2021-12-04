@@ -69,6 +69,7 @@ public class TimerScript : NetworkBehaviour
 
     void EndGameTimerDeath()
     {
+        text.text = "0 : 00";
         BoardChecker c = BoardChecker.Checker;
         // If we have the most tiles/tie we win
         if (c.ownedTileCount[Repository.Central.localPlayerId] >= c.ownedTileCount.Max())
