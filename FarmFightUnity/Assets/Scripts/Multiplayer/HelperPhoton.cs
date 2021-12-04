@@ -20,10 +20,22 @@ public partial class HelperPhoton : MonoBehaviour
         StopClient();
     }
 
-    private void Update()
+    IEnumerator PhotonUpdate()
     {
-        client.Service();
-        Thread.Sleep(33);
+        bool running = true;
+        while (running)
+        {
+            try
+            {
+                client.Service();
+            }
+            catch
+            {
+                print("Error performing client service");
+                running = false;
+            }
+            yield return new WaitForSecondsRealtime(0.05f);
+        }
     }
 }
 
@@ -38,6 +50,8 @@ partial class HelperPhoton : IConnectionCallbacks
         client.StateChanged += OnStateChange;
 
         client.ConnectUsingSettings(PhotonAppSettings.Instance.AppSettings);
+
+        StartCoroutine(PhotonUpdate());
     }
 
     public void StopClient()
@@ -68,6 +82,12 @@ partial class HelperPhoton : IConnectionCallbacks
     {
         print("Disconnected");
         print(cause);
+        // Timeout means we want to reconnect
+        if (cause == DisconnectCause.ClientTimeout || cause == DisconnectCause.ServerTimeout)
+        {
+            StopClient();
+            StartClient();
+        }
     }
 
     public void OnRegionListReceived(RegionHandler regionHandler)
