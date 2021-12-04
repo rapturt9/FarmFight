@@ -65,7 +65,6 @@ public class GameManager : NetworkBehaviour
         interstitial.SetActive(false);
         TileArtRepository.Art.Init();
         TileManager.TM.Init();
-        SetupCorners();
         Repository.Central.timer.init(Repository.Central.time.x, Repository.Central.time.y);
 
         if (IsServer)
@@ -86,6 +85,8 @@ public class GameManager : NetworkBehaviour
             }
             gameState.Init(botsToAdd, numPlayers);
             totalPlayersAndBots += botsToAdd;
+
+            SetupCorners();
         }
 
         // Adds a new player and gets their ID
@@ -135,13 +136,43 @@ public class GameManager : NetworkBehaviour
     // Sets up corners for players to start. Only called server-side
     void SetupCorners()
     {
-        if (!IsServer) { return; }
-
         openCorners = new List<Hex>();
 
-        foreach (var relative in TileManager.TM.getValidNeighbors(new Hex(0,0)))
+        // Configration changes depending on how many players there are
+
+        // Singleplayer or >= 5 -> everything
+        if (totalPlayersAndBots == 1 || totalPlayersAndBots >= 5)
         {
-            openCorners.Add(relative * TileManager.TM.size);
+            foreach (var relative in TileManager.TM.getValidNeighbors(new Hex(0, 0)))
+            {
+                openCorners.Add(relative * TileManager.TM.size);
+            }
+        }
+        // 2 -> top and bottom
+        else if (totalPlayersAndBots == 2)
+        {
+            openCorners.Add(new Hex(0, 1) * TileManager.TM.size);
+            openCorners.Add(new Hex(0, -1) * TileManager.TM.size);
+        }
+        // 3 -> triangle
+        else if (totalPlayersAndBots == 3)
+        {
+            openCorners.Add(new Hex(0, 1) * TileManager.TM.size);
+            openCorners.Add(new Hex(1, -1) * TileManager.TM.size);
+            openCorners.Add(new Hex(-1, 0) * TileManager.TM.size);
+        }
+        // 4 -> rectangle
+        else if (totalPlayersAndBots == 4)
+        {
+            openCorners.Add(new Hex(1, 0) * TileManager.TM.size);
+            openCorners.Add(new Hex(1, -1) * TileManager.TM.size);
+            openCorners.Add(new Hex(-1, 0) * TileManager.TM.size);
+            openCorners.Add(new Hex(-1, 1) * TileManager.TM.size);
+        }
+        // Zero players shouldn't happen
+        else
+        {
+            Debug.LogWarning("Invalid number of players!");
         }
     }
 
