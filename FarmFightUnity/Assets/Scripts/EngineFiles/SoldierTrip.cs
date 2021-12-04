@@ -29,9 +29,22 @@ public class SoldierTrip : NetworkBehaviour
 
         StartCoroutine("Mover");
 
+        
+
         return true;
+
+        
     }
 
+    public float scale = 5;
+    public float amp = .2f;
+
+    private float time;
+
+    private Vector3 getStepOffset()
+    {
+        return Mathf.Abs(Mathf.Sin((Time.time-time) * scale)) * Vector3.up*amp;
+    }
 
     private IEnumerator Mover()
     {
@@ -39,12 +52,28 @@ public class SoldierTrip : NetworkBehaviour
 
         soldier.GetComponent<SpriteRenderer>().enabled = true;
 
+        Vector3 startPos = TileManager.TM.HexToWorld(start);
+        while (transform.position != startPos )
+        {
+            transform.position = Vector3.MoveTowards(transform.position, startPos, soldier.travelSpeed);
+            yield return new WaitForFixedUpdate();
+        }
+
+
+        Vector3 positionHold = transform.position;
+        time = Time.time;
         foreach (var wayPoint in finder.Path)
         {
             Vector3 pos = TileManager.TM.HexToWorld(wayPoint);
-            while (transform.position != pos)
+            while (positionHold != pos)
             {
-                transform.position = Vector3.MoveTowards(transform.position, pos, soldier.travelSpeed);
+
+                positionHold = Vector3.MoveTowards(positionHold, pos, soldier.travelSpeed);
+
+                transform.position = positionHold + getStepOffset();
+
+
+
                 yield return new WaitForFixedUpdate();
             }
         }
