@@ -5,13 +5,19 @@ using UnityEngine;
 
 public class JoinableLobby : MonoBehaviour
 {
-    private TextMeshProUGUI buttonText;
-    public string lobbyId;
+    public TextMeshProUGUI buttonText;
+    public TextMeshProUGUI playerCountText;
 
-    void Start()
+    string lobbyId;
+    int playerCount;
+
+    public void Init(string lobbyId, int playerCount)
     {
-        buttonText = GetComponentInChildren<TextMeshProUGUI>();
+        this.lobbyId = lobbyId;
+        this.playerCount = playerCount;
+
         buttonText.text = $"Join \"{lobbyId}\"";
+        playerCountText.text = playerCount.ToString() + "/6";
     }
 
     public void JoinLobby()

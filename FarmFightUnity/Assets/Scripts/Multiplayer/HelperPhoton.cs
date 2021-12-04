@@ -66,6 +66,8 @@ partial class HelperPhoton : IConnectionCallbacks
 
     public void OnDisconnected(DisconnectCause cause)
     {
+        print("Disconnected");
+        print(cause);
     }
 
     public void OnRegionListReceived(RegionHandler regionHandler)
@@ -95,15 +97,21 @@ partial class HelperPhoton : ILobbyCallbacks
     public void OnRoomListUpdate(List<RoomInfo> roomList)
     {
         Debug.Log("Updated Room List");
-        Debug.Log("Room Count: " + roomList.Count);
 
         foreach (RoomInfo room in roomList)
         {
+            // Remove from lobby list
             if (room.RemovedFromList)
             {
                 availableRooms.Remove(room);
             }
-            else if (!availableRoomNames.Contains(room.Name))
+            // Updating a room we already have
+            else if (availableRoomNames.Contains(room.Name))
+            {
+                availableRooms[availableRooms.IndexOf(room)] = room;
+            }
+            // Adding a new room
+            else
             {
                 availableRooms.Add(room);
             }

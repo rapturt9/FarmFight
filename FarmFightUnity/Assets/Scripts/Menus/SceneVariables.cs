@@ -14,7 +14,7 @@ public static class SceneVariables
     public static int maxBots = 0;
 
     // Lobby ID
-    public static string lobbyId = "1";
+    public static string lobbyId = "";
 
     // Whether the lobby is private
     public static bool isPrivate = false;
