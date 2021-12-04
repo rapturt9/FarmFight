@@ -12,7 +12,8 @@ public class panelmover : MonoBehaviour
     private int Player;
     public void Init(int player)
     {
-        GetComponent<Image>().color = Repository.Central.TeamColors[player];
+        GetComponent<Image>().color = Repository.Central.TeamColors[player] -
+            Color.black / 2;
         
 
         if (started == true)
@@ -37,7 +38,7 @@ public class panelmover : MonoBehaviour
 
     public void setcolor(int player)
     {
-        GetComponent<Image>().color = Repository.Central.TeamColors[player];
+        GetComponent<Image>().color = Repository.Central.TeamColors[player] - Color.black / 2;
         Player = player;
     }
 

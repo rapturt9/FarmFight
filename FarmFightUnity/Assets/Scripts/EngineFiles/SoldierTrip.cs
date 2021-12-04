@@ -29,10 +29,7 @@ public class SoldierTrip : NetworkBehaviour
 
         StartCoroutine("Mover");
 
-        
-
         return true;
-
         
     }
 
@@ -43,7 +40,7 @@ public class SoldierTrip : NetworkBehaviour
 
     private Vector3 getStepOffset()
     {
-        return Mathf.Abs(Mathf.Sin((Time.time-time) * scale)) * Vector3.up*amp;
+        return Mathf.Abs(Mathf.Sin((Time.time-time) * scale)) * Vector3.up * amp;
     }
 
     private IEnumerator Mover()

@@ -4,12 +4,16 @@ using UnityEngine;
 
 public class onlyOneSoundtrack : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public static onlyOneSoundtrack track;
     private void Awake()
     {
-        if(GameObject.Find("BackgroundMusic") != null)
+        if(track != null)
         {
             Destroy(gameObject);
+        }
+        else
+        {
+            track = this;
         }
     }
 
