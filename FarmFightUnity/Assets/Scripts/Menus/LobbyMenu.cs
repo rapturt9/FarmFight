@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using Photon.Realtime;
+using System.Linq;
 
 public class LobbyMenu : MonoBehaviour
 {
@@ -14,8 +16,8 @@ public class LobbyMenu : MonoBehaviour
     public GameObject joinableLobbyPrefab;
     public RectTransform joinableLobbyTop;
 
-    private float joinableLobbySpacing;
     private List<GameObject> joinableLobbyButtons = new List<GameObject>();
+    List<string> randomLobbyNames = new List<string> { "Potato", "Carrot", "Wheat", "Eggplant" };
 
     public static LobbyMenu LBMenu;
 
@@ -33,9 +35,6 @@ public class LobbyMenu : MonoBehaviour
 
     private void Start()
     {
-        // Get padding for lobby buttons
-        joinableLobbySpacing = joinableLobbyPrefab.GetComponent<RectTransform>().rect.height;
-
         RefreshJoinableLobbies();
     }
 
@@ -44,21 +43,50 @@ public class LobbyMenu : MonoBehaviour
         print("Joining Game");
         SceneVariables.isHosting = isHosting;
         SceneVariables.cameThroughMenu = true;
+
         helperPhoton.StopClient();
+
+        if (isHosting && SceneVariables.lobbyId == "") // Random lobby name
+        {
+            GetRandomLobbyName();
+        }
+
         SceneManager.LoadScene("MainScene");
+    }
+
+    void GetRandomLobbyName()
+    {
+        // Up to 6 (arbitrary) times, try to get a new lobby name that isn't taken already
+        int maxAttempts = 6;
+        int attempts = 0;
+        do
+        {
+            SceneVariables.lobbyId = randomLobbyNames[Random.Range(0, randomLobbyNames.Count)].ToUpper();
+            attempts++;
+        }
+        while ((attempts < maxAttempts) && helperPhoton.availableRoomNames.Contains(SceneVariables.lobbyId));
+
+        // If it's still taken, add a random 2-digit number to the end
+        // This is acceptably unlikely to cause a collision
+        if (helperPhoton.availableRoomNames.Contains(SceneVariables.lobbyId))
+        {
+            SceneVariables.lobbyId += Random.Range(10, 100).ToString();
+        }
     }
 
     public void TryJoinPrivateGame()
     {
-        foreach (var roomName in helperPhoton.availableRoomNames)
-        {
-            if (SceneVariables.lobbyId == roomName)
-            {
-                print($"Joining Private Game \"{roomName}\"");
-                PlayGame(false);
-                return;
-            }
-        }
+        helperPhoton.TryJoinPrivateGame();
+    }
+
+    public void JoinPrivateGameSuccess()
+    {
+        print($"Joining Private Game \"{SceneVariables.lobbyId}\"");
+        PlayGame(false);
+    }
+
+    public void JoinPrivateGameFail()
+    {
         privateLobbyText.text = "";
         privateLobbyPlaceholderText.text = "Not Found";
     }
@@ -88,13 +116,16 @@ public class LobbyMenu : MonoBehaviour
             Destroy(button);
         }
 
+        // DEBUG
+        //string[] testRoomNames = new string[] {"ABC", "DEF", "GHI", "123", "456", "678", "FarmFight", "Lobby"};
+        //var testRooms = from name in testRoomNames select new Room(name, new RoomOptions());
+
         // Creates new buttons
         int i = 0;
-        foreach (var roomName in helperPhoton.availableRoomNames)
+        foreach (var room in helperPhoton.availableRooms)
         {
             GameObject go = Instantiate(joinableLobbyPrefab, joinableLobbyTop);
-            go.transform.localPosition = Vector3.down * joinableLobbySpacing * i;
-            go.GetComponent<JoinableLobby>().lobbyId = roomName;
+            go.GetComponent<JoinableLobby>().Init(room.Name, room.PlayerCount);
             joinableLobbyButtons.Add(go);
 
             i++;

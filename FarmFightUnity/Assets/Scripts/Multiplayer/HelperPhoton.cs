@@ -20,10 +20,22 @@ public partial class HelperPhoton : MonoBehaviour
         StopClient();
     }
 
-    private void Update()
+    IEnumerator PhotonUpdate()
     {
-        client.Service();
-        Thread.Sleep(33);
+        bool running = true;
+        while (running)
+        {
+            try
+            {
+                client.Service();
+            }
+            catch
+            {
+                print("Error performing client service");
+                running = false;
+            }
+            yield return new WaitForSecondsRealtime(0.05f);
+        }
     }
 }
 
@@ -38,6 +50,8 @@ partial class HelperPhoton : IConnectionCallbacks
         client.StateChanged += OnStateChange;
 
         client.ConnectUsingSettings(PhotonAppSettings.Instance.AppSettings);
+
+        StartCoroutine(PhotonUpdate());
     }
 
     public void StopClient()
@@ -66,6 +80,14 @@ partial class HelperPhoton : IConnectionCallbacks
 
     public void OnDisconnected(DisconnectCause cause)
     {
+        print("Disconnected");
+        print(cause);
+        // Timeout means we want to reconnect
+        if (cause == DisconnectCause.ClientTimeout || cause == DisconnectCause.ServerTimeout)
+        {
+            StopClient();
+            StartClient();
+        }
     }
 
     public void OnRegionListReceived(RegionHandler regionHandler)
@@ -95,15 +117,21 @@ partial class HelperPhoton : ILobbyCallbacks
     public void OnRoomListUpdate(List<RoomInfo> roomList)
     {
         Debug.Log("Updated Room List");
-        Debug.Log("Room Count: " + roomList.Count);
 
         foreach (RoomInfo room in roomList)
         {
+            // Remove from lobby list
             if (room.RemovedFromList)
             {
                 availableRooms.Remove(room);
             }
-            else if (!availableRoomNames.Contains(room.Name))
+            // Updating a room we already have
+            else if (availableRoomNames.Contains(room.Name))
+            {
+                availableRooms[availableRooms.IndexOf(room)] = room;
+            }
+            // Adding a new room
+            else
             {
                 availableRooms.Add(room);
             }
@@ -116,5 +144,64 @@ partial class HelperPhoton : ILobbyCallbacks
 
     public void OnLobbyStatisticsUpdate(List<TypedLobbyInfo> lobbyStatistics)
     {
+    }
+}
+
+partial class HelperPhoton : IMatchmakingCallbacks
+{
+    bool joiningPrivate = false;
+
+    public void OnCreatedRoom()
+    {
+
+    }
+
+    public void OnCreateRoomFailed(short returnCode, string message)
+    {
+
+    }
+
+    public void OnFriendListUpdate(List<FriendInfo> friendList)
+    {
+
+    }
+
+    public void OnJoinedRoom()
+    {
+        // If we joined a private room, leave it instantly since this is a temp photon instance
+        if (joiningPrivate)
+        {
+            client.OpLeaveRoom(false);
+            joiningPrivate = false;
+            LobbyMenu.LBMenu.JoinPrivateGameSuccess();
+        }
+    }
+
+    public void OnJoinRandomFailed(short returnCode, string message)
+    {
+
+    }
+
+    public void OnJoinRoomFailed(short returnCode, string message)
+    {
+        if (joiningPrivate)
+        {
+            joiningPrivate = false;
+            LobbyMenu.LBMenu.JoinPrivateGameFail();
+        }
+    }
+
+    public void OnLeftRoom()
+    {
+
+    }
+
+    public void TryJoinPrivateGame()
+    {
+        joiningPrivate = true;
+
+        EnterRoomParams enterRoomParams = new EnterRoomParams();
+        enterRoomParams.RoomName = SceneVariables.lobbyId;
+        client.OpJoinRoom(enterRoomParams);
     }
 }

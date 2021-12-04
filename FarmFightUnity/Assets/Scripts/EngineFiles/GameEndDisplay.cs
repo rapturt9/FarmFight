@@ -24,6 +24,20 @@ public class GameEndDisplay : MonoBehaviour
     bool gameEnded = false;
     [HideInInspector] public bool hostCanContinue = false;
 
+    public static GameEndDisplay EndDisp;
+
+    void Awake()
+    {
+        if (EndDisp == null)
+        {
+            EndDisp = this;
+        }
+        else if (EndDisp != this)
+        {
+            Destroy(gameObject);
+        }
+    }
+
     public void EndingDisplay(bool won)
     {
         if (gameEnded)
