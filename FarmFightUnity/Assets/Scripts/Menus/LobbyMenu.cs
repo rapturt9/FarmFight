@@ -76,15 +76,17 @@ public class LobbyMenu : MonoBehaviour
 
     public void TryJoinPrivateGame()
     {
-        foreach (var roomName in helperPhoton.availableRoomNames)
-        {
-            if (SceneVariables.lobbyId == roomName)
-            {
-                print($"Joining Private Game \"{roomName}\"");
-                PlayGame(false);
-                return;
-            }
-        }
+        helperPhoton.TryJoinPrivateGame();
+    }
+
+    public void JoinPrivateGameSuccess()
+    {
+        print($"Joining Private Game \"{SceneVariables.lobbyId}\"");
+        PlayGame(false);
+    }
+
+    public void JoinPrivateGameFail()
+    {
         privateLobbyText.text = "";
         privateLobbyPlaceholderText.text = "Not Found";
     }

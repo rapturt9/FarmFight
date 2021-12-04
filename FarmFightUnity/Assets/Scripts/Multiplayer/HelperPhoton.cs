@@ -146,3 +146,62 @@ partial class HelperPhoton : ILobbyCallbacks
     {
     }
 }
+
+partial class HelperPhoton : IMatchmakingCallbacks
+{
+    bool joiningPrivate = false;
+
+    public void OnCreatedRoom()
+    {
+
+    }
+
+    public void OnCreateRoomFailed(short returnCode, string message)
+    {
+
+    }
+
+    public void OnFriendListUpdate(List<FriendInfo> friendList)
+    {
+
+    }
+
+    public void OnJoinedRoom()
+    {
+        // If we joined a private room, leave it instantly since this is a temp photon instance
+        if (joiningPrivate)
+        {
+            client.OpLeaveRoom(false);
+            joiningPrivate = false;
+            LobbyMenu.LBMenu.JoinPrivateGameSuccess();
+        }
+    }
+
+    public void OnJoinRandomFailed(short returnCode, string message)
+    {
+
+    }
+
+    public void OnJoinRoomFailed(short returnCode, string message)
+    {
+        if (joiningPrivate)
+        {
+            joiningPrivate = false;
+            LobbyMenu.LBMenu.JoinPrivateGameFail();
+        }
+    }
+
+    public void OnLeftRoom()
+    {
+
+    }
+
+    public void TryJoinPrivateGame()
+    {
+        joiningPrivate = true;
+
+        EnterRoomParams enterRoomParams = new EnterRoomParams();
+        enterRoomParams.RoomName = SceneVariables.lobbyId;
+        client.OpJoinRoom(enterRoomParams);
+    }
+}
