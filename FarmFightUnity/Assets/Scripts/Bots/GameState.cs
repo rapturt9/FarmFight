@@ -41,12 +41,12 @@ public class GameState : MonoBehaviour
         hexCoords = BoardHelperFns.HexList(3);
     }
 
-    public void Init(int numBots, int currMaxLocalPlayerId)
+    public void Init(int numBots, int numPlayers)
     {
         updateGameStateFirstTime();
         StartCoroutine(collectGameData());
         
-        for (int playerId = currMaxLocalPlayerId; playerId < numBots + currMaxLocalPlayerId; playerId++)
+        for (int playerId = numPlayers; playerId < numBots + numPlayers; playerId++)
         {
             gameManager.addNewPlayer(playerId);
             var botObj = new GameObject("Bot"+playerId.ToString());

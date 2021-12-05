@@ -46,7 +46,7 @@ public class GameStartCountdown : NetworkBehaviour
         if (timeLeft <= 0 && IsServer)
         {
             print("Time ran out");
-            GameManager.GM.GameStartClientRpc();
+            GameManager.GM.GameStart();
             Destroy(gameObject);
         }
     }
