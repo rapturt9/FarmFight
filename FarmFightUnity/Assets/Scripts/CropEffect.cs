@@ -48,7 +48,12 @@ public class CropEffect : NetworkBehaviour
         if (tile.tileOwner == Repository.Central.localPlayerId)
             Flies.volume = .05f * (1 - Mathf.Pow(BoardChecker.Checker.ownedTileCount[tile.tileOwner] / 37f, 2));
         else
+        {
             Flies.volume = 0;
+            Harvest.volume = 0;
+        }
+           
+
     }
 
     
