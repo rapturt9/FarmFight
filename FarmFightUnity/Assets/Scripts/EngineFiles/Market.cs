@@ -22,6 +22,8 @@ public class Market : NetworkBehaviour
 
     public Text moneyText;
 
+    [SerializeField] private float heldLengthSend = 0.8f; // Seconds of holding finger to send soldier
+
     public Dictionary<CropType, int> CropCosts
     {
         get
@@ -121,6 +123,7 @@ public class Market : NetworkBehaviour
             SoldierSendUpdate();
 
         // Right click soldiers
+#if UNITY_EDITOR || UNITY_STANDALONE
         if (Input.GetMouseButtonDown(1))
         {
             Hex endHex = TileManager.TM.getMouseHex();
@@ -135,6 +138,51 @@ public class Market : NetworkBehaviour
                 soldierManager.SendSoldier(selectedHex, endHex);
             }
         }
+#elif UNITY_IOS || UNITY_ANDROID
+        // Dragging sends soldiers
+        if (Input.touchCount == 1)
+        {
+            Touch touch = Input.GetTouch(0);
+            Hex endHex = TileManager.TM.getTouchHex(0);
+
+            // Dragging sets ui
+            if (touch.phase == TouchPhase.Moved && TileManager.TM.isValidHex(endHex))
+            {
+                if (SoldierDestination != null && SoldierDestination != selectedHex)
+                {
+                    UIHandler[SoldierDestination] = new BlankTile();
+                }
+
+                if (endHex != selectedHex)
+                {
+                    SoldierDestination = endHex;
+                    UIHandler[SoldierDestination] = new SoldierDestination();
+                }
+            }
+            // Lift up sends soldier
+            else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+            {
+                if (endHex != selectedHex)
+                {
+                    soldierManager.SendSoldier(selectedHex, endHex);
+                    if (SoldierDestination != null && SoldierDestination != selectedHex)
+                    {
+                        UIHandler[SoldierDestination] = new BlankTile();
+                    }
+                }
+            }
+        }
+        // Multi-touch also sends soldiers
+        if (Input.touchCount == 2)
+        {
+            Touch touch = Input.GetTouch(1);
+            if (touch.phase == TouchPhase.Began)
+            {
+                Hex endHex = TileManager.TM.getTouchHex(1);
+                soldierManager.SendSoldier(selectedHex, endHex);
+            }
+        }
+#endif
     }
 
     public void MarketUpdateFunctionality()
@@ -272,12 +320,6 @@ public class Market : NetworkBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            /*if (TileManager.TM.getMouseHex() == SoldierDestination)
-            {
-                SoldierTrip(selectedHex, SoldierDestination);
-            }
-
-            SetSoldierDestination();*/
             if (SoldierDestination != null && UIHandler != null && UIHandler[SoldierDestination] != null){
                 SoldierTrip(selectedHex, SoldierDestination);
             }
@@ -331,5 +373,13 @@ public class Market : NetworkBehaviour
         {
             central.GamesMode = PlayState.NormalGame;
         }
+    }
+
+    IEnumerator TrySendSoldierTouch(int touchNum)
+    {
+        yield return new WaitForSeconds(heldLengthSend);
+
+        Hex endHex = TileManager.TM.getTouchHex(touchNum);
+        soldierManager.SendSoldier(selectedHex, endHex);
     }
 }

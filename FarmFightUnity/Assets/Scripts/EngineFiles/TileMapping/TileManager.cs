@@ -141,6 +141,12 @@ public class TileManager : MonoBehaviour
         return screenToHex(Vector3Int.FloorToInt(Input.mousePosition));
     }
 
+    public Hex getTouchHex(int touchNum)
+    {
+        Touch touch = Input.GetTouch(touchNum);
+        return screenToHex(Vector3Int.FloorToInt(touch.position));
+    }
+
     public bool isValidHex(Hex hex)
     {
         

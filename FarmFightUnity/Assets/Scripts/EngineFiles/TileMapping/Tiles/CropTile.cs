@@ -88,6 +88,8 @@ public abstract class TileTemp : TileTempDepr
         double diff = frameInternal / frameRate - mid; //for sparkle
         double diff2 = tileArts.Count - frameInternal / frameRate; //for rot
 
+        // This is bugged in android so it's disabled
+#if UNITY_EDITOR || UNITY_STANDALONE
         if (-.3 < diff && diff < .3)
         {
             effect.GetComponent<CropEffect>().Sparkle();
@@ -100,6 +102,7 @@ public abstract class TileTemp : TileTempDepr
         {
             effect.GetComponent<CropEffect>().Stop();
         }
+#endif
     }
     
     // Sees if the farmer should harvest its crop

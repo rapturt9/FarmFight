@@ -6,7 +6,10 @@ using MLAPI.Serialization;
 using MLAPI.Serialization.Pooled;
 using MLAPI.Transports.PhotonRealtime;
 using Photon.Realtime;
+
+#if UNITY_EDITOR
 using ParrelSync;
+#endif
 
 public class MultiplayerWorldManager : MonoBehaviour
 {
@@ -52,6 +55,7 @@ public class MultiplayerWorldManager : MonoBehaviour
             }
         }
         // Starting directly from MainScene means host/client is dictated by clone or not
+        #if UNITY_EDITOR
         else
         {
             if (ClonesManager.IsClone())
@@ -63,6 +67,7 @@ public class MultiplayerWorldManager : MonoBehaviour
                 Host();
             }
         }
+        #endif
     }
 
     void OnGUI()
