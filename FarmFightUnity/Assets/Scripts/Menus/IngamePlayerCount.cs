@@ -22,26 +22,33 @@ public class IngamePlayerCount : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!(transport.Client.CurrentRoom is null))
+        int playerCount = 0;
+        try
         {
-            // At least one other player, so can start
-            if (transport.Client.CurrentRoom.PlayerCount > 1)
-            {
-                playerCountText.text = transport.Client.CurrentRoom.PlayerCount.ToString() + "/6 Players";
+            playerCount = transport.Client.CurrentRoom.PlayerCount;
+        }
+        catch
+        {
+            playerCountText.text = "Waiting for players...";
+        }
 
-                if (!countdown.started)
-                {
-                    countdown.StartTimer();
-                }
-            }
-            // Nobody else, so won't automatically start
-            else
+        // At least one other player, so can start
+        if (playerCount > 1)
+        {
+            playerCountText.text = playerCount.ToString() + "/6 Players";
+
+            if (!countdown.started)
             {
-                playerCountText.text = "Waiting for players...";
-                if (countdown.started)
-                {
-                    countdown.StopTimer();
-                }
+                countdown.StartTimer();
+            }
+        }
+        // Nobody else, so won't automatically start
+        else
+        {
+            playerCountText.text = "Waiting for players...";
+            if (countdown.started)
+            {
+                countdown.StopTimer();
             }
         }
     }
