@@ -9683,9 +9683,9 @@ MonoBehaviour:
   - {r: 1, g: 0, b: 0, a: 1}
   - {r: 1, g: 0, b: 0.95224714, a: 1}
   - {r: 0.682575, g: 0.7075472, b: 0, a: 1}
-  - {r: 0, g: 0.33599806, b: 1, a: 1}
   - {r: 1, g: 0.53792745, b: 0, a: 1}
   - {r: 0.021381378, g: 1, b: 0, a: 1}
+  - {r: 0, g: 0.33599806, b: 1, a: 1}
   tilemap: {fileID: 1785283980}
 --- !u!114 &1785283978
 MonoBehaviour:
@@ -10026,7 +10026,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8089935416490882806, guid: a3d32b2bb9aa88e468fed442bf570f2c, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8089935416490882807, guid: a3d32b2bb9aa88e468fed442bf570f2c, type: 3}
       propertyPath: m_Pivot.x
@@ -10062,7 +10062,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8089935416490882807, guid: a3d32b2bb9aa88e468fed442bf570f2c, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 40.48
+      value: 47.78
       objectReference: {fileID: 0}
     - target: {fileID: 8089935416490882807, guid: a3d32b2bb9aa88e468fed442bf570f2c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -10112,6 +10112,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8089935417474862389, guid: a3d32b2bb9aa88e468fed442bf570f2c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -4.4
+      objectReference: {fileID: 0}
     - target: {fileID: 8089935417474862394, guid: a3d32b2bb9aa88e468fed442bf570f2c, type: 3}
       propertyPath: m_text
       value: START NOW
@@ -10123,7 +10127,7 @@ PrefabInstance:
     - target: {fileID: 8089935417474862394, guid: a3d32b2bb9aa88e468fed442bf570f2c, type: 3}
       propertyPath: m_fontAsset
       value: 
-      objectReference: {fileID: 11400000, guid: fc87afeac7bd9427bae4d262446b98d6, type: 2}
+      objectReference: {fileID: 11400000, guid: 91595d5a23cae4bdd81b67be1149210a, type: 2}
     - target: {fileID: 8089935417474862394, guid: a3d32b2bb9aa88e468fed442bf570f2c, type: 3}
       propertyPath: m_fontSizeBase
       value: 36.87
@@ -10133,12 +10137,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8089935417474862394, guid: a3d32b2bb9aa88e468fed442bf570f2c, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 1816770572943459415, guid: 91595d5a23cae4bdd81b67be1149210a, type: 2}
+    - target: {fileID: 8089935417474862394, guid: a3d32b2bb9aa88e468fed442bf570f2c, type: 3}
       propertyPath: m_HorizontalAlignment
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8089935417474862394, guid: a3d32b2bb9aa88e468fed442bf570f2c, type: 3}
       propertyPath: m_hasFontAssetChanged
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a3d32b2bb9aa88e468fed442bf570f2c, type: 3}
