@@ -106,7 +106,7 @@ public class MultiplayerWorldManager : MonoBehaviour
         if (SceneVariables.cameThroughMenu)
             startGameButton.SetActive(true);
         else
-            GameManager.GM.GameStart();
+            GameManager.GM.StartFromMainSceneServerRpc(NetworkManager.Singleton.LocalClientId);
 
         print("Joining as Host");
     }
@@ -124,7 +124,7 @@ public class MultiplayerWorldManager : MonoBehaviour
         NetworkManager.Singleton.StartClient();
 
         if (!SceneVariables.cameThroughMenu)
-            GameManager.GM.startOnNetworkStart = true;
+            StartCoroutine(GameManager.GM.StartFromMainScene());
 
         print("Joining as Client");
     }

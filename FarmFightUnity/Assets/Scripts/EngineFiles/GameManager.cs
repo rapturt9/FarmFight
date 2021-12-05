@@ -17,11 +17,11 @@ public class GameManager : NetworkBehaviour
     public int currMaxLocalPlayerId = 0;
     public int totalPlayersAndBots = 0;
     public int botsToAdd = 0;
+    public bool startOnNetworkStart = false; // DEBUG
     public List<int> realPlayers = new List<int>();
     private List<Hex> openCorners;
     Repository central;
     PhotonRealtimeTransport transport;
-    public bool startOnNetworkStart = false; // DEBUG
 
     public static GameManager GM;
 
@@ -51,13 +51,19 @@ public class GameManager : NetworkBehaviour
     public override void NetworkStart()
     {
         if (startOnNetworkStart)
-            StartFromMainSceneServerRpc(NetworkManager.Singleton.LocalClientId);
+        {
+            GameStart();
+        }
     }
 
+    // Starts the game for everyone, called from server
     [ClientRpc]
     public void GameStartClientRpc()
     {
-        GameStart();
+        if (!IsServer)
+        {
+            GameStart();
+        }
     }
 
     public void GameStart()
@@ -69,24 +75,14 @@ public class GameManager : NetworkBehaviour
 
         if (IsServer)
         {
-            // Only make private if starting from the menu
             if (SceneVariables.cameThroughMenu)
             {
-                transport.Client.CurrentRoom.IsOpen = false;
-                transport.Client.CurrentRoom.IsVisible = false;
+                HostStartGame();
             }
-
-            // Bots
-            int numPlayers = NetworkManager.Singleton.ConnectedClientsList.Count;
-            botsToAdd = SceneVariables.maxBots;
-            if (botsToAdd + numPlayers > Repository.maxPlayers)
+            else
             {
-                botsToAdd = Repository.maxPlayers - numPlayers;
+                SetupCorners();
             }
-            gameState.Init(botsToAdd, numPlayers);
-            totalPlayersAndBots += botsToAdd;
-
-            SetupCorners();
         }
 
         // Adds a new player and gets their ID
@@ -95,6 +91,27 @@ public class GameManager : NetworkBehaviour
         // Now, let things update
         central.gameIsRunning = true;
         BoardChecker.Checker.StartChecking();
+    }
+
+    // Host starting game does server stuff first, then sends a message to clients to connect
+    public void HostStartGame()
+    {
+        transport.Client.CurrentRoom.IsOpen = false;
+        transport.Client.CurrentRoom.IsVisible = false;
+
+        // Bots
+        int numPlayers = NetworkManager.Singleton.ConnectedClientsList.Count;
+        botsToAdd = SceneVariables.maxBots;
+        if (botsToAdd + numPlayers > Repository.maxPlayers)
+        {
+            botsToAdd = Repository.maxPlayers - numPlayers;
+        }
+        totalPlayersAndBots = numPlayers + botsToAdd;
+        SetupCorners();
+        gameState.Init(botsToAdd, numPlayers);
+        //print(TileManager.TM["CropTiles"][new Hex(0, -3)].tileOwner);
+
+        GameStartClientRpc();
     }
 
     // Update is called once per frame
@@ -116,11 +133,6 @@ public class GameManager : NetworkBehaviour
         {
             Repository.Central.selectedHex = hex;
         }
-
-        // Moved to BoardChecker
-        //if (BoardChecker.Checker.ownedTileCount[central.localPlayerId] > 0)
-        //    gameStarted = true;
-        //gameLost(); 
     }
 
 
@@ -141,12 +153,14 @@ public class GameManager : NetworkBehaviour
         // Configration changes depending on how many players there are
 
         // Singleplayer or >= 5 -> everything
-        if (totalPlayersAndBots == 1 || totalPlayersAndBots >= 5)
+        if (totalPlayersAndBots <= 1 || totalPlayersAndBots >= 5)
         {
-            foreach (var relative in TileManager.TM.getValidNeighbors(new Hex(0, 0)))
-            {
-                openCorners.Add(relative * TileManager.TM.size);
-            }
+            openCorners.Add(new Hex(1, 0) * TileManager.TM.size);
+            openCorners.Add(new Hex(-1, 0) * TileManager.TM.size);
+            openCorners.Add(new Hex(0, 1) * TileManager.TM.size);
+            openCorners.Add(new Hex(0, -1) * TileManager.TM.size);
+            openCorners.Add(new Hex(1, -1) * TileManager.TM.size);
+            openCorners.Add(new Hex(-1, 1) * TileManager.TM.size);
         }
         // 2 -> top and bottom
         else if (totalPlayersAndBots == 2)
@@ -168,11 +182,6 @@ public class GameManager : NetworkBehaviour
             openCorners.Add(new Hex(1, -1) * TileManager.TM.size);
             openCorners.Add(new Hex(-1, 0) * TileManager.TM.size);
             openCorners.Add(new Hex(-1, 1) * TileManager.TM.size);
-        }
-        // Zero players shouldn't happen
-        else
-        {
-            Debug.LogWarning("Invalid number of players!");
         }
     }
 
@@ -198,7 +207,10 @@ public class GameManager : NetworkBehaviour
 
         // Adds player index
         currMaxLocalPlayerId++;
-        totalPlayersAndBots++;
+        if (!SceneVariables.cameThroughMenu)
+        {
+            totalPlayersAndBots++;
+        }
     }
 
     [ClientRpc]
@@ -208,11 +220,18 @@ public class GameManager : NetworkBehaviour
         gameState.DeserializeBoard(allTiles);
     }
 
+    public IEnumerator StartFromMainScene()
+    {
+        yield return new WaitForSeconds(2);
+        GameStart();
+        yield return null;
+    }
+
     // Actually adds player at corner, can be used for bots
     public void addNewPlayer(int playerId)
     {
         // Sets the player in a random corner
-        int index = Random.Range(0, openCorners.Count - 1);
+        int index = Random.Range(0, openCorners.Count);
         Hex newCorner = openCorners[index];
         openCorners.RemoveAt(index);
 
@@ -221,7 +240,6 @@ public class GameManager : NetworkBehaviour
         int cropTileHandlerIndex = 0;
         TileManager.TM.Handlers[cropTileHandlerIndex][newCorner] = startingTile;
     }
-
 
     // Starting directly from the main scene
     [ServerRpc(RequireOwnership = false)]
@@ -237,6 +255,12 @@ public class GameManager : NetworkBehaviour
         StartFromMainSceneClientRpc(clientRpcParams);
     }
 
+    [ClientRpc]
+    public void StartFromMainSceneClientRpc(ClientRpcParams clientRpcParams = default)
+    {
+        GameStart();
+    }
+
     private bool gameStarted;
 
     private void gameLost()
@@ -248,12 +272,6 @@ public class GameManager : NetworkBehaviour
             Debug.Log("YouLost");
             central.money = 0;
         }
-    }
-
-    [ClientRpc]
-    public void StartFromMainSceneClientRpc(ClientRpcParams clientRpcParams = default)
-    {
-        GameStart();
     }
 
     IEnumerator Disconnect()

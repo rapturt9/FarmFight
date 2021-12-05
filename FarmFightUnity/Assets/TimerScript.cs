@@ -14,7 +14,7 @@ public class TimerScript : NetworkBehaviour
     public int time;
     public TMP_Text text;
 
-    NetworkVariable<float> startTime;
+    NetworkVariable<float> startTime = new NetworkVariable<float>(0f);
     int maxTime;
 
     public void Start()
@@ -28,9 +28,8 @@ public class TimerScript : NetworkBehaviour
             text.text = $"{minutes} : 0{seconds}";
         else
             text.text = $"{minutes} : {seconds}";
-
-        
     }
+
     public void init(int minutes, int seconds)
     {
         if (IsServer)
@@ -46,22 +45,25 @@ public class TimerScript : NetworkBehaviour
     {
         while(time > 0)
         {
-            if (startTime.Value == 0)
+            if (startTime is null || startTime.Value == 0)
             {
                 yield return null;
             }
-            int minutes = time / 60;
-            int seconds = time % 60;
-
-
-            if(seconds < 10)
-                text.text = $"{minutes} : 0{seconds}" ;
             else
-                text.text = $"{minutes} : {seconds}";
+            {
+                int minutes = time / 60;
+                int seconds = time % 60;
 
-            time = maxTime - (int)(NetworkManager.Singleton.NetworkTime - startTime.Value);
 
-            yield return new WaitForEndOfFrame();
+                if (seconds < 10)
+                    text.text = $"{minutes} : 0{seconds}";
+                else
+                    text.text = $"{minutes} : {seconds}";
+
+                time = maxTime - (int)(NetworkManager.Singleton.NetworkTime - startTime.Value);
+
+                yield return new WaitForEndOfFrame();
+            }
         }
 
         EndGameTimerDeath();

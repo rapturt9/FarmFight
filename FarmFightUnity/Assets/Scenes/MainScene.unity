@@ -438,7 +438,6 @@ MonoBehaviour:
   totalPlayersAndBots: 0
   botsToAdd: 0
   realPlayers: 
-  startOnNetworkStart: 0
 --- !u!114 &58370722
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -994,7 +993,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
-  m_SortingLayerID: -521906877
+  m_SortingLayerID: 1343229513
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!224 &192996518
@@ -6458,7 +6457,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_NickName: FF
-  m_RoomName: 2
+  m_RoomName: aaaa
   m_MaxPlayers: 6
   m_IsVisible: 1
   m_ChannelIdCodesStartRange: 0
@@ -8195,7 +8194,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8089935416490882804, guid: a3d32b2bb9aa88e468fed442bf570f2c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: GameStartClientRpc
+      value: GameStart
       objectReference: {fileID: 0}
     - target: {fileID: 8089935416490882804, guid: a3d32b2bb9aa88e468fed442bf570f2c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName

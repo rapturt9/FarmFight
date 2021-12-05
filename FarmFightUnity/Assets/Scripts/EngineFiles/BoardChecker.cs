@@ -76,7 +76,13 @@ public class BoardChecker : NetworkBehaviour
                 EndGame(false);
             }
             // Winning
-            if (GameManager.GM.totalPlayersAndBots > 1 && IsServer) // Make sure we don't win with only one person playing
+            if (IsServer && 
+
+                ((!SceneVariables.cameThroughMenu && GameManager.GM.currMaxLocalPlayerId > 1) || // Started from MainScene
+
+                (SceneVariables.cameThroughMenu && // Started from menu
+                (GameManager.GM.currMaxLocalPlayerId + GameManager.GM.botsToAdd) >= GameManager.GM.totalPlayersAndBots) // Actual players equal to expected players
+                ))
             {
                 int winningPlayer = CheckForAnyWin();
                 if (winningPlayer != -1)
