@@ -269,9 +269,9 @@ public abstract class TileTemp : TileTempDepr
         return soldier;
     }
 
-    public void addSoldier(Soldier soldier)
+    public void addSoldier(Soldier soldier, bool wasMoving = false)
     {
-        soldier.AddToTile(hexCoord);
+        soldier.AddToTile(hexCoord, wasMoving);
 
         soldier.transform.position = hexCoord.world() + .25f * Vector2.left;
 
@@ -324,6 +324,7 @@ public abstract class TileTemp : TileTempDepr
                 soldier.FadeIn();
 
                 // Soldier does stuff to remove itself and moove smoothly
+                BoardChecker.Checker.movingSoldierCount[soldier.owner.Value]++;
                 soldier.StartTripAsClientRpc(BoardHelperFns.HexToArray(hexCoord), BoardHelperFns.HexToArray(end));
 
                 // Stop capturing if there are no occupying soldiers

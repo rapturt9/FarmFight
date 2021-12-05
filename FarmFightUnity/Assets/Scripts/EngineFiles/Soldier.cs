@@ -81,36 +81,38 @@ public class Soldier: NetworkBehaviour
     {
         Hex coord = BoardHelperFns.ArrayToHex(coordArray);
         if (handler[coord].SortedSoldiers[owner.Value].Contains(this))
+        {
             handler[coord].SortedSoldiers[owner.Value].Remove(this);
+        }
     }
 
     // Add to all client tiles
-    public void AddToTile(Hex coord)
+    public void AddToTile(Hex coord, bool wasMoving = false)
     {
         if (IsClient)
         {
-            AddToTileServerRpc(BoardHelperFns.HexToArray(coord));
+            AddToTileServerRpc(BoardHelperFns.HexToArray(coord), wasMoving);
         }
         else if (IsServer)
         {
-            AddToTileClientRpc(BoardHelperFns.HexToArray(coord));
+            AddToTileClientRpc(BoardHelperFns.HexToArray(coord), wasMoving);
         }
     }
 
     [ServerRpc(RequireOwnership = false)]
-    void AddToTileServerRpc(int[] coord)
+    void AddToTileServerRpc(int[] coord, bool wasMoving = false)
     {
-        AddToTileClientRpc(coord);
+        AddToTileClientRpc(coord, wasMoving);
     }
 
     [ClientRpc]
-    void AddToTileClientRpc(int[] coord)
+    void AddToTileClientRpc(int[] coord, bool wasMoving = false)
     {
-        _AddToTile(coord);
+        _AddToTile(coord, wasMoving);
     }
 
     // Internal function, actually changes the tile
-    void _AddToTile(int[] coordArray)
+    void _AddToTile(int[] coordArray, bool wasMoving = false)
     {
         Hex coord = BoardHelperFns.ArrayToHex(coordArray);
         List<Soldier> fellowSoldiers = handler[coord].SortedSoldiers[owner.Value];
@@ -119,6 +121,10 @@ public class Soldier: NetworkBehaviour
         if (!fellowSoldiers.Contains(this))
         {
             fellowSoldiers.Add(this);
+            if (wasMoving)
+            {
+                BoardChecker.Checker.movingSoldierCount[owner.Value]--;
+            }
         }
         // Fades out if battling
         if (handler[coord].battleOccurring)
@@ -137,6 +143,10 @@ public class Soldier: NetworkBehaviour
         Hex end = BoardHelperFns.ArrayToHex(endArray);
 
         // Removing from tile if the rpc hasn't been processed
+        if (!IsServer)
+        {
+            BoardChecker.Checker.movingSoldierCount[owner.Value]++;
+        }
         _RemoveFromTile(startArray);
 
         // Fading
