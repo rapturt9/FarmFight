@@ -126,13 +126,25 @@ public class GameManager : NetworkBehaviour
             StartCoroutine("Disconnect");
         }
 
+#if UNITY_EDITOR || UNITY_STANDALONE
         Hex hex = TileManager.TM.getMouseHex();
-
         if (Input.GetMouseButtonDown(0) &
-                TileManager.TM.isValidHex(hex))
+            TileManager.TM.isValidHex(hex))
         {
             Repository.Central.selectedHex = hex;
         }
+#elif UNITY_IOS || UNITY_ANDROID
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+            Hex hex = TileManager.TM.getTouchHex(0);
+            // Clicking tile
+            if (touch.phase == TouchPhase.Began && TileManager.TM.isValidHex(hex))
+            {
+                Repository.Central.selectedHex = hex;
+            }
+        }
+#endif
     }
 
 
