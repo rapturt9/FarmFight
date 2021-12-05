@@ -10,7 +10,7 @@ using ParrelSync;
 
 public class MultiplayerWorldManager : MonoBehaviour
 {
-    public PhotonRealtimeTransport transport;
+    PhotonRealtimeTransport transport;
 
     public GameObject interstitial;
     public GameObject startGameButton;
