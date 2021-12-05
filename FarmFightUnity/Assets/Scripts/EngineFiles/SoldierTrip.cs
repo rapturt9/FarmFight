@@ -85,7 +85,7 @@ public class SoldierTrip : NetworkBehaviour
         if (IsServer)
         {
             bool fade = TileManager.TM["Crops"][end].soldierCount != 0; // Fade if tile not empty
-            TileManager.TM["Crops"][end].addSoldier(soldier);
+            TileManager.TM["Crops"][end].addSoldier(soldier, true);
             soldier.EndTripAsClientRpc(fade);
         }
     }

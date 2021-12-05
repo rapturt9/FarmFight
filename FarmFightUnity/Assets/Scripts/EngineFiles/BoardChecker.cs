@@ -13,6 +13,7 @@ public class BoardChecker : NetworkBehaviour
 
     public int[] ownedTileCount;
     public int[] soldierCount;
+    public int[] movingSoldierCount;
 
     public int totalOwned { get
         {
@@ -47,6 +48,7 @@ public class BoardChecker : NetworkBehaviour
         hexCoords = BoardHelperFns.HexList(TileManager.TM.size);
         ownedTileCount = new int[Repository.maxPlayers];
         soldierCount = new int[Repository.maxPlayers];
+        movingSoldierCount = new int[Repository.maxPlayers];
     }
 
     public void StartChecking()
@@ -165,6 +167,11 @@ public class BoardChecker : NetworkBehaviour
             }
             foreach (var player in tile.SortedSoldiers)
                 soldierCount[player.Key] += player.Value.Count;
+        }
+        // Moving soldiers
+        for (int playerId = 0; playerId < Repository.maxPlayers; playerId++)
+        {
+            soldierCount[playerId] += movingSoldierCount[playerId];
         }
     }
 
