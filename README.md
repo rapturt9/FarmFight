@@ -1,3 +1,5 @@
+tldr, if you want to play, download at https://www.gamecreation.org/games/farmfight
+
 # FarmFight
 
 Push Often. Have Fun
